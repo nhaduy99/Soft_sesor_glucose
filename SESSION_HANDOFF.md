@@ -31,6 +31,16 @@ Open the main supervised report here:
   - Glucose: 22.7%
 - Added project maintenance files: `PROJECT_CONTEXT.md`, `DECISIONS.md`, and `SESSION_HANDOFF.md`.
 - Added an explicit rule to `AGENTS.md`: at the end of every task, update `SESSION_HANDOFF.md` so the next Codex session can continue without chat history.
+- Continued optimization with distance-normalized kNN and focused RBF/Laplacian kernel ridge. Latest confirmed results did not reach the requested extra 20% RMSE reduction beyond the previous best.
+
+## Latest Confirmed Results
+| Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
+|---|---|---|---|---:|---:|---:|
+| Rhamnose | target_focused | fusion_full | kNN, Manhattan, L2 row normalization | 0.7043 | 18.4% | 2.4% |
+| Xylose | all_known | eem_full | Laplacian kernel ridge, log target | 0.5359 | 12.0% | 0.4% |
+| Glucose | target_focused | eem_interpretable | kNN, Manhattan | 0.5589 | 27.3% | 5.9% |
+
+The interrupted mean-blend optimization run was stopped and should not be treated as a confirmed result.
 
 ## Commands Recently Run
 ```bash
@@ -38,6 +48,7 @@ python train_monosaccharide_softsensor.py
 python -m py_compile train_monosaccharide_softsensor.py
 python -c "from html.parser import HTMLParser; HTMLParser().feed(open('supervised_monosaccharides/supervised_report.html', encoding='utf-8').read()); print('HTML parse ok')"
 git push
+python train_monosaccharide_softsensor.py
 ```
 
 ## Key Caveat

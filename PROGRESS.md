@@ -6,7 +6,7 @@ Last updated: 2026-05-17
 Prepare a scientifically defensible, ML-ready workflow for predicting Rhamnose from EEM and Raman data once quantitative HPLC targets are available.
 
 ## Current status
-Raw data have been inventoried and matched across EEM and Raman using filename structure plus plate metadata. An enriched inventory exists and includes experiment, plate, well, treatment labels, and HPLC sample-code mapping from the available legend workbooks. Scientific visualizations have been generated for Raman and EEM, including a second-pass cleaned EEM analysis that masks saturated and near-diagonal scatter regions. Interpretable and full feature tables have been exported for ML use, unsupervised PCA/K-means exploration has been completed on the interpretable features, and supervised standard/spike-based monosaccharide soft-sensor models have been trained.
+Raw data have been inventoried and matched across EEM and Raman using filename structure plus plate metadata. An enriched inventory exists and includes experiment, plate, well, treatment labels, and HPLC sample-code mapping from the available legend workbooks. Scientific visualizations have been generated for Raman and EEM, including a second-pass cleaned EEM analysis that masks saturated and near-diagonal scatter regions. Interpretable and full feature tables have been exported for ML use, unsupervised PCA/K-means exploration has been completed on the interpretable features, and supervised standard/spike-based monosaccharide soft-sensor models have been trained and further optimized with distance-normalized kNN and kernel-ridge variants.
 
 The main missing piece for culture-sample prediction is still the quantitative HPLC monosaccharide reference table. Standards and known spikes now support supervised calibration experiments, but culture rows without quantitative targets remain excluded from final supervised evaluation.
 
@@ -18,6 +18,14 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Created a starter `rhamnose_ml` training scaffold for future supervised modeling.
 - Added `docs/softsensor_monosaccharide_model_io.html`, a self-contained HTML explanation of model inputs, outputs, candidate pipelines, and the recommended Raman + EEM mid-level fusion strategy for monosaccharide prediction.
 - Added `train_monosaccharide_softsensor.py` and generated supervised standard/spike calibration outputs in `supervised_monosaccharides/`. The iterative search improved RMSE versus the initial linear/no-log/all-known baseline by 16.4% for rhamnose, 11.7% for xylose, and 22.7% for glucose.
+- Ran a further optimization pass with cosine/correlation/Manhattan kNN, row-wise normalization, and focused RBF/Laplacian kernel ridge. Latest confirmed results improved the previous best by 2.4% for rhamnose, 0.4% for xylose, and 5.9% for glucose; the requested additional 20% improvement was not reached with the current standard/spike labels.
+
+## Latest supervised results
+| Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
+|---|---|---|---|---:|---:|---:|
+| Rhamnose | target_focused | fusion_full | kNN, Manhattan, L2 row normalization | 0.7043 | 18.4% | 2.4% |
+| Xylose | all_known | eem_full | Laplacian kernel ridge, log target | 0.5359 | 12.0% | 0.4% |
+| Glucose | target_focused | eem_interpretable | kNN, Manhattan | 0.5589 | 27.3% | 5.9% |
 
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
@@ -45,7 +53,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 1. Obtain and merge the actual quantitative HPLC monosaccharide reference table for culture samples.
 2. Re-run supervised training with culture targets and compare against the current standards/spikes calibration results.
 3. Add stronger Raman baseline correction and EEM scatter masking, then rerun `train_monosaccharide_softsensor.py`.
-4. If external dependencies are allowed, compare the pure-NumPy search against scikit-learn PLSR/SVR/XGBoost implementations.
+4. If external dependencies are allowed, compare the pure-NumPy search against scikit-learn PLSR/SVR/XGBoost implementations. The current pure-NumPy optimization did not deliver an extra 20% RMSE reduction beyond the previous best.
 
 ## How to run
 ```bash

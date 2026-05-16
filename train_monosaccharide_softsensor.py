@@ -13,6 +13,11 @@ INTERPRETABLE_CSV = FEATURES_DIR / "rhamnose_interpretable_features.csv"
 FULL_CSV = FEATURES_DIR / "rhamnose_full_feature_matrix.csv"
 
 TARGETS = ("rhamnose_gL", "xylose_gL", "glucose_gL")
+PREVIOUS_BEST_RMSE = {
+    "rhamnose_gL": 0.72189956,
+    "xylose_gL": 0.53806598,
+    "glucose_gL": 0.59378797,
+}
 ID_COLUMNS = (
     "sample_set",
     "batch",
@@ -304,11 +309,31 @@ def pls1_predict(model, x):
     return ridge_predict(ridge, x @ rotations)
 
 
-def knn_predict(x_train, y_train, x_test, k, weighted):
+def pairwise_distances(x_train, row, metric):
+    if metric == "manhattan":
+        return np.sum(np.abs(x_train - row), axis=1)
+    if metric == "cosine":
+        train_norm = np.linalg.norm(x_train, axis=1)
+        row_norm = float(np.linalg.norm(row))
+        denom = np.maximum(train_norm * row_norm, 1e-12)
+        sim = (x_train @ row) / denom
+        return 1.0 - np.clip(sim, -1.0, 1.0)
+    if metric == "correlation":
+        train_center = x_train - x_train.mean(axis=1, keepdims=True)
+        row_center = row - row.mean()
+        train_norm = np.linalg.norm(train_center, axis=1)
+        row_norm = float(np.linalg.norm(row_center))
+        denom = np.maximum(train_norm * row_norm, 1e-12)
+        sim = (train_center @ row_center) / denom
+        return 1.0 - np.clip(sim, -1.0, 1.0)
+    return np.sqrt(np.sum((x_train - row) ** 2, axis=1))
+
+
+def knn_predict(x_train, y_train, x_test, k, weighted, metric):
     preds = []
     k = min(k, len(y_train))
     for row in x_test:
-        dist = np.sqrt(np.sum((x_train - row) ** 2, axis=1))
+        dist = pairwise_distances(x_train, row, metric)
         order = np.argsort(dist)[:k]
         vals = y_train[order]
         if weighted:
@@ -319,10 +344,64 @@ def knn_predict(x_train, y_train, x_test, k, weighted):
     return np.asarray(preds, dtype=float)
 
 
+def kernel_matrix(x_left, x_right, kernel, gamma):
+    if kernel == "linear":
+        return x_left @ x_right.T
+    diff = x_left[:, None, :] - x_right[None, :, :]
+    if kernel == "laplacian":
+        dist = np.sum(np.abs(diff), axis=2)
+        return np.exp(-gamma * dist)
+    dist2 = np.sum(diff * diff, axis=2)
+    return np.exp(-gamma * dist2)
+
+
+def median_distance_gamma(x, kernel, gamma_scale):
+    if len(x) < 2:
+        return 1.0
+    diffs = x[:, None, :] - x[None, :, :]
+    if kernel == "laplacian":
+        dist = np.sum(np.abs(diffs), axis=2)
+    else:
+        dist = np.sqrt(np.sum(diffs * diffs, axis=2))
+    vals = dist[np.triu_indices_from(dist, k=1)]
+    vals = vals[np.isfinite(vals) & (vals > 1e-12)]
+    if len(vals) == 0:
+        return 1.0
+    median = float(np.median(vals))
+    if kernel == "laplacian":
+        return gamma_scale / max(median, 1e-12)
+    return gamma_scale / max(median * median, 1e-12)
+
+
+def kernel_ridge_fit(x_train, y_train, alpha, kernel, gamma_scale):
+    gamma = median_distance_gamma(x_train, kernel, gamma_scale)
+    k_train = kernel_matrix(x_train, x_train, kernel, gamma)
+    dual = np.linalg.pinv(k_train + np.eye(len(x_train)) * alpha) @ y_train
+    return x_train, dual, kernel, gamma
+
+
+def kernel_ridge_predict(model, x_test):
+    x_train, dual, kernel, gamma = model
+    return kernel_matrix(x_test, x_train, kernel, gamma) @ dual
+
+
 def transform_y(y, transform):
     if transform == "log1p":
         return np.log1p(y)
     return y
+
+
+def transform_x(x, transform):
+    if transform == "sample_center":
+        return x - x.mean(axis=1, keepdims=True)
+    if transform == "sample_zscore":
+        centered = x - x.mean(axis=1, keepdims=True)
+        scale = x.std(axis=1, keepdims=True)
+        return centered / np.where(scale > 1e-12, scale, 1.0)
+    if transform == "l2":
+        norm = np.linalg.norm(x, axis=1, keepdims=True)
+        return x / np.where(norm > 1e-12, norm, 1.0)
+    return x
 
 
 def inverse_transform_y(y, transform):
@@ -362,7 +441,7 @@ def metrics(y_true, y_pred):
     return {"rmse": rmse, "mae": mae, "r2": r2, "test_mean_rmse": baseline}
 
 
-def prepare_train_test(x, y, train_idx, test_idx, max_features):
+def prepare_train_test(x, y, train_idx, test_idx, max_features, x_transform):
     x_train_raw = x[train_idx]
     x_test_raw = x[test_idx]
     y_train = y[train_idx]
@@ -387,6 +466,8 @@ def prepare_train_test(x, y, train_idx, test_idx, max_features):
     mean, std = standardize_fit(x_train)
     x_train = standardize_apply(x_train, mean, std)
     x_test = standardize_apply(x_test, mean, std)
+    x_train = transform_x(x_train, x_transform)
+    x_test = transform_x(x_test, x_transform)
     return x_train, x_test, y_train, y_test, int(var_keep.sum()), int(corr_keep.sum())
 
 
@@ -397,27 +478,51 @@ def evaluate_feature_set(rows, columns, target, feature_set, cohort):
     if len(kept) < 12:
         return [], []
 
+    focused_nonlinear = (
+        (target == "rhamnose_gL" and cohort in {"all_known", "target_focused"} and feature_set == "fusion_full")
+        or (target == "xylose_gL" and cohort == "all_known" and feature_set == "eem_full")
+        or (target == "glucose_gL" and cohort == "target_focused" and feature_set == "eem_interpretable")
+    )
     configs = []
     max_feature_options = [12, 24, 48, 96, 192, 384]
     for max_features in max_feature_options:
         if feature_set.endswith("interpretable") and max_features > 96:
             continue
         for y_transform in ("none", "log1p"):
-            configs.append(("ridge", {"alpha": 0.1, "max_features": max_features, "y_transform": y_transform}))
-            configs.append(("ridge", {"alpha": 1.0, "max_features": max_features, "y_transform": y_transform}))
-            configs.append(("ridge", {"alpha": 10.0, "max_features": max_features, "y_transform": y_transform}))
+            for x_transform in ("none",):
+                configs.append(("ridge", {"alpha": 0.1, "max_features": max_features, "y_transform": y_transform, "x_transform": x_transform}))
+                configs.append(("ridge", {"alpha": 1.0, "max_features": max_features, "y_transform": y_transform, "x_transform": x_transform}))
+                configs.append(("ridge", {"alpha": 10.0, "max_features": max_features, "y_transform": y_transform, "x_transform": x_transform}))
             for k in (1, 3, 5, 9):
-                configs.append(("knn", {"k": k, "weighted": True, "max_features": max_features, "y_transform": y_transform}))
-            for n in (2, 3, 5, 8, 12):
-                configs.append(("pcr", {"n_components": n, "alpha": 1.0, "max_features": max_features, "y_transform": y_transform}))
-                configs.append(("pls", {"n_components": n, "alpha": 1.0, "max_features": max_features, "y_transform": y_transform}))
+                distance_metrics = ("euclidean", "manhattan", "cosine", "correlation") if focused_nonlinear else ("euclidean",)
+                x_transforms = ("none", "sample_center", "sample_zscore", "l2") if focused_nonlinear else ("none",)
+                for metric in distance_metrics:
+                    for x_transform in x_transforms:
+                        configs.append(("knn", {"k": k, "weighted": True, "metric": metric, "max_features": max_features, "y_transform": y_transform, "x_transform": x_transform}))
+            if focused_nonlinear:
+                for kernel in ("rbf", "laplacian"):
+                    for alpha in (0.01, 0.1, 1.0):
+                        for gamma_scale in (0.5, 1.0, 2.0):
+                            for x_transform in ("none", "l2"):
+                                configs.append(("krr", {"kernel": kernel, "alpha": alpha, "gamma_scale": gamma_scale, "max_features": max_features, "y_transform": y_transform, "x_transform": x_transform}))
+            for x_transform in ("none",):
+                for n in (2, 3, 5, 8, 12):
+                    configs.append(("pcr", {"n_components": n, "alpha": 1.0, "max_features": max_features, "y_transform": y_transform, "x_transform": x_transform}))
+                    configs.append(("pls", {"n_components": n, "alpha": 1.0, "max_features": max_features, "y_transform": y_transform, "x_transform": x_transform}))
 
     metric_rows = []
     prediction_rows = []
     for seed in range(10):
         train_idx, test_idx = split_indices(kept, seed=1000 + seed)
         for model_name, params in configs:
-            prepared = prepare_train_test(x, y, train_idx, test_idx, max_features=params["max_features"])
+            prepared = prepare_train_test(
+                x,
+                y,
+                train_idx,
+                test_idx,
+                max_features=params["max_features"],
+                x_transform=params.get("x_transform", "none"),
+            )
             if prepared is None:
                 continue
             x_train, x_test, y_train, y_test, n_var, n_selected = prepared
@@ -449,9 +554,25 @@ def evaluate_feature_set(rows, columns, target, feature_set, cohort):
                     pred = inverse_transform_y(pls1_predict(model, x_test), y_transform)
                 elif model_name == "knn":
                     pred = inverse_transform_y(
-                        knn_predict(x_train, y_train_fit, x_test, k=params["k"], weighted=params["weighted"]),
+                        knn_predict(
+                            x_train,
+                            y_train_fit,
+                            x_test,
+                            k=params["k"],
+                            weighted=params["weighted"],
+                            metric=params["metric"],
+                        ),
                         y_transform,
                     )
+                elif model_name == "krr":
+                    model = kernel_ridge_fit(
+                        x_train,
+                        y_train_fit,
+                        alpha=params["alpha"],
+                        kernel=params["kernel"],
+                        gamma_scale=params["gamma_scale"],
+                    )
+                    pred = inverse_transform_y(kernel_ridge_predict(model, x_test), y_transform)
                 else:
                     continue
             except np.linalg.LinAlgError:
@@ -483,8 +604,8 @@ def evaluate_feature_set(rows, columns, target, feature_set, cohort):
                 }
             )
 
-            # Save predictions only for compact candidate configs; final report will filter best configs.
-            if seed == 0:
+            # Keep the prediction artifact compact; full model comparisons are in metrics CSVs.
+            if seed == 0 and focused_nonlinear and model_name in {"knn", "krr"}:
                 for local_idx, row_idx in enumerate(test_idx):
                     src = kept[row_idx]
                     pred_row = {key: src.get(key, "") for key in ID_COLUMNS}
@@ -558,9 +679,16 @@ def optimization_summary(aggregated):
         baseline = min(baseline_candidates, key=lambda row: row["mean_rmse"])
         final = min(final_candidates, key=lambda row: row["mean_rmse"])
         improvement = 100.0 * (baseline["mean_rmse"] - final["mean_rmse"]) / baseline["mean_rmse"]
+        previous_best = PREVIOUS_BEST_RMSE.get(target, float("nan"))
+        additional_improvement = (
+            100.0 * (previous_best - final["mean_rmse"]) / previous_best
+            if previous_best > 0
+            else float("nan")
+        )
         rows.append(
             {
                 "target": target,
+                "previous_best_rmse": previous_best,
                 "initial_baseline_feature_set": baseline["feature_set"],
                 "initial_baseline_model": baseline["model"],
                 "initial_baseline_config": baseline["config"],
@@ -571,6 +699,8 @@ def optimization_summary(aggregated):
                 "final_best_config": final["config"],
                 "final_best_rmse": final["mean_rmse"],
                 "rmse_improvement_pct": improvement,
+                "additional_rmse_improvement_vs_previous_best_pct": additional_improvement,
+                "met_additional_20pct_threshold": additional_improvement >= 20.0,
                 "met_10pct_threshold": improvement >= 10.0,
             }
         )
@@ -605,6 +735,8 @@ def make_html_report(target_summary, aggregated, best, opt_rows):
     opt_table_rows = "\n".join(
         f"<tr><td>{r['target']}</td><td>{r['initial_baseline_rmse']:.5g}</td><td>{r['final_best_rmse']:.5g}</td>"
         f"<td>{r['rmse_improvement_pct']:.1f}%</td><td>{'yes' if r['met_10pct_threshold'] else 'no'}</td>"
+        f"<td>{r['additional_rmse_improvement_vs_previous_best_pct']:.1f}%</td>"
+        f"<td>{'yes' if r['met_additional_20pct_threshold'] else 'no'}</td>"
         f"<td>{r['final_best_cohort']} / {r['final_best_feature_set']} / {r['final_best_model']}</td></tr>"
         for r in opt_rows
     )
@@ -638,7 +770,7 @@ def make_html_report(target_summary, aggregated, best, opt_rows):
 
   <h2>Optimization Improvement</h2>
   <table>
-    <tr><th>Target</th><th>Initial baseline RMSE</th><th>Final best RMSE</th><th>RMSE improvement</th><th>Met 10% threshold</th><th>Final model</th></tr>
+    <tr><th>Target</th><th>Initial baseline RMSE</th><th>Final best RMSE</th><th>RMSE improvement</th><th>Met 10% threshold</th><th>Additional improvement vs previous best</th><th>Met extra 20%</th><th>Final model</th></tr>
     {opt_table_rows}
   </table>
 
@@ -771,7 +903,8 @@ def main():
     for row in opt_rows:
         print(
             f"{row['target']} optimized RMSE improvement vs initial baseline: "
-            f"{row['rmse_improvement_pct']:.1f}%"
+            f"{row['rmse_improvement_pct']:.1f}% "
+            f"(additional vs previous best: {row['additional_rmse_improvement_vs_previous_best_pct']:.1f}%)"
         )
 
 

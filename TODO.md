@@ -12,11 +12,16 @@
 
 ## Modeling
 - Extend the current standard/spike supervised training to quantitative HPLC culture targets when available.
+- Treat the additional 20% RMSE-improvement target as unresolved with the current standard/spike labels. Latest extra gains over the previous best are rhamnose 2.4%, xylose 0.4%, and glucose 5.9%.
 - Compare the current pure-NumPy Ridge/PCR/PLS/kNN search with dependency-backed models if package installation is allowed:
   - scikit-learn PLSR
   - SVR
   - XGBoost or histogram gradient boosting
 - Compare grouped splits by `batch` versus `metadata_experiment`.
+- Add true spectroscopy preprocessing before another optimization attempt:
+  - Raman baseline correction / smoothing
+  - EEM scatter-region masking and PARAFAC scores
+  - replicate-aware calibration using quantitative HPLC targets
 
 ## Reporting
 - Add supervised culture-sample evaluation plots after HPLC targets are available:

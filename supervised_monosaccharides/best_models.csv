@@ -1,4 +1,4 @@
 target,cohort,feature_set,model,config,n_repeats,mean_rmse,std_rmse,mean_mae,mean_r2,mean_improvement_vs_test_mean_pct
-glucose_gL,target_focused,eem_interpretable,knn,"k=1,weighted=True,max_features=12,y_transform=none",10,0.59378797,0.13923411,0.34958824,-0.23015819,5.8580199
-rhamnose_gL,all_known,fusion_full,knn,"k=1,weighted=True,max_features=192,y_transform=none",10,0.72189956,0.35026368,0.30564474,0.24079042,16.601433
-xylose_gL,all_known,eem_full,knn,"k=3,weighted=True,max_features=192,y_transform=log1p",10,0.53806598,0.23280792,0.22046627,0.13306457,7.6087964
+glucose_gL,target_focused,eem_interpretable,knn,"k=1,weighted=True,metric=manhattan,max_features=12,y_transform=none,x_transform=none",10,0.55887802,0.20181691,0.35241176,-0.38725566,6.6238976
+rhamnose_gL,target_focused,fusion_full,knn,"k=1,weighted=True,metric=manhattan,max_features=192,y_transform=none,x_transform=l2",10,0.70427079,0.24152578,0.41845455,-0.10826615,4.0256311
+xylose_gL,all_known,eem_full,krr,"kernel=laplacian,alpha=0.01,gamma_scale=2.0,max_features=192,y_transform=log1p,x_transform=none",10,0.53590234,0.27601197,0.22624364,0.22614658,12.668056
