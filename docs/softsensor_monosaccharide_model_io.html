@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Soft Sensor Model Inputs and Outputs for Monosaccharide Prediction</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #17202a;
+      --muted: #5d6d7e;
+      --line: #d6dde5;
+      --bg: #f6f8fb;
+      --panel: #ffffff;
+      --eem: #2f7d7e;
+      --raman: #7a4e9f;
+      --target: #b5651d;
+      --model: #2d5f9a;
+      --ok: #2e7d32;
+      --warn: #a85d00;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.5;
+    }
+
+    header, main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 32px 24px;
+    }
+
+    header {
+      padding-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    h2 {
+      margin: 36px 0 12px;
+      font-size: 22px;
+    }
+
+    h3 {
+      margin: 24px 0 10px;
+      font-size: 17px;
+    }
+
+    p { margin: 8px 0 14px; }
+
+    .subtitle {
+      max-width: 900px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 18px;
+      margin: 16px 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .tag {
+      display: inline-block;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 2px 9px;
+      font-size: 12px;
+      color: var(--muted);
+      background: #fff;
+      margin-right: 6px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+      background: #fff;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px 10px;
+      vertical-align: top;
+      text-align: left;
+    }
+
+    th {
+      background: #eef3f8;
+      font-weight: 700;
+    }
+
+    code {
+      font-family: Consolas, Monaco, monospace;
+      font-size: 0.95em;
+      background: #eef3f8;
+      padding: 1px 4px;
+      border-radius: 4px;
+    }
+
+    ul {
+      margin: 8px 0 14px 20px;
+      padding: 0;
+    }
+
+    li { margin: 4px 0; }
+
+    .callout {
+      border-left: 4px solid var(--model);
+      background: #eef5ff;
+      padding: 12px 14px;
+      margin: 14px 0;
+    }
+
+    .warning {
+      border-left-color: var(--warn);
+      background: #fff6e8;
+    }
+
+    .diagram {
+      width: 100%;
+      overflow-x: auto;
+      padding: 12px 0 4px;
+    }
+
+    svg {
+      max-width: 100%;
+      height: auto;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .small {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    @media (max-width: 860px) {
+      .grid,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      header, main {
+        padding: 24px 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Soft Sensor Model Inputs and Outputs for Monosaccharide Prediction</h1>
+    <p class="subtitle">
+      This note translates the Emilie SoftSensor data-description files into a modelling plan for predicting
+      monosaccharide concentrations, especially rhamnose, xylose, and glucose, from EEM and Raman spectroscopy.
+    </p>
+    <p class="small">
+      Source folder read: <code>Emilie_SoftSensor/Data_descriptions</code>. Generated for the Codex inventory project.
+    </p>
+  </header>
+
+  <main>
+    <section class="panel">
+      <h2>Executive Model Definition</h2>
+      <p>
+        The soft sensor should learn a regression function from spectroscopy and metadata-linked sample identifiers
+        to a numeric monosaccharide concentration vector.
+      </p>
+      <table>
+        <tr>
+          <th>Element</th>
+          <th>Definition for this project</th>
+        </tr>
+        <tr>
+          <td>Input samples</td>
+          <td>One well/sample identified by experiment, plate, well, modality, filename, and metadata.</td>
+        </tr>
+        <tr>
+          <td>EEM input</td>
+          <td>A 15 row x 19 column excitation-emission matrix. Rows are excitation wavelengths, columns are emission wavelengths, values are fluorescence intensity. Values marked <code>OVER</code> exceed detector linear range and must be masked or treated as unreliable.</td>
+        </tr>
+        <tr>
+          <td>Raman input</td>
+          <td>A two-column Raman spectrum: Raman shift in cm-1 and Raman intensity. Files span 99-3500 cm-1, but the useful measured range is described as 500-2000 cm-1. Excitation wavelength was 532 nm.</td>
+        </tr>
+        <tr>
+          <td>Target output</td>
+          <td>Numeric monosaccharide concentrations, preferably as a multi-output vector <code>[Rhamnose_gL, Xylose_gL, Glucose_gL]</code>. If only one target is available, train one model per sugar.</td>
+        </tr>
+        <tr>
+          <td>Calibration source</td>
+          <td>Known standards from Experiment 4 and quantitative HPLC reference tables when available. The data description states standard concentrations are in g/L.</td>
+        </tr>
+      </table>
+      <div class="callout warning">
+        <strong>Important limitation:</strong> the existing inventory notes indicate that a full quantitative HPLC
+        target table is still the main blocker for supervised culture-sample modelling. Standards can calibrate and
+        validate sugar signal, but final soft-sensor training needs numeric target concentrations matched to sample IDs.
+      </div>
+    </section>
+
+    <section>
+      <h2>Data Description Files Read</h2>
+      <div class="grid">
+        <div class="panel">
+          <h3>Spectroscopy description</h3>
+          <p><code>Data description MS SoftSensor.docx</code></p>
+          <ul>
+            <li>EEM is one excitation-emission matrix per sample.</li>
+            <li>Raman is one spectrum per sample.</li>
+            <li>Rha means rhamnose, Xyl means xylose, Glu means glucose.</li>
+            <li>Master Mix means rhamnose, xylose, and glucose mixed at bracketed final concentrations.</li>
+            <li>Concentrations in brackets are in g/L.</li>
+          </ul>
+        </div>
+        <div class="panel">
+          <h3>Metadata and legends</h3>
+          <ul>
+            <li><code>Experiment legend.xlsx</code>: plate layouts for experiments, including monosaccharide standards.</li>
+            <li><code>Emilie_HPLC_Sample legend.xlsx</code>: sample codes for HPLC submission and treatment groups.</li>
+            <li><code>metadata_..._Plate.xlsx</code>: EEM and Raman plate metadata.</li>
+            <li><code>metadata_..._Flask.xlsx</code>: EEM and Raman flask metadata.</li>
+            <li><code>metadata_..._MSStandards.xlsx</code> and <code>metadata_..._Rhamnose.xlsx</code>: standard and rhamnose-focused metadata.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Whole-System Input and Output Diagram</h2>
+      <p>
+        The spectroscopy files provide raw signals. The metadata and legends map those signals to experiment, plate,
+        well, standard mixture, culture state, OD750, and HPLC sample codes. The final training table must align all of
+        these fields to numeric sugar targets.
+      </p>
+      <div class="diagram" aria-label="Whole system model input output flow diagram">
+        <svg viewBox="0 0 1120 440" role="img">
+          <defs>
+            <marker id="arrow" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#44546a"></path>
+            </marker>
+          </defs>
+
+          <rect x="20" y="45" width="220" height="95" rx="8" fill="#e7f4f4" stroke="#2f7d7e"></rect>
+          <text x="130" y="75" text-anchor="middle" font-size="18" font-weight="700" fill="#174344">EEM files</text>
+          <text x="130" y="102" text-anchor="middle" font-size="13" fill="#174344">15 x 19 matrix</text>
+          <text x="130" y="123" text-anchor="middle" font-size="13" fill="#174344">fluorescence intensity</text>
+
+          <rect x="20" y="185" width="220" height="95" rx="8" fill="#f0e9f7" stroke="#7a4e9f"></rect>
+          <text x="130" y="215" text-anchor="middle" font-size="18" font-weight="700" fill="#44275f">Raman files</text>
+          <text x="130" y="242" text-anchor="middle" font-size="13" fill="#44275f">shift cm-1 + intensity</text>
+          <text x="130" y="263" text-anchor="middle" font-size="13" fill="#44275f">use 500-2000 cm-1</text>
+
+          <rect x="20" y="325" width="220" height="70" rx="8" fill="#fff4e6" stroke="#b5651d"></rect>
+          <text x="130" y="354" text-anchor="middle" font-size="17" font-weight="700" fill="#6b3a0a">Legends + metadata</text>
+          <text x="130" y="377" text-anchor="middle" font-size="13" fill="#6b3a0a">experiment, plate, well, HPLC code</text>
+
+          <rect x="330" y="105" width="230" height="210" rx="8" fill="#ffffff" stroke="#b8c2cc"></rect>
+          <text x="445" y="138" text-anchor="middle" font-size="18" font-weight="700" fill="#17202a">Preprocessing</text>
+          <text x="445" y="170" text-anchor="middle" font-size="13" fill="#17202a">mask OVER values</text>
+          <text x="445" y="193" text-anchor="middle" font-size="13" fill="#17202a">crop Raman range</text>
+          <text x="445" y="216" text-anchor="middle" font-size="13" fill="#17202a">baseline / scale</text>
+          <text x="445" y="239" text-anchor="middle" font-size="13" fill="#17202a">join by experiment-plate-well</text>
+          <text x="445" y="262" text-anchor="middle" font-size="13" fill="#17202a">construct feature tables</text>
+
+          <rect x="640" y="70" width="220" height="95" rx="8" fill="#eef5ff" stroke="#2d5f9a"></rect>
+          <text x="750" y="100" text-anchor="middle" font-size="17" font-weight="700" fill="#193b63">EEM feature block</text>
+          <text x="750" y="127" text-anchor="middle" font-size="13" fill="#193b63">PARAFAC scores or</text>
+          <text x="750" y="148" text-anchor="middle" font-size="13" fill="#193b63">unfolded EEM features</text>
+
+          <rect x="640" y="215" width="220" height="95" rx="8" fill="#eef5ff" stroke="#2d5f9a"></rect>
+          <text x="750" y="245" text-anchor="middle" font-size="17" font-weight="700" fill="#193b63">Raman feature block</text>
+          <text x="750" y="272" text-anchor="middle" font-size="13" fill="#193b63">Raman intensities or</text>
+          <text x="750" y="293" text-anchor="middle" font-size="13" fill="#193b63">Raman PLS scores</text>
+
+          <rect x="925" y="122" width="170" height="135" rx="8" fill="#fff8ef" stroke="#b5651d"></rect>
+          <text x="1010" y="154" text-anchor="middle" font-size="18" font-weight="700" fill="#6b3a0a">Regression output</text>
+          <text x="1010" y="188" text-anchor="middle" font-size="13" fill="#6b3a0a">Rhamnose g/L</text>
+          <text x="1010" y="211" text-anchor="middle" font-size="13" fill="#6b3a0a">Xylose g/L</text>
+          <text x="1010" y="234" text-anchor="middle" font-size="13" fill="#6b3a0a">Glucose g/L</text>
+
+          <line x1="240" y1="92" x2="330" y2="165" stroke="#44546a" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="240" y1="232" x2="330" y2="215" stroke="#44546a" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="240" y1="360" x2="330" y2="260" stroke="#44546a" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="560" y1="178" x2="640" y2="118" stroke="#44546a" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="560" y1="238" x2="640" y2="262" stroke="#44546a" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="860" y1="118" x2="925" y2="172" stroke="#44546a" stroke-width="2" marker-end="url(#arrow)"></line>
+          <line x1="860" y1="262" x2="925" y2="211" stroke="#44546a" stroke-width="2" marker-end="url(#arrow)"></line>
+        </svg>
+      </div>
+    </section>
+
+    <section>
+      <h2>Model Candidates</h2>
+      <table>
+        <tr>
+          <th>Model</th>
+          <th>Input</th>
+          <th>Feature representation</th>
+          <th>Regressor</th>
+          <th>Output</th>
+          <th>Purpose</th>
+        </tr>
+        <tr>
+          <td>Model 1: EEM PARAFAC + regression</td>
+          <td>EEM only</td>
+          <td>PARAFAC component scores</td>
+          <td>PLSR, SVR, or XGBoost</td>
+          <td>One sugar or multi-output sugar concentration vector</td>
+          <td>Most interpretable EEM soft sensor. Links prediction to fluorescence components.</td>
+        </tr>
+        <tr>
+          <td>Model 2: Unfolded EEM + PLSR</td>
+          <td>EEM only</td>
+          <td>Flattened 15 x 19 matrix after masking/scaling</td>
+          <td>PLSR</td>
+          <td>Monosaccharide concentration</td>
+          <td>Strong, simple, accepted baseline for EEM prediction.</td>
+        </tr>
+        <tr>
+          <td>Model 3: Unfolded EEM + nonlinear model</td>
+          <td>EEM only</td>
+          <td>Flattened EEM, then PCA or feature selection</td>
+          <td>SVR, XGBoost, or ANN</td>
+          <td>Monosaccharide concentration</td>
+          <td>Use when sample size is large enough to justify nonlinear fitting.</td>
+        </tr>
+        <tr>
+          <td>Model 4: Raman + EEM fusion</td>
+          <td>Raman plus EEM</td>
+          <td>Raman PLS scores plus EEM PARAFAC scores or unfolded EEM features</td>
+          <td>PLSR, SVR, XGBoost, or stacked regression</td>
+          <td>Rhamnose, xylose, glucose concentrations</td>
+          <td>Most powerful and most defensible direction for weakly fluorescent sugars.</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Recommended Mid-Level Fusion Model</h2>
+      <p>
+        Because glucose and some monosaccharides are weakly fluorescent, EEM should not be treated as the only direct
+        sugar sensor. Raman is better positioned for direct sugar signatures, while EEM can capture indirect metabolic
+        and process-state changes from fluorescence-active compounds in the culture.
+      </p>
+      <div class="diagram" aria-label="Recommended mid-level fusion model diagram">
+        <svg viewBox="0 0 1120 500" role="img">
+          <defs>
+            <marker id="arrow2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#44546a"></path>
+            </marker>
+          </defs>
+
+          <rect x="30" y="60" width="210" height="80" rx="8" fill="#f0e9f7" stroke="#7a4e9f"></rect>
+          <text x="135" y="93" text-anchor="middle" font-size="17" font-weight="700" fill="#44275f">Raman spectrum</text>
+          <text x="135" y="118" text-anchor="middle" font-size="13" fill="#44275f">500-2000 cm-1 crop</text>
+
+          <rect x="30" y="290" width="210" height="80" rx="8" fill="#e7f4f4" stroke="#2f7d7e"></rect>
+          <text x="135" y="323" text-anchor="middle" font-size="17" font-weight="700" fill="#174344">EEM matrix</text>
+          <text x="135" y="348" text-anchor="middle" font-size="13" fill="#174344">mask OVER + scatter</text>
+
+          <rect x="315" y="52" width="220" height="96" rx="8" fill="#ffffff" stroke="#b8c2cc"></rect>
+          <text x="425" y="83" text-anchor="middle" font-size="16" font-weight="700" fill="#17202a">Raman PLS encoder</text>
+          <text x="425" y="109" text-anchor="middle" font-size="13" fill="#17202a">compress spectrum to</text>
+          <text x="425" y="130" text-anchor="middle" font-size="13" fill="#17202a">predictive latent scores</text>
+
+          <rect x="315" y="282" width="220" height="96" rx="8" fill="#ffffff" stroke="#b8c2cc"></rect>
+          <text x="425" y="313" text-anchor="middle" font-size="16" font-weight="700" fill="#17202a">EEM PARAFAC encoder</text>
+          <text x="425" y="339" text-anchor="middle" font-size="13" fill="#17202a">extract fluorescence</text>
+          <text x="425" y="360" text-anchor="middle" font-size="13" fill="#17202a">component scores</text>
+
+          <rect x="610" y="165" width="220" height="120" rx="8" fill="#eef5ff" stroke="#2d5f9a"></rect>
+          <text x="720" y="198" text-anchor="middle" font-size="17" font-weight="700" fill="#193b63">Mid-level fusion</text>
+          <text x="720" y="226" text-anchor="middle" font-size="13" fill="#193b63">concatenate score table</text>
+          <text x="720" y="249" text-anchor="middle" font-size="13" fill="#193b63">[Raman scores | EEM scores]</text>
+          <text x="720" y="272" text-anchor="middle" font-size="13" fill="#193b63">scale and validate by group</text>
+
+          <rect x="895" y="165" width="190" height="120" rx="8" fill="#fff8ef" stroke="#b5651d"></rect>
+          <text x="990" y="198" text-anchor="middle" font-size="17" font-weight="700" fill="#6b3a0a">Final regression</text>
+          <text x="990" y="226" text-anchor="middle" font-size="13" fill="#6b3a0a">PLSR / SVR / XGBoost</text>
+          <text x="990" y="249" text-anchor="middle" font-size="13" fill="#6b3a0a">predicts sugar vector</text>
+          <text x="990" y="272" text-anchor="middle" font-size="13" fill="#6b3a0a">Rha, Xyl, Glu g/L</text>
+
+          <line x1="240" y1="100" x2="315" y2="100" stroke="#44546a" stroke-width="2" marker-end="url(#arrow2)"></line>
+          <line x1="240" y1="330" x2="315" y2="330" stroke="#44546a" stroke-width="2" marker-end="url(#arrow2)"></line>
+          <line x1="535" y1="100" x2="610" y2="198" stroke="#44546a" stroke-width="2" marker-end="url(#arrow2)"></line>
+          <line x1="535" y1="330" x2="610" y2="252" stroke="#44546a" stroke-width="2" marker-end="url(#arrow2)"></line>
+          <line x1="830" y1="225" x2="895" y2="225" stroke="#44546a" stroke-width="2" marker-end="url(#arrow2)"></line>
+
+          <text x="425" y="185" text-anchor="middle" font-size="13" fill="#5d6d7e">direct sugar signal</text>
+          <text x="425" y="420" text-anchor="middle" font-size="13" fill="#5d6d7e">indirect process-state signal</text>
+        </svg>
+      </div>
+      <div class="callout">
+        <strong>Recommended paper-ready result:</strong> compare Raman-only, EEM-only, and fused models, then emphasize
+        Raman + EEM mid-level fusion if it improves prediction while retaining interpretable Raman latent variables and
+        PARAFAC fluorescence components.
+      </div>
+    </section>
+
+    <section>
+      <h2>Training Table Structure</h2>
+      <p>
+        The practical output of preprocessing should be a single supervised table. Each row is one matched sample or
+        well. Each target column is a measured or known concentration.
+      </p>
+      <table>
+        <tr>
+          <th>Column group</th>
+          <th>Examples</th>
+          <th>Use</th>
+        </tr>
+        <tr>
+          <td>Identifiers</td>
+          <td><code>sample_id</code>, <code>experiment</code>, <code>plate</code>, <code>well</code>, <code>eem_file</code>, <code>raman_file</code></td>
+          <td>Join spectroscopy with metadata and prevent leakage across replicated wells or experiments.</td>
+        </tr>
+        <tr>
+          <td>Metadata</td>
+          <td><code>strain</code>, <code>CorE</code>, <code>comment</code>, <code>OD750</code>, <code>HPLC_sample_code</code></td>
+          <td>Audit sample context and define grouped validation.</td>
+        </tr>
+        <tr>
+          <td>Raman features</td>
+          <td><code>raman_pls_1</code> ... <code>raman_pls_k</code> or selected Raman intensities</td>
+          <td>Direct monosaccharide spectral information.</td>
+        </tr>
+        <tr>
+          <td>EEM features</td>
+          <td><code>parafac_comp_1</code> ... <code>parafac_comp_k</code>, or unfolded EEM pixels</td>
+          <td>Fluorescence component/process-state information.</td>
+        </tr>
+        <tr>
+          <td>Targets</td>
+          <td><code>rhamnose_gL</code>, <code>xylose_gL</code>, <code>glucose_gL</code></td>
+          <td>Regression outputs. Use known standard concentrations and quantitative HPLC targets.</td>
+        </tr>
+      </table>
+    </section>
+
+    <section class="panel">
+      <h2>Validation and Reporting</h2>
+      <div class="grid-3">
+        <div>
+          <h3>Validation split</h3>
+          <p>Use grouped validation by experiment, plate, batch, or HPLC sample group. Random row splits can overstate performance when adjacent wells or replicates are similar.</p>
+        </div>
+        <div>
+          <h3>Metrics</h3>
+          <p>Report RMSE, MAE, R2, bias, and predicted-vs-measured plots for each sugar. For multi-output models, report per-target metrics.</p>
+        </div>
+        <div>
+          <h3>Interpretation</h3>
+          <p>Use Raman loadings and PARAFAC emission/excitation profiles to explain whether predictions reflect direct sugar peaks, matrix effects, or biological process state.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Recommended Execution Order</h2>
+      <ol>
+        <li>Build a matched sample table from filename, experiment, plate, well, and HPLC sample code.</li>
+        <li>Add numeric target concentrations from standards and quantitative HPLC results.</li>
+        <li>Preprocess EEM by masking <code>OVER</code> values and scatter-dominated regions; scale intensities.</li>
+        <li>Preprocess Raman by cropping to 500-2000 cm-1, correcting baseline if needed, and scaling.</li>
+        <li>Train Raman-PLSR as the direct-signal baseline.</li>
+        <li>Train EEM-PARAFAC-PLSR for interpretability.</li>
+        <li>Train EEM-unfolded-PLSR as the EEM predictive baseline.</li>
+        <li>Train Raman + EEM mid-level fusion and compare against all single-modality baselines.</li>
+      </ol>
+    </section>
+  </main>
+</body>
+</html>

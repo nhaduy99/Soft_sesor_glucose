@@ -16,6 +16,7 @@ The main missing piece is still the quantitative HPLC Rhamnose reference table. 
 - Exported ML-ready feature tables from cleaned EEM and cropped Raman data.
 - Ran unsupervised PCA and clustering on interpretable features and saved an HTML report.
 - Created a starter `rhamnose_ml` training scaffold for future supervised modeling.
+- Added `docs/softsensor_monosaccharide_model_io.html`, a self-contained HTML explanation of model inputs, outputs, candidate pipelines, and the recommended Raman + EEM mid-level fusion strategy for monosaccharide prediction.
 
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
@@ -27,6 +28,7 @@ The main missing piece is still the quantitative HPLC Rhamnose reference table. 
 - `features/rhamnose_full_feature_matrix.csv`: high-dimensional feature matrix for full-spectrum / full-matrix models.
 - `explore_features_unsupervised.py`: runs PCA and K-means using `numpy` only.
 - `unsupervised/unsupervised_report.html`: integrated unsupervised exploration report.
+- `docs/softsensor_monosaccharide_model_io.html`: model input/output explanation with diagrams for monosaccharide soft-sensor prediction.
 - `rhamnose_ml/scripts/train_baseline.py`: starter baseline training entry point for supervised Rhamnose prediction.
 - `rhamnose_ml/src/rhamnose_ml/train.py`: baseline training pipeline using PLS with grouped train/test splitting.
 
