@@ -19,6 +19,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Added `docs/softsensor_monosaccharide_model_io.html`, a self-contained HTML explanation of model inputs, outputs, candidate pipelines, and the recommended Raman + EEM mid-level fusion strategy for monosaccharide prediction.
 - Added `train_monosaccharide_softsensor.py` and generated supervised standard/spike calibration outputs in `supervised_monosaccharides/`. The iterative search improved RMSE versus the initial linear/no-log/all-known baseline by 16.4% for rhamnose, 11.7% for xylose, and 22.7% for glucose.
 - Ran a further optimization pass with cosine/correlation/Manhattan kNN, row-wise normalization, and focused RBF/Laplacian kernel ridge. Latest confirmed results improved the previous best by 2.4% for rhamnose, 0.4% for xylose, and 5.9% for glucose; the requested additional 20% improvement was not reached with the current standard/spike labels.
+- Added `generate_supervised_visual_report.py` and generated `supervised_monosaccharides/comprehensive_modeling_report.html` with predicted-vs-true scatter plots, residual plots, RMSE/improvement bar charts, top-model tables, and an end-to-end modelling pipeline summary.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -40,7 +41,9 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - `docs/softsensor_monosaccharide_model_io.html`: model input/output explanation with diagrams for monosaccharide soft-sensor prediction.
 - `train_monosaccharide_softsensor.py`: pure-NumPy supervised training and model-search script for rhamnose, xylose, and glucose standards/spikes.
 - `supervised_monosaccharides/supervised_report.html`: supervised model results report with target coverage, training flow, best models, and optimization improvement.
+- `supervised_monosaccharides/comprehensive_modeling_report.html`: comprehensive visual report for processing, modelling, training, optimization, predicted-vs-true plots, residuals, and metrics.
 - `supervised_monosaccharides/optimization_improvement_summary.csv`: final-best RMSE compared with the initial baseline search.
+- `generate_supervised_visual_report.py`: pure-Python SVG/HTML report generator for supervised modelling visualizations.
 - `rhamnose_ml/scripts/train_baseline.py`: starter baseline training entry point for supervised Rhamnose prediction.
 - `rhamnose_ml/src/rhamnose_ml/train.py`: baseline training pipeline using PLS with grouped train/test splitting.
 
@@ -63,5 +66,6 @@ python visualize_eem_raman.py
 python export_rhamnose_features.py
 python explore_features_unsupervised.py
 python train_monosaccharide_softsensor.py
+python generate_supervised_visual_report.py
 python rhamnose_ml/scripts/train_baseline.py --config rhamnose_ml/config/defaults.json
 ```

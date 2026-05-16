@@ -15,6 +15,10 @@ Open the main supervised report here:
 
 `supervised_monosaccharides/supervised_report.html`
 
+Open the comprehensive visual modelling report here:
+
+`supervised_monosaccharides/comprehensive_modeling_report.html`
+
 ## What Was Completed
 - Uploaded the project to GitHub.
 - Uploaded the raw data folder into `data/raw/Emilie_SoftSensor`.
@@ -32,6 +36,7 @@ Open the main supervised report here:
 - Added project maintenance files: `PROJECT_CONTEXT.md`, `DECISIONS.md`, and `SESSION_HANDOFF.md`.
 - Added an explicit rule to `AGENTS.md`: at the end of every task, update `SESSION_HANDOFF.md` so the next Codex session can continue without chat history.
 - Continued optimization with distance-normalized kNN and focused RBF/Laplacian kernel ridge. Latest confirmed results did not reach the requested extra 20% RMSE reduction beyond the previous best.
+- Generated `supervised_monosaccharides/comprehensive_modeling_report.html` with predicted-vs-true scatter plots, residual plots, metric bar charts, top-model tables, and pipeline documentation.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
@@ -49,6 +54,7 @@ python -m py_compile train_monosaccharide_softsensor.py
 python -c "from html.parser import HTMLParser; HTMLParser().feed(open('supervised_monosaccharides/supervised_report.html', encoding='utf-8').read()); print('HTML parse ok')"
 git push
 python train_monosaccharide_softsensor.py
+python generate_supervised_visual_report.py
 ```
 
 ## Key Caveat
