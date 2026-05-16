@@ -1,0 +1,4 @@
+target,cohort,feature_set,model,config,n_repeats,mean_rmse,std_rmse,mean_mae,mean_r2,mean_improvement_vs_test_mean_pct
+glucose_gL,target_focused,eem_interpretable,knn,"k=1,weighted=True,max_features=12,y_transform=none",10,0.59378797,0.13923411,0.34958824,-0.23015819,5.8580199
+rhamnose_gL,all_known,fusion_full,knn,"k=1,weighted=True,max_features=192,y_transform=none",10,0.72189956,0.35026368,0.30564474,0.24079042,16.601433
+xylose_gL,all_known,eem_full,knn,"k=3,weighted=True,max_features=192,y_transform=log1p",10,0.53806598,0.23280792,0.22046627,0.13306457,7.6087964
