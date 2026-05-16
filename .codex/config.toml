@@ -1,0 +1,11 @@
+# Optional Codex settings for this workspace.
+
+[project]
+name = "emilie-softsensor-codex-inventory"
+root = "."
+
+[notes]
+primary_inventory = "eem_raman_hplc_inventory_enriched.csv"
+ml_workspace = "rhamnose_ml"
+visual_report = "visualizations/visual_report.html"
+unsupervised_report = "unsupervised/unsupervised_report.html"

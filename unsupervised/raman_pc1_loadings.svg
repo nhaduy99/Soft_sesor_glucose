@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620">
+<style>
+text { font-family: Arial, sans-serif; fill: #111; }
+.title { font-size: 22px; font-weight: bold; }
+.subtitle { font-size: 12px; fill: #444; }
+.axis { stroke: #222; stroke-width: 1.2; }
+.grid { stroke: #ddd; stroke-width: 1; }
+.small { font-size: 11px; }
+.label { font-size: 12px; }
+.anno { font-size: 11px; fill: #7a1010; font-weight: bold; }
+</style>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<text x="90" y="50" class="title">Raman interpretable features: strongest PC1 loadings</text>
+<text x="90" y="75" class="subtitle">Highest-magnitude feature contributions to the first principal component</text>
+<line x1="110" y1="300.0" x2="960" y2="300.0" class="axis"/>
+<rect x="120.0" y="140.4" width="121.7" height="159.6" fill="#1f77b4" opacity="0.8"/>
+<text x="180.8" y="318.0" text-anchor="middle" class="small">raman_crop_sum</text>
+<text x="180.8" y="134.4" text-anchor="middle" class="small">0.28</text>
+<rect x="261.7" y="140.4" width="121.7" height="159.6" fill="#1f77b4" opacity="0.8"/>
+<text x="322.5" y="318.0" text-anchor="middle" class="small">raman_crop_mean</text>
+<text x="322.5" y="134.4" text-anchor="middle" class="small">0.28</text>
+<rect x="403.3" y="145.9" width="121.7" height="154.1" fill="#1f77b4" opacity="0.8"/>
+<text x="464.2" y="318.0" text-anchor="middle" class="small">r1523_mean</text>
+<text x="464.2" y="139.9" text-anchor="middle" class="small">0.27</text>
+<rect x="545.0" y="145.9" width="121.7" height="154.1" fill="#1f77b4" opacity="0.8"/>
+<text x="605.8" y="318.0" text-anchor="middle" class="small">r1523_sum</text>
+<text x="605.8" y="139.9" text-anchor="middle" class="small">0.27</text>
+<rect x="686.7" y="148.3" width="121.7" height="151.7" fill="#1f77b4" opacity="0.8"/>
+<text x="747.5" y="318.0" text-anchor="middle" class="small">raman_crop_max</text>
+<text x="747.5" y="142.3" text-anchor="middle" class="small">0.27</text>
+<rect x="828.3" y="148.8" width="121.7" height="151.2" fill="#1f77b4" opacity="0.8"/>
+<text x="889.2" y="318.0" text-anchor="middle" class="small">r1156_sum</text>
+<text x="889.2" y="142.8" text-anchor="middle" class="small">0.27</text>
+</svg>

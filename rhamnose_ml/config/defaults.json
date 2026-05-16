@@ -1,0 +1,41 @@
+{
+  "inventory_csv": "..\\eem_raman_hplc_inventory_enriched.csv",
+  "output_dir": "outputs",
+  "target_column": "target_rhamnose",
+  "id_columns": [
+    "group_code",
+    "sample_set",
+    "batch",
+    "replicate",
+    "sample_id",
+    "container_type",
+    "metadata_experiment",
+    "metadata_plate",
+    "metadata_well"
+  ],
+  "split": {
+    "group_column": "batch",
+    "test_size": 0.2,
+    "random_state": 42
+  },
+  "eem": {
+    "enabled": true,
+    "replace_over_with_nan": true
+  },
+  "raman": {
+    "enabled": true,
+    "min_shift": 500.0,
+    "max_shift": 2000.0
+  },
+  "models": {
+    "eem": {
+      "n_components": 8
+    },
+    "raman": {
+      "n_components": 8
+    },
+    "fusion": {
+      "n_components": 12
+    }
+  }
+}

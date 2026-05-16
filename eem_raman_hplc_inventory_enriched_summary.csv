@@ -1,0 +1,9 @@
+metric,value,note
+total_inventory_rows,1483,
+rows_with_any_plate_metadata,1024,Plate metadata workbook only; flask rows remain unmatched
+rows_with_eem_plate_metadata,871,
+rows_with_raman_plate_metadata,380,
+rows_with_legend_treatment_label,1024,Derived from Experiment legend.xlsx by Experiment + Plate + Well
+rows_with_hplc_sample_code,720,"Codes like N0, S1, B2, STD"
+rows_with_hplc_sample_legend_match,684,Matched to Emilie_HPLC_Sample legend.xlsx
+rows_with_quantitative_hplc_reference,0,Expected to remain zero until actual HPLC results are provided

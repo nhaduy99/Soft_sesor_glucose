@@ -1,0 +1,8 @@
+metric,value,note
+rows,1483,
+rows_with_eem,1330,
+rows_with_raman,837,
+eem_clean_hotspot_features,6,Interpretable masked EEM hotspot summaries
+raman_peak_windows,6,Interpretable Raman windows around detected mean-spectrum peaks
+eem_vector_columns,174,Full cleaned EEM vector columns
+raman_vector_columns,1556,Full cropped Raman vector columns

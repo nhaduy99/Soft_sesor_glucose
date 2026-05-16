@@ -1,0 +1,4 @@
+analysis,n_rows,n_features,pc1_explained_percent,pc2_explained_percent,kmeans_inertia
+raman,837,23,52.328,15.760,4029.618
+eem,1330,12,67.453,14.992,824.714
+fusion,684,35,42.214,23.379,4327.230

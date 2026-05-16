@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="620" viewBox="0 0 1100 620">
+<style>
+text { font-family: Arial, sans-serif; fill: #111; }
+.title { font-size: 22px; font-weight: bold; }
+.subtitle { font-size: 12px; fill: #444; }
+.axis { stroke: #222; stroke-width: 1.2; }
+.grid { stroke: #ddd; stroke-width: 1; }
+.small { font-size: 11px; }
+.label { font-size: 12px; }
+.anno { font-size: 11px; fill: #7a1010; font-weight: bold; }
+</style>
+<rect x="0" y="0" width="100%" height="100%" fill="white"/>
+<text x="90" y="50" class="title">Cleaned EEM interpretable features: strongest PC1 loadings</text>
+<text x="90" y="75" class="subtitle">Highest-magnitude feature contributions to the first principal component</text>
+<line x1="110" y1="300.0" x2="960" y2="300.0" class="axis"/>
+<rect x="120.0" y="300.0" width="121.7" height="159.6" fill="#d62728" opacity="0.8"/>
+<text x="180.8" y="292.0" text-anchor="middle" class="small">eem_clean_max</text>
+<text x="180.8" y="473.6" text-anchor="middle" class="small">-0.38</text>
+<rect x="261.7" y="300.0" width="121.7" height="158.7" fill="#d62728" opacity="0.8"/>
+<text x="322.5" y="292.0" text-anchor="middle" class="small">eem_clean_mean</text>
+<text x="322.5" y="472.7" text-anchor="middle" class="small">-0.38</text>
+<rect x="403.3" y="300.0" width="121.7" height="148.5" fill="#d62728" opacity="0.8"/>
+<text x="464.2" y="292.0" text-anchor="middle" class="small">eem_h4_ex400_em440</text>
+<text x="464.2" y="462.5" text-anchor="middle" class="small">-0.35</text>
+<rect x="545.0" y="300.0" width="121.7" height="143.9" fill="#d62728" opacity="0.8"/>
+<text x="605.8" y="292.0" text-anchor="middle" class="small">eem_h5_ex420_em460</text>
+<text x="605.8" y="457.9" text-anchor="middle" class="small">-0.34</text>
+<rect x="686.7" y="300.0" width="121.7" height="140.2" fill="#d62728" opacity="0.8"/>
+<text x="747.5" y="292.0" text-anchor="middle" class="small">eem_h6_ex440_em480</text>
+<text x="747.5" y="454.2" text-anchor="middle" class="small">-0.33</text>
+<rect x="828.3" y="300.0" width="121.7" height="130.8" fill="#d62728" opacity="0.8"/>
+<text x="889.2" y="292.0" text-anchor="middle" class="small">eem_h2_ex380_em420</text>
+<text x="889.2" y="444.8" text-anchor="middle" class="small">-0.31</text>
+</svg>

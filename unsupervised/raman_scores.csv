@@ -1,0 +1,838 @@
+sample_set,batch,replicate,sample_id,matching_measurements,legend_treatment_label,pc1,pc2,cluster
+MSStandards,4,1,A1,Raman only,Rha (5),-1.814954,2.278731,0
+MSStandards,4,1,A10,Raman only,Rha-Glu (0.01),-1.926971,2.195822,0
+MSStandards,4,1,A11,Raman only,Rha-Xyl (0.1),-1.820831,2.457606,0
+MSStandards,4,1,A2,Raman only,Rha (1),-1.870913,2.196675,0
+MSStandards,4,1,A3,Raman only,Rha (0.25),-3.189896,-0.153884,0
+MSStandards,4,1,A4,Raman only,Rha (0.05),-1.834258,2.325235,0
+MSStandards,4,1,A5,Raman only,Rha (0.01),-1.862896,2.322318,0
+MSStandards,4,1,A6,Raman only,Glu (1),2.532452,1.843155,1
+MSStandards,4,1,A7,Raman only,Glu (0.25),-1.722355,2.479980,0
+MSStandards,4,1,A8,Raman only,Glu (0.075),-1.813316,2.463425,0
+MSStandards,4,1,A9,Raman only,Glu (0.01),-1.894448,2.066681,0
+MSStandards,4,1,B1,Raman only,Rha (5),-1.808635,2.251228,0
+MSStandards,4,1,B10,Raman only,Rha-Glu (0.01),-3.269853,0.070817,0
+MSStandards,4,1,B11,Raman only,Rha-Xyl (0.01),-1.807193,2.427420,0
+MSStandards,4,1,B2,Raman only,Rha (0.75),-1.807712,2.390479,0
+MSStandards,4,1,B3,Raman only,Rha (0.25),-3.165748,0.128131,0
+MSStandards,4,1,B4,Raman only,Rha (0.05),-1.996448,2.051871,0
+MSStandards,4,1,B5,Raman only,Glu (5),-1.769375,2.476850,0
+MSStandards,4,1,B6,Raman only,Glu (1),-1.848920,2.319141,0
+MSStandards,4,1,B7,Raman only,Glu (0.25),-1.644979,2.747343,0
+MSStandards,4,1,B8,Raman only,Glu (0.05),-1.666125,2.744521,0
+MSStandards,4,1,B9,Raman only,Glu (0.01),-1.679126,2.714421,0
+MSStandards,4,1,C1,Raman only,Rha (5),-1.803693,2.419547,0
+MSStandards,4,1,C10,Raman only,Rha-Glu (0.01),-1.889312,2.152382,0
+MSStandards,4,1,C11,Raman only,Rha-Xyl (0.01),-2.040283,1.822671,0
+MSStandards,4,1,C2,Raman only,Rha (0.75),-1.824018,2.247940,0
+MSStandards,4,1,C3,Raman only,Rha (0.1),-1.891976,2.312047,0
+MSStandards,4,1,C4,Raman only,Rha (0.05),-1.873097,2.137198,0
+MSStandards,4,1,C5,Raman only,Glu (5),-1.745966,2.506084,0
+MSStandards,4,1,C6,Raman only,Glu (0.75),-1.722230,2.673806,0
+MSStandards,4,1,C7,Raman only,Glu (0.25),-1.794846,2.484869,0
+MSStandards,4,1,C8,Raman only,Glu (0.05),-1.523339,2.815884,0
+MSStandards,4,1,C9,Raman only,Rha-Glu (1),-1.603148,2.790157,0
+MSStandards,4,1,D1,Raman only,Rha (2.5),-2.096728,1.782553,0
+MSStandards,4,1,D10,Raman only,Rha-Xyl (1),-1.977713,1.993338,0
+MSStandards,4,1,D11,Raman only,Rha-Xyl (0.01),-1.954294,2.113241,0
+MSStandards,4,1,D2,Raman only,Rha (0.75),-1.957917,2.113211,0
+MSStandards,4,1,D3,Raman only,Rha (0.1),-1.807296,2.501239,0
+MSStandards,4,1,D4,Raman only,Rha (0.025),-1.722688,2.533443,0
+MSStandards,4,1,D5,Raman only,Glu (5),-2.123362,1.757281,0
+MSStandards,4,1,D6,Raman only,Glu (0.75),-1.684351,2.748481,0
+MSStandards,4,1,D7,Raman only,Glu (0.1),-1.859029,2.278224,0
+MSStandards,4,1,D8,Raman only,Glu (0.05),-1.856896,2.467183,0
+MSStandards,4,1,D9,Raman only,Rha-Glu (1),-2.227334,1.587922,0
+MSStandards,4,1,E1,Raman only,Rha (2.5),-2.213954,1.674833,0
+MSStandards,4,1,E10,Raman only,Rha-Xyl (1),-2.083574,1.668994,0
+MSStandards,4,1,E2,Raman only,Rha (0.5),-2.349233,1.411033,0
+MSStandards,4,1,E3,Raman only,Rha (0.1),-2.023491,2.174916,0
+MSStandards,4,1,E4,Raman only,Rha (0.025),-1.917926,2.261456,0
+MSStandards,4,1,E5,Raman only,Glu (2.5),-1.995876,2.104579,0
+MSStandards,4,1,E6,Raman only,Glu (0.75),-2.488821,0.425644,0
+MSStandards,4,1,E7,Raman only,Glu (0.1),-2.148251,1.938755,0
+MSStandards,4,1,E8,Raman only,Glu (0.025),-1.945749,2.356140,0
+MSStandards,4,1,E9,Raman only,Rha-Glu (1),-1.875187,2.380989,0
+MSStandards,4,1,F1,Raman only,Rha (2.5),-2.187663,1.840628,0
+MSStandards,4,1,F10,Raman only,Rha-Xyl (1),-2.284492,1.628729,0
+MSStandards,4,1,F2,Raman only,Rha (0.5),-2.556246,0.861299,0
+MSStandards,4,1,F3,Raman only,Rha (0.075),-2.116636,2.073332,0
+MSStandards,4,1,F4,Raman only,Rha (0.025),-2.100894,1.834355,0
+MSStandards,4,1,F5,Raman only,Glu (2.5),-2.031326,2.121720,0
+MSStandards,4,1,F6,Raman only,Glu (0.5),-2.336976,1.541695,0
+MSStandards,4,1,F7,Raman only,Glu (0.1),-2.303456,1.419930,0
+MSStandards,4,1,F8,Raman only,Glu (0.025),-2.059697,2.082442,0
+MSStandards,4,1,F9,Raman only,Rha-Glu (0.1),-2.029314,2.172854,0
+MSStandards,4,1,G1,Raman only,Rha (1),-2.287972,1.723548,0
+MSStandards,4,1,G10,Raman only,Rha-Xyl (0.1),-2.290704,1.579829,0
+MSStandards,4,1,G2,Raman only,Rha (0.5),-2.323642,1.633988,0
+MSStandards,4,1,G3,Raman only,Rha (0.075),-2.171500,1.946636,0
+MSStandards,4,1,G4,Raman only,Rha (0.01),-2.191671,1.929687,0
+MSStandards,4,1,G5,Raman only,Glu (2.5),-2.117077,1.922594,0
+MSStandards,4,1,G6,Raman only,Glu (0.5),-2.322967,1.447883,0
+MSStandards,4,1,G7,Raman only,Glu (0.075),-2.502233,1.290999,0
+MSStandards,4,1,G8,Raman only,Glu (0.025),-2.663794,0.825915,0
+MSStandards,4,1,G9,Raman only,Rha-Glu (0.1),-2.169522,1.930053,0
+MSStandards,4,1,H1,Raman only,Rha (1),-2.444814,1.429055,0
+MSStandards,4,1,H10,Raman only,Rha-Xyl (0.1),-2.304956,1.610134,0
+MSStandards,4,1,H2,Raman only,Rha (0.25),-2.361724,1.591101,0
+MSStandards,4,1,H3,Raman only,Rha (0.075),-2.444788,1.398078,0
+MSStandards,4,1,H4,Raman only,Rha (0.01),-2.401811,1.610787,0
+MSStandards,4,1,H5,Raman only,Glu (1),-2.361273,1.628880,0
+MSStandards,4,1,H6,Raman only,Glu (0.5),-2.421027,1.494142,0
+MSStandards,4,1,H7,Raman only,Glu (0.075),-2.327144,1.690550,0
+MSStandards,4,1,H8,Raman only,Glu (0.01),-3.165204,-0.731384,0
+MSStandards,4,1,H9,Raman only,Rha-Glu (0.1),-2.300125,1.678854,0
+MSStandards,4,2,A1,Raman only,Xyl (5),-1.720721,2.489617,0
+MSStandards,4,2,A2,Raman only,Xyl (1),-2.223869,1.802718,0
+MSStandards,4,2,A3,Raman only,Xyl (0.25),-1.943541,2.187150,0
+MSStandards,4,2,A4,Raman only,Xyl (0.05),-1.870249,2.247199,0
+MSStandards,4,2,A5,Raman only,Xyl (0.01),-1.999371,2.158191,0
+MSStandards,4,2,A6,Raman only,MM f/2 (0.01),-1.975143,2.063891,0
+MSStandards,4,2,A7,Raman only,MMAlgae (0.01),-1.199234,-1.100145,0
+MSStandards,4,2,A8,Raman only,Rha-Algae (0.1),-0.741987,-1.207300,0
+MSStandards,4,2,A9,Raman only,MilliQ,-1.918232,2.257336,0
+MSStandards,4,2,B1,Raman only,Xyl (5),-2.061596,2.000931,0
+MSStandards,4,2,B2,Raman only,Xyl (0.75),-2.043600,1.915313,0
+MSStandards,4,2,B3,Raman only,Xyl (0.25),-2.192410,1.756049,0
+MSStandards,4,2,B4,Raman only,Xyl (0.05),-3.296985,-0.247073,0
+MSStandards,4,2,B5,Raman only,MM f/2 (1),-1.773591,2.342291,0
+MSStandards,4,2,B6,Raman only,MM f/2 (0.01),-1.994107,2.133527,0
+MSStandards,4,2,B7,Raman only,MMAlgae (0.01),0.940889,-1.485830,1
+MSStandards,4,2,B8,Raman only,Rha-Algae (0.01),-1.308278,-0.884227,0
+MSStandards,4,2,B9,Raman only,MilliQ,-1.888655,2.297613,0
+MSStandards,4,2,C1,Raman only,Xyl (5),-2.050490,2.033412,0
+MSStandards,4,2,C2,Raman only,Xyl (0.75),-2.077068,2.045788,0
+MSStandards,4,2,C3,Raman only,Xyl (0.1),-2.014044,2.118231,0
+MSStandards,4,2,C4,Raman only,Xyl (0.05),-2.221853,1.760217,0
+MSStandards,4,2,C5,Raman only,MM f/2 (1),-1.996720,2.055171,0
+MSStandards,4,2,C6,Raman only,MMAlgae (1),-2.267187,-0.522316,0
+MSStandards,4,2,C7,Raman only,MMAlgae (0.01),-1.275100,-1.102803,0
+MSStandards,4,2,C8,Raman only,Rha-Algae (0.01),-0.946088,-1.205343,0
+MSStandards,4,2,C9,Raman only,Algae (blank),-0.202828,-1.739844,0
+MSStandards,4,2,D1,Raman only,Xyl (2.5),-2.093508,2.017628,0
+MSStandards,4,2,D2,Raman only,Xyl (0.75),-2.153304,1.939144,0
+MSStandards,4,2,D3,Raman only,Xyl (0.1),-2.130808,1.958691,0
+MSStandards,4,2,D4,Raman only,Xyl (0.025),-2.104301,2.008656,0
+MSStandards,4,2,D5,Raman only,MM f/2 (1),-2.132291,1.898606,0
+MSStandards,4,2,D6,Raman only,MMAlgae (1),-1.635597,-0.725420,0
+MSStandards,4,2,D7,Raman only,Rha-Algae (1),-1.322692,-0.954773,0
+MSStandards,4,2,D8,Raman only,Rha-Algae (0.01),-0.682683,-1.532017,0
+MSStandards,4,2,D9,Raman only,Algae (blank),-0.577112,-1.670595,0
+MSStandards,4,2,E1,Raman only,Xyl (2.5),-2.179151,1.862913,0
+MSStandards,4,2,E2,Raman only,Xyl (0.5),-2.254094,1.803843,0
+MSStandards,4,2,E3,Raman only,Xyl (0.1),-2.185345,1.913966,0
+MSStandards,4,2,E4,Raman only,Xyl (0.025),-2.161713,1.918496,0
+MSStandards,4,2,E5,Raman only,MM f/2 (0.1),-2.172074,1.883943,0
+MSStandards,4,2,E6,Raman only,MMAlgae (1),-2.978573,-0.190049,0
+MSStandards,4,2,E7,Raman only,Rha-Algae (1),-0.890136,-0.759670,0
+MSStandards,4,2,E8,Raman only,BLANK f/2,-2.084646,2.010361,0
+MSStandards,4,2,E9,Raman only,Algae (blank),-0.676783,-1.267841,0
+MSStandards,4,2,F1,Raman only,Xyl (2.5),-2.205437,1.815760,0
+MSStandards,4,2,F2,Raman only,Xyl (0.5),-2.162679,1.798195,0
+MSStandards,4,2,F3,Raman only,Xyl (0.075),-2.249525,1.734854,0
+MSStandards,4,2,F4,Raman only,Xyl (0.025),-2.188028,1.822262,0
+MSStandards,4,2,F5,Raman only,MM f/2 (0.1),-2.290455,1.763094,0
+MSStandards,4,2,F7,Raman only,Rha-Algae (1),-1.679102,-1.130124,0
+MSStandards,4,2,F8,Raman only,BLANK f/2,-2.204554,1.812357,0
+MSStandards,4,2,F9,Raman only,MMAlgae (0.1),-2.894241,-0.537346,0
+MSStandards,4,2,G1,Raman only,Xyl (1),-2.354562,1.596667,0
+MSStandards,4,2,G2,Raman only,Xyl (0.5),-2.359745,1.590358,0
+MSStandards,4,2,G3,Raman only,Xyl (0.075),-2.345583,1.601347,0
+MSStandards,4,2,G4,Raman only,Xyl (0.01),-2.322884,1.667804,0
+MSStandards,4,2,G5,Raman only,MM f/2 (0.1),-2.252988,1.835612,0
+MSStandards,4,2,G7,Raman only,Rha-Algae (0.1),-1.650535,-1.201976,0
+MSStandards,4,2,G8,Raman only,BLANK f/2,-2.359074,1.543264,0
+MSStandards,4,2,G9,Raman only,MMAlgae (0.1),-3.078023,-0.505476,0
+MSStandards,4,2,H1,Raman only,Xyl (1),-2.528684,1.326100,0
+MSStandards,4,2,H2,Raman only,Xyl (0.25),-2.545411,1.345518,0
+MSStandards,4,2,H3,Raman only,Xyl (0.075),-2.534576,1.329456,0
+MSStandards,4,2,H4,Raman only,Xyl (0.01),-2.537131,1.352479,0
+MSStandards,4,2,H5,Raman only,MM f/2 (0.01),-2.566476,1.243377,0
+MSStandards,4,2,H7,Raman only,Rha-Algae (0.1),-2.430370,-0.790031,0
+MSStandards,4,2,H8,Raman only,MilliQ,-2.458038,1.503501,0
+MSStandards,4,2,H9,Raman only,MMAlgae (0.1),-3.102836,-0.673740,0
+Pavlovagyrans,1,7,B10,EEM+Raman,B2,3.522939,1.396466,1
+Pavlovagyrans,1,7,B11,EEM+Raman,B4,4.428096,1.483290,1
+Pavlovagyrans,1,7,B2,EEM+Raman,N0,1.967360,2.405865,1
+Pavlovagyrans,1,7,B3,EEM+Raman,N2,8.877739,7.256124,2
+Pavlovagyrans,1,7,B4,EEM+Raman,N4,7.099511,0.514389,2
+Pavlovagyrans,1,7,B5,EEM+Raman,N6,10.609798,5.634384,2
+Pavlovagyrans,1,7,B6,EEM+Raman,S1,2.614666,1.968696,1
+Pavlovagyrans,1,7,B7,EEM+Raman,S3,2.656181,2.195611,1
+Pavlovagyrans,1,7,B8,EEM+Raman,S5,2.218315,1.794286,1
+Pavlovagyrans,1,7,B9,EEM+Raman,S7,1.472124,2.005354,1
+Pavlovagyrans,1,7,C10,EEM+Raman,B2,8.926706,6.437505,2
+Pavlovagyrans,1,7,C11,EEM+Raman,B4,1.627982,2.595457,1
+Pavlovagyrans,1,7,C2,EEM+Raman,N0,1.100154,3.110571,1
+Pavlovagyrans,1,7,C3,EEM+Raman,N2,2.479255,2.358056,1
+Pavlovagyrans,1,7,C4,EEM+Raman,N4,3.148716,1.436338,1
+Pavlovagyrans,1,7,C5,EEM+Raman,N6,9.479904,5.638398,2
+Pavlovagyrans,1,7,C6,EEM+Raman,S1,8.444514,7.057465,2
+Pavlovagyrans,1,7,C7,EEM+Raman,S3,1.939617,3.004656,1
+Pavlovagyrans,1,7,C8,EEM+Raman,S5,1.689569,2.615168,1
+Pavlovagyrans,1,7,C9,EEM+Raman,S7,1.677693,2.927940,1
+Pavlovagyrans,1,7,D10,EEM+Raman,B2,3.087652,1.266629,1
+Pavlovagyrans,1,7,D11,EEM+Raman,B4,8.723697,7.524333,2
+Pavlovagyrans,1,7,D2,EEM+Raman,N0,7.883808,7.170951,2
+Pavlovagyrans,1,7,D3,EEM+Raman,N2,2.425638,1.522513,1
+Pavlovagyrans,1,7,D4,EEM+Raman,N4,2.011564,2.390067,1
+Pavlovagyrans,1,7,D5,EEM+Raman,N6,3.097902,1.528473,1
+Pavlovagyrans,1,7,D6,EEM+Raman,S1,0.501885,3.674770,0
+Pavlovagyrans,1,7,D7,EEM+Raman,S3,1.344065,2.788660,1
+Pavlovagyrans,1,7,D8,EEM+Raman,S5,1.564009,2.813671,1
+Pavlovagyrans,1,7,D9,EEM+Raman,S7,8.621876,8.297453,2
+Pavlovagyrans,1,7,E10,EEM+Raman,B3,2.976831,0.500799,1
+Pavlovagyrans,1,7,E11,EEM+Raman,STD,8.038925,7.429733,2
+Pavlovagyrans,1,7,E2,EEM+Raman,N1,1.966842,2.272221,1
+Pavlovagyrans,1,7,E3,EEM+Raman,N3,3.207831,0.440393,1
+Pavlovagyrans,1,7,E4,EEM+Raman,N5,2.814088,0.976466,1
+Pavlovagyrans,1,7,E5,EEM+Raman,N7,1.565961,1.958480,1
+Pavlovagyrans,1,7,E6,EEM+Raman,S2,6.991561,7.647689,2
+Pavlovagyrans,1,7,E7,EEM+Raman,S4,0.732977,2.552943,1
+Pavlovagyrans,1,7,E8,EEM+Raman,S6,7.740133,7.412877,2
+Pavlovagyrans,1,7,E9,EEM+Raman,B1,2.899271,1.290918,1
+Pavlovagyrans,1,7,F10,EEM+Raman,B3,1.625121,2.418841,1
+Pavlovagyrans,1,7,F11,EEM+Raman,STD,0.988475,2.241672,1
+Pavlovagyrans,1,7,F2,EEM+Raman,N1,1.682640,1.563506,1
+Pavlovagyrans,1,7,F3,EEM+Raman,N3,2.424035,1.056448,1
+Pavlovagyrans,1,7,F4,EEM+Raman,N5,1.918843,1.313573,1
+Pavlovagyrans,1,8,D10,EEM+Raman,B2,7.896066,-0.788304,2
+Pavlovagyrans,1,8,D11,EEM+Raman,B4,3.301946,0.711928,1
+Pavlovagyrans,1,8,D2,EEM+Raman,N0,2.936638,1.358163,1
+Pavlovagyrans,1,8,D3,EEM+Raman,N2,3.653318,1.068761,1
+Pavlovagyrans,1,8,D4,EEM+Raman,N4,4.661429,-0.320852,1
+Pavlovagyrans,1,8,D5,EEM+Raman,N6,2.441773,1.542858,1
+Pavlovagyrans,1,8,D6,EEM+Raman,S1,1.500600,2.546543,1
+Pavlovagyrans,1,8,D7,EEM+Raman,S3,8.303597,6.210395,2
+Pavlovagyrans,1,8,D8,EEM+Raman,S5,2.885876,1.063776,1
+Pavlovagyrans,1,8,D9,EEM+Raman,S7,2.481917,2.004720,1
+Pavlovagyrans,1,8,E10,EEM+Raman,B3,6.689004,0.363289,2
+Pavlovagyrans,1,8,E11,EEM+Raman,STD,5.033170,-0.314938,1
+Pavlovagyrans,1,8,E2,EEM+Raman,N1,2.303392,1.962808,1
+Pavlovagyrans,1,8,E3,EEM+Raman,N3,5.221384,1.248011,1
+Pavlovagyrans,1,8,E4,EEM+Raman,N5,4.992024,1.441083,1
+Pavlovagyrans,1,8,E5,EEM+Raman,N7,2.621964,0.743889,1
+Pavlovagyrans,1,8,E6,EEM+Raman,S2,1.164928,2.166650,1
+Pavlovagyrans,1,8,E7,EEM+Raman,S4,7.717265,7.197261,2
+Pavlovagyrans,1,8,E8,EEM+Raman,S6,4.388402,1.060521,1
+Pavlovagyrans,1,8,E9,EEM+Raman,B1,7.296507,-0.106509,2
+Pavlovagyrans,1,8,F10,EEM+Raman,B3,4.473645,0.049835,1
+Pavlovagyrans,1,8,F11,EEM+Raman,STD,3.988647,0.194698,1
+Pavlovagyrans,1,8,F2,EEM+Raman,N1,2.341898,0.768607,1
+Pavlovagyrans,1,8,F3,EEM+Raman,N3,7.545744,5.111373,2
+Pavlovagyrans,1,8,F4,EEM+Raman,N5,2.286798,0.920938,1
+Pavlovagyrans,1,8,F5,EEM+Raman,N7,2.007593,1.343048,1
+Pavlovagyrans,1,8,F6,EEM+Raman,S2,1.182772,1.867065,1
+Pavlovagyrans,1,8,F7,EEM+Raman,S4,6.800351,7.338919,2
+Pavlovagyrans,1,8,F8,EEM+Raman,S6,2.452518,1.037753,1
+Pavlovagyrans,1,8,F9,EEM+Raman,B1,6.596321,0.059569,2
+Pavlovagyrans,1,8,G10,EEM+Raman,B3,3.444897,-0.007340,1
+Pavlovagyrans,1,8,G11,EEM+Raman,STD,4.631125,-0.137889,1
+Pavlovagyrans,1,8,G2,EEM+Raman,N1,1.214801,0.875276,1
+Pavlovagyrans,1,8,G3,EEM+Raman,N3,2.473229,0.644199,1
+Pavlovagyrans,1,8,G4,EEM+Raman,N5,3.037362,-0.186151,1
+Pavlovagyrans,1,8,G5,EEM+Raman,N7,1.995706,0.579570,1
+Pavlovagyrans,1,8,G6,EEM+Raman,S2,0.499987,2.046347,0
+Pavlovagyrans,1,8,G7,EEM+Raman,S4,0.530806,2.246911,0
+Pavlovagyrans,1,8,G8,EEM+Raman,S6,0.761599,1.612913,1
+Pavlovagyrans,1,8,G9,EEM+Raman,B1,2.418021,0.047989,1
+Pavlovagyrans,1,9,B10,EEM+Raman,B2,10.957092,-1.605896,2
+Pavlovagyrans,1,9,B11,EEM+Raman,B4,10.032797,6.044206,2
+Pavlovagyrans,1,9,B2,EEM+Raman,N0,8.842143,7.221070,2
+Pavlovagyrans,1,9,B3,EEM+Raman,N2,7.118330,-0.056174,2
+Pavlovagyrans,1,9,B4,EEM+Raman,N4,10.376716,3.716984,2
+Pavlovagyrans,1,9,B5,EEM+Raman,N6,10.913261,-1.383310,2
+Pavlovagyrans,1,9,B6,EEM+Raman,S1,2.977782,1.963928,1
+Pavlovagyrans,1,9,B7,EEM+Raman,S3,1.254688,2.571666,1
+Pavlovagyrans,1,9,B8,EEM+Raman,S5,2.950985,1.510212,1
+Pavlovagyrans,1,9,B9,EEM+Raman,S7,2.331102,2.362191,1
+Pavlovagyrans,1,9,C10,EEM+Raman,B2,4.652902,0.247167,1
+Pavlovagyrans,1,9,C11,EEM+Raman,B4,5.030004,0.305574,1
+Pavlovagyrans,1,9,C2,EEM+Raman,N0,2.179312,1.393047,1
+Pavlovagyrans,1,9,C3,EEM+Raman,N2,5.680121,1.605236,2
+Pavlovagyrans,1,9,C4,EEM+Raman,N4,3.394924,1.703508,1
+Pavlovagyrans,1,9,C5,EEM+Raman,N6,3.233854,1.016326,1
+Pavlovagyrans,1,9,C6,EEM+Raman,S1,2.447513,2.186643,1
+Pavlovagyrans,1,9,C7,EEM+Raman,S3,2.020478,2.547244,1
+Pavlovagyrans,1,9,C8,EEM+Raman,S5,8.646935,7.313352,2
+Pavlovagyrans,1,9,C9,EEM+Raman,S7,1.662580,2.756598,1
+Pavlovagyrans,1,9,D10,EEM+Raman,B2,4.133219,0.923573,1
+Pavlovagyrans,1,9,D11,EEM+Raman,B4,3.509455,0.986821,1
+Pavlovagyrans,1,9,D2,EEM+Raman,N0,1.481295,1.829737,1
+Pavlovagyrans,1,9,D3,EEM+Raman,N2,1.510672,2.128428,1
+Pavlovagyrans,1,9,D4,EEM+Raman,N4,3.425728,1.115586,1
+Pavlovagyrans,1,9,D5,EEM+Raman,N6,2.344228,2.117660,1
+Pavlovagyrans,1,9,D6,EEM+Raman,S1,2.448492,2.152491,1
+Pavlovagyrans,1,9,D7,EEM+Raman,S3,2.363475,1.706591,1
+Pavlovagyrans,1,9,D8,EEM+Raman,S5,2.120376,2.128687,1
+Pavlovagyrans,1,9,D9,EEM+Raman,S7,10.126355,9.016919,2
+Pavlovagyrans,1,9,E10,EEM+Raman,B3,4.283971,0.179046,1
+Pavlovagyrans,1,9,E11,EEM+Raman,STD,3.893471,0.895814,1
+Pavlovagyrans,1,9,E2,EEM+Raman,N1,2.776645,1.025683,1
+Pavlovagyrans,1,9,E3,EEM+Raman,N3,2.911244,0.669849,1
+Pavlovagyrans,1,9,E4,EEM+Raman,N5,3.784917,0.871653,1
+Pavlovagyrans,1,9,E5,EEM+Raman,N7,3.335610,0.552408,1
+Pavlovagyrans,1,9,E6,EEM+Raman,S2,1.937940,2.096928,1
+Pavlovagyrans,1,9,E7,EEM+Raman,S4,1.289363,2.411936,1
+Pavlovagyrans,1,9,E8,EEM+Raman,S6,1.924704,2.711866,1
+Pavlovagyrans,1,9,E9,EEM+Raman,B1,4.408719,0.002653,1
+Pavlovagyrans,1,9,F10,EEM+Raman,B3,9.240054,4.288638,2
+Pavlovagyrans,1,9,F11,EEM+Raman,STD,4.583410,0.226395,1
+Pavlovagyrans,1,9,F2,EEM+Raman,N1,2.766056,0.545640,1
+Pavlovagyrans,1,9,F3,EEM+Raman,N3,2.040529,0.930497,1
+Pavlovagyrans,1,9,F4,EEM+Raman,N5,3.483206,0.282022,1
+Pavlovagyrans,1,9,F5,EEM+Raman,N7,1.836009,1.709858,1
+Pavlovagyrans,1,9,F6,EEM+Raman,S2,0.479499,2.381909,0
+Pavlovagyrans,1,9,F7,EEM+Raman,S4,1.315495,2.381275,1
+Pavlovagyrans,1,9,F8,EEM+Raman,S6,7.658710,6.939129,2
+Pavlovagyrans,1,9,F9,EEM+Raman,B1,3.910182,-0.064821,1
+Pavlovagyrans,1,9,G10,EEM+Raman,B3,3.269266,0.694532,1
+Pavlovagyrans,1,9,G11,EEM+Raman,STD,2.239370,0.683469,1
+Pavlovagyrans,1,9,G2,EEM+Raman,N1,2.137753,0.206123,1
+Pavlovagyrans,1,9,G3,EEM+Raman,N3,3.661942,0.695202,1
+Pavlovagyrans,1,9,G4,EEM+Raman,N5,2.410307,0.993683,1
+Pavlovagyrans,1,9,G5,EEM+Raman,N7,2.922983,0.544870,1
+Pavlovagyrans,1,9,G6,EEM+Raman,S2,6.101619,4.720193,2
+Pavlovagyrans,1,9,G7,EEM+Raman,S4,0.970552,2.005511,1
+Pavlovagyrans,1,9,G8,EEM+Raman,S6,1.074350,2.042717,1
+Pavlovagyrans,1,9,G9,EEM+Raman,B1,8.466440,3.582297,2
+Pavlovagyrans,1,10,B10,EEM+Raman,B2,-2.017123,-0.874240,0
+Pavlovagyrans,1,10,B11,EEM+Raman,B4,-1.883089,-0.845743,0
+Pavlovagyrans,1,10,B2,EEM+Raman,N0,-2.760341,-0.403295,0
+Pavlovagyrans,1,10,B3,EEM+Raman,N2,-3.150907,-0.922732,0
+Pavlovagyrans,1,10,B4,EEM+Raman,N4,-1.489131,-1.033603,0
+Pavlovagyrans,1,10,B5,EEM+Raman,N6,-0.166922,-1.810639,0
+Pavlovagyrans,1,10,B6,EEM+Raman,S1,-2.580651,-0.392394,0
+Pavlovagyrans,1,10,B7,EEM+Raman,S3,-1.839225,-0.683849,0
+Pavlovagyrans,1,10,B8,EEM+Raman,S5,-1.750393,-0.764602,0
+Pavlovagyrans,1,10,B9,EEM+Raman,S7,-2.148788,-0.600705,0
+Pavlovagyrans,1,10,C10,EEM+Raman,B2,-1.749746,-0.718625,0
+Pavlovagyrans,1,10,C11,EEM+Raman,B4,-1.177240,-0.699314,0
+Pavlovagyrans,1,10,C2,EEM+Raman,N0,-2.511666,-0.825337,0
+Pavlovagyrans,1,10,C3,EEM+Raman,N2,-1.991014,-0.744462,0
+Pavlovagyrans,1,10,C4,EEM+Raman,N4,-2.629155,-0.540235,0
+Pavlovagyrans,1,10,C5,EEM+Raman,N6,-2.203743,-0.958875,0
+Pavlovagyrans,1,10,C6,EEM+Raman,S1,-2.437352,-0.622834,0
+Pavlovagyrans,1,10,C7,EEM+Raman,S3,-2.399885,-0.684498,0
+Pavlovagyrans,1,10,C8,EEM+Raman,S5,-2.823469,-0.304047,0
+Pavlovagyrans,1,10,C9,EEM+Raman,S7,-2.368401,-0.701456,0
+Pavlovagyrans,1,10,D10,EEM+Raman,B2,-2.340559,-0.801068,0
+Pavlovagyrans,1,10,D11,EEM+Raman,B4,-2.531311,-0.609042,0
+Pavlovagyrans,1,10,D2,EEM+Raman,N0,-2.762642,-0.542281,0
+Pavlovagyrans,1,10,D3,EEM+Raman,N2,-1.334159,-0.785409,0
+Pavlovagyrans,1,10,D4,EEM+Raman,N4,-1.703506,-0.931128,0
+Pavlovagyrans,1,10,D5,EEM+Raman,N6,-1.720241,-0.616660,0
+Pavlovagyrans,1,10,D6,EEM+Raman,S1,-2.578040,-0.520853,0
+Pavlovagyrans,1,10,D7,EEM+Raman,S3,-2.388638,-0.539059,0
+Pavlovagyrans,1,10,D8,EEM+Raman,S5,-2.686940,-0.527232,0
+Pavlovagyrans,1,10,D9,EEM+Raman,S7,-2.379083,-0.463488,0
+Pavlovagyrans,1,10,E10,EEM+Raman,B3,-2.398535,-0.660360,0
+Pavlovagyrans,1,10,E11,EEM+Raman,STD,-1.939757,-0.804573,0
+Pavlovagyrans,1,10,E2,EEM+Raman,N1,-2.684300,-0.665786,0
+Pavlovagyrans,1,10,E3,EEM+Raman,N3,-2.490706,-0.744464,0
+Pavlovagyrans,1,10,E4,EEM+Raman,N5,-2.560467,-0.342713,0
+Pavlovagyrans,1,10,E5,EEM+Raman,N7,-2.325284,-0.850691,0
+Pavlovagyrans,1,10,E6,EEM+Raman,S2,-2.842884,-0.425229,0
+Pavlovagyrans,1,10,E7,EEM+Raman,S4,-2.809898,-0.521011,0
+Pavlovagyrans,1,10,E8,EEM+Raman,S6,-2.672993,-0.517751,0
+Pavlovagyrans,1,10,E9,EEM+Raman,B1,-2.842181,-0.581223,0
+Pavlovagyrans,1,10,F10,EEM+Raman,B3,-2.671630,-0.656582,0
+Pavlovagyrans,1,10,F11,EEM+Raman,STD,-1.999970,-0.871735,0
+Pavlovagyrans,1,10,F2,EEM+Raman,N1,-1.767997,1.044592,0
+Pavlovagyrans,1,10,F3,EEM+Raman,N3,-2.470628,-0.865540,0
+Pavlovagyrans,1,10,F4,EEM+Raman,N5,-2.353289,-0.727983,0
+Pavlovagyrans,1,10,F5,EEM+Raman,N7,-2.529955,-0.619885,0
+Pavlovagyrans,1,10,F6,EEM+Raman,S2,-2.839001,-0.583752,0
+Pavlovagyrans,1,10,F7,EEM+Raman,S4,-2.669570,-0.675988,0
+Pavlovagyrans,1,10,F8,EEM+Raman,S6,-2.808155,-0.488024,0
+Pavlovagyrans,1,10,F9,EEM+Raman,B1,-2.270470,-0.827942,0
+Pavlovagyrans,1,10,G10,EEM+Raman,B3,-2.730793,-0.850707,0
+Pavlovagyrans,1,10,G11,EEM+Raman,STD,-2.967111,-0.562018,0
+Pavlovagyrans,1,10,G2,EEM+Raman,N1,-2.656571,-0.697503,0
+Pavlovagyrans,1,10,G3,EEM+Raman,N3,-1.875040,0.273401,0
+Pavlovagyrans,1,10,G4,EEM+Raman,N5,-2.781220,-0.506837,0
+Pavlovagyrans,1,10,G5,EEM+Raman,N7,-2.691128,-0.662256,0
+Pavlovagyrans,1,10,G6,EEM+Raman,S2,-2.755403,-0.695727,0
+Pavlovagyrans,1,10,G7,EEM+Raman,S4,-2.884781,-0.530769,0
+Pavlovagyrans,1,10,G8,EEM+Raman,S6,-2.919028,-0.593918,0
+Pavlovagyrans,1,10,G9,EEM+Raman,B1,-2.196173,-1.054083,0
+Pavlovagyrans,1,11,B10,EEM+Raman,B2,-1.889214,-0.820223,0
+Pavlovagyrans,1,11,B11,EEM+Raman,B4,-1.913453,-0.948758,0
+Pavlovagyrans,1,11,B2,EEM+Raman,N0,-2.340446,-0.676352,0
+Pavlovagyrans,1,11,B3,EEM+Raman,N2,-2.116428,-0.870885,0
+Pavlovagyrans,1,11,B4,EEM+Raman,N4,-0.733089,-1.093587,0
+Pavlovagyrans,1,11,B5,EEM+Raman,N6,-2.402643,-0.754433,0
+Pavlovagyrans,1,11,B6,EEM+Raman,S1,-1.946547,-0.533443,0
+Pavlovagyrans,1,11,B7,EEM+Raman,S3,-2.377537,-0.824929,0
+Pavlovagyrans,1,11,B8,EEM+Raman,S5,-1.717583,-0.860330,0
+Pavlovagyrans,1,11,B9,EEM+Raman,S7,-2.899673,-0.481183,0
+Pavlovagyrans,1,11,C10,EEM+Raman,B2,-2.177064,-0.782065,0
+Pavlovagyrans,1,11,C11,EEM+Raman,B4,-2.201717,-0.521615,0
+Pavlovagyrans,1,11,C2,EEM+Raman,N0,-2.203096,-0.541397,0
+Pavlovagyrans,1,11,C3,EEM+Raman,N2,-2.719092,-0.507884,0
+Pavlovagyrans,1,11,C4,EEM+Raman,N4,-2.539172,-0.737725,0
+Pavlovagyrans,1,11,C5,EEM+Raman,N6,-2.255338,-0.744595,0
+Pavlovagyrans,1,11,C6,EEM+Raman,S1,-2.593699,-0.601139,0
+Pavlovagyrans,1,11,C7,EEM+Raman,S3,-2.123147,-0.483171,0
+Pavlovagyrans,1,11,C8,EEM+Raman,S5,-1.894534,-0.790655,0
+Pavlovagyrans,1,11,C9,EEM+Raman,S7,-2.049115,-0.714557,0
+Pavlovagyrans,1,11,D10,EEM+Raman,B2,-1.752040,-0.965703,0
+Pavlovagyrans,1,11,D11,EEM+Raman,B4,-1.562157,-1.020002,0
+Pavlovagyrans,2,1,A1,EEM+Raman,,-2.127145,-0.597356,0
+Pavlovagyrans,2,1,A2,EEM+Raman,,-2.769606,-0.460393,0
+Pavlovagyrans,2,1,A3,EEM+Raman,,-2.880688,-0.313359,0
+Pavlovagyrans,2,1,A4,EEM+Raman,,-2.856088,-0.523394,0
+Pavlovagyrans,2,1,A5,EEM+Raman,,-2.950708,-0.324349,0
+Pavlovagyrans,2,1,A6,EEM+Raman,,-1.384064,0.408100,0
+Pavlovagyrans,2,1,A7,EEM+Raman,,-2.597190,-0.614091,0
+Pavlovagyrans,2,1,A8,EEM+Raman,,-0.990738,-0.373762,0
+Pavlovagyrans,2,1,B1,EEM+Raman,,-2.581328,-0.371764,0
+Pavlovagyrans,2,1,B2,EEM+Raman,,-3.099941,-0.090443,0
+Pavlovagyrans,2,1,B3,EEM+Raman,,-2.955794,-0.296127,0
+Pavlovagyrans,2,1,B4,EEM+Raman,,-2.952423,-0.251615,0
+Pavlovagyrans,2,1,B5,EEM+Raman,,-2.957398,-0.149961,0
+Pavlovagyrans,2,1,B6,EEM+Raman,,-2.896057,-0.332368,0
+Pavlovagyrans,2,1,B7,EEM+Raman,,-0.149479,-0.628959,0
+Pavlovagyrans,2,1,B8,EEM+Raman,,-3.057358,-0.194258,0
+Pavlovagyrans,2,1,C1,EEM+Raman,,-1.521706,-0.755822,0
+Pavlovagyrans,2,1,C2,EEM+Raman,,-2.940321,-0.351602,0
+Pavlovagyrans,2,1,C3,EEM+Raman,,-2.063989,0.578605,0
+Pavlovagyrans,2,1,C4,EEM+Raman,,-2.909402,-0.511462,0
+Pavlovagyrans,2,1,C5,EEM+Raman,,-3.215613,-0.217460,0
+Pavlovagyrans,2,1,C6,EEM+Raman,,-2.883934,-0.291114,0
+Pavlovagyrans,2,1,C7,EEM+Raman,,-3.193590,-0.146844,0
+Pavlovagyrans,2,1,C8,EEM+Raman,,-2.995575,-0.528516,0
+Pavlovagyrans,2,1,D1,EEM+Raman,,-2.888268,-0.405342,0
+Pavlovagyrans,2,1,D2,EEM+Raman,,-2.805092,-0.678724,0
+Pavlovagyrans,2,1,D3,EEM+Raman,,-3.268027,-0.069277,0
+Pavlovagyrans,2,1,D4,EEM+Raman,,-3.138228,-0.167965,0
+Pavlovagyrans,2,1,D5,EEM+Raman,,-2.876312,-0.294869,0
+Pavlovagyrans,2,1,D6,EEM+Raman,,-3.237048,-0.205459,0
+Pavlovagyrans,2,1,D7,EEM+Raman,,-1.900899,0.685292,0
+Pavlovagyrans,2,1,D8,EEM+Raman,,-3.223036,-0.057666,0
+Pavlovagyrans,2,1,E1,EEM+Raman,,-3.144831,-0.386290,0
+Pavlovagyrans,2,1,E2,EEM+Raman,,-3.099200,-0.461736,0
+Pavlovagyrans,2,1,E3,EEM+Raman,,-3.243918,-0.085890,0
+Pavlovagyrans,2,1,E4,EEM+Raman,,-3.107537,-0.278753,0
+Pavlovagyrans,2,1,E5,EEM+Raman,,-3.201175,-0.377172,0
+Pavlovagyrans,2,1,E6,EEM+Raman,,-3.089905,-0.306636,0
+Pavlovagyrans,2,1,E7,EEM+Raman,,-3.253287,-0.220541,0
+Pavlovagyrans,2,1,E8,EEM+Raman,,-2.312734,-0.577978,0
+Pavlovagyrans,2,1,F1,EEM+Raman,,-3.048126,-0.685615,0
+Pavlovagyrans,2,1,F2,EEM+Raman,,-3.297258,-0.509181,0
+Pavlovagyrans,2,1,F3,EEM+Raman,,-3.289613,-0.316942,0
+Pavlovagyrans,2,1,F4,EEM+Raman,,-3.317875,-0.282297,0
+Pavlovagyrans,2,1,F5,EEM+Raman,,-3.230168,-0.203678,0
+Pavlovagyrans,2,1,F6,EEM+Raman,,-3.443119,-0.349685,0
+Pavlovagyrans,2,1,F7,EEM+Raman,,-3.251908,-0.274201,0
+Pavlovagyrans,2,1,F8,EEM+Raman,,-3.188528,-0.666731,0
+Pavlovagyrans,2,2,A1,EEM+Raman,,-2.326539,-0.626422,0
+Pavlovagyrans,2,2,A10,EEM+Raman,,0.151643,-0.934960,1
+Pavlovagyrans,2,2,A11,EEM+Raman,,-1.601204,-0.891955,0
+Pavlovagyrans,2,2,A2,EEM+Raman,,-2.448891,-0.662342,0
+Pavlovagyrans,2,2,A3,EEM+Raman,,-3.031101,-0.348576,0
+Pavlovagyrans,2,2,A4,EEM+Raman,,-2.695964,-0.712584,0
+Pavlovagyrans,2,2,A5,EEM+Raman,,-2.931988,-0.409153,0
+Pavlovagyrans,2,2,A6,EEM+Raman,,-2.731407,-0.693263,0
+Pavlovagyrans,2,2,A7,EEM+Raman,,-2.615812,-0.789134,0
+Pavlovagyrans,2,2,A8,EEM+Raman,,-2.042328,-0.756163,0
+Pavlovagyrans,2,2,A9,EEM+Raman,,-2.324626,-0.787260,0
+Pavlovagyrans,2,2,B1,EEM+Raman,,-2.849537,-0.538249,0
+Pavlovagyrans,2,2,B10,EEM+Raman,,-1.467440,-0.768029,0
+Pavlovagyrans,2,2,B11,EEM+Raman,,-1.754299,-1.132643,0
+Pavlovagyrans,2,2,B2,EEM+Raman,,-3.233648,-0.323271,0
+Pavlovagyrans,2,2,B3,EEM+Raman,,-3.020171,-0.230528,0
+Pavlovagyrans,2,2,B4,EEM+Raman,,-0.755041,-1.030692,0
+Pavlovagyrans,2,2,B5,EEM+Raman,,-2.332428,-0.891700,0
+Pavlovagyrans,2,2,B6,EEM+Raman,,-0.105131,-0.843423,0
+Pavlovagyrans,2,2,B7,EEM+Raman,,-2.874735,-0.579301,0
+Pavlovagyrans,2,2,B8,EEM+Raman,,-2.721877,-0.655230,0
+Pavlovagyrans,2,2,B9,EEM+Raman,,-2.935566,-0.464239,0
+Pavlovagyrans,2,2,C1,EEM+Raman,,-1.310967,-1.321215,0
+Pavlovagyrans,2,2,C10,EEM+Raman,,0.050727,-0.633139,0
+Pavlovagyrans,2,2,C11,EEM+Raman,,0.009826,-0.782627,0
+Pavlovagyrans,2,2,C2,EEM+Raman,,-2.983105,-0.394626,0
+Pavlovagyrans,2,2,C3,EEM+Raman,,-3.199258,-0.363874,0
+Pavlovagyrans,2,2,C4,EEM+Raman,,-0.045189,-0.241313,0
+Pavlovagyrans,2,2,C5,EEM+Raman,,-0.684427,-0.857628,0
+Pavlovagyrans,2,2,C6,EEM+Raman,,-3.130380,-0.331281,0
+Pavlovagyrans,2,2,C7,EEM+Raman,,-2.842171,-0.554913,0
+Pavlovagyrans,2,2,C8,EEM+Raman,,-2.568703,-0.553186,0
+Pavlovagyrans,2,2,C9,EEM+Raman,,-2.496546,-0.657892,0
+Pavlovagyrans,2,2,D1,EEM+Raman,,-2.800646,-0.646497,0
+Pavlovagyrans,2,2,D10,EEM+Raman,,-0.976670,-1.071332,0
+Pavlovagyrans,2,2,D11,EEM+Raman,,-2.828366,-0.474699,0
+Pavlovagyrans,2,2,D2,EEM+Raman,,-1.980782,1.656225,0
+Pavlovagyrans,2,2,D3,EEM+Raman,,-2.409976,-0.878385,0
+Pavlovagyrans,2,2,D4,EEM+Raman,,-1.380560,-0.581795,0
+Pavlovagyrans,2,2,D5,EEM+Raman,,-1.988177,-0.845522,0
+Pavlovagyrans,2,2,D6,EEM+Raman,,-3.062228,-0.439794,0
+Pavlovagyrans,2,2,D7,EEM+Raman,,-1.646912,0.184380,0
+Pavlovagyrans,2,2,D8,EEM+Raman,,-2.632792,-0.640104,0
+Pavlovagyrans,2,2,D9,EEM+Raman,,-3.054424,-0.371623,0
+Pavlovagyrans,2,2,E1,EEM+Raman,,-2.791644,-0.755768,0
+Pavlovagyrans,2,2,E10,EEM+Raman,,-2.620834,-0.886960,0
+Pavlovagyrans,2,2,E11,EEM+Raman,,-3.021146,-0.242013,0
+Pavlovagyrans,2,2,E2,EEM+Raman,,-2.582523,-0.818656,0
+Pavlovagyrans,2,2,E3,EEM+Raman,,-2.123240,-0.704960,0
+Pavlovagyrans,2,2,E4,EEM+Raman,,-1.709114,-1.198350,0
+Pavlovagyrans,2,2,E5,EEM+Raman,,0.765020,-1.762741,1
+Pavlovagyrans,2,2,E6,EEM+Raman,,0.500494,-0.930615,1
+Pavlovagyrans,2,2,E7,EEM+Raman,,-2.777852,-0.666099,0
+Pavlovagyrans,2,2,E8,EEM+Raman,,-2.858931,-0.386613,0
+Pavlovagyrans,2,2,E9,EEM+Raman,,-1.122367,-0.888479,0
+Pavlovagyrans,2,2,F1,EEM+Raman,,-3.277092,-0.338501,0
+Pavlovagyrans,2,2,F10,EEM+Raman,,-2.811810,-0.764105,0
+Pavlovagyrans,2,2,F11,EEM+Raman,,-3.311053,-0.291562,0
+Pavlovagyrans,2,2,F2,EEM+Raman,,-3.135910,-0.366680,0
+Pavlovagyrans,2,2,F3,EEM+Raman,,-3.286461,-0.517552,0
+Pavlovagyrans,2,2,F4,EEM+Raman,,-3.061399,-0.480105,0
+Pavlovagyrans,2,2,F5,EEM+Raman,,-2.963565,-0.506122,0
+Pavlovagyrans,2,2,F6,EEM+Raman,,-2.979534,-0.642172,0
+Pavlovagyrans,2,2,F7,EEM+Raman,,-3.078176,-0.448069,0
+Pavlovagyrans,2,2,F8,EEM+Raman,,-2.805546,-0.740641,0
+Pavlovagyrans,2,2,F9,EEM+Raman,,-3.276890,-0.297664,0
+Pavlovagyrans,2,3,A1,EEM+Raman,,-1.484663,0.997224,0
+Pavlovagyrans,2,3,A2,EEM+Raman,,3.804520,0.590464,1
+Pavlovagyrans,2,3,A3,EEM+Raman,,-3.131822,-0.300290,0
+Pavlovagyrans,2,3,A4,EEM+Raman,,-3.035721,-0.277475,0
+Pavlovagyrans,2,3,A5,EEM+Raman,,-3.199587,-0.221610,0
+Pavlovagyrans,2,3,A6,EEM+Raman,,-3.124889,-0.183908,0
+Pavlovagyrans,2,3,A7,EEM+Raman,,-3.126993,-0.197942,0
+Pavlovagyrans,2,3,A8,EEM+Raman,,-2.846454,-0.562394,0
+Pavlovagyrans,2,3,B1,EEM+Raman,,-3.195279,0.028341,0
+Pavlovagyrans,2,3,B2,EEM+Raman,,-3.134691,-0.049681,0
+Pavlovagyrans,2,3,B3,EEM+Raman,,-3.305010,0.199598,0
+Pavlovagyrans,2,3,B4,EEM+Raman,,-3.141654,0.070948,0
+Pavlovagyrans,2,3,B5,EEM+Raman,,-3.037444,-0.406611,0
+Pavlovagyrans,2,3,B6,EEM+Raman,,-3.088878,-0.042952,0
+Pavlovagyrans,2,3,B7,EEM+Raman,,-2.025373,0.697824,0
+Pavlovagyrans,2,3,B8,EEM+Raman,,-1.994728,0.585545,0
+Pavlovagyrans,2,3,C1,EEM+Raman,,-3.254882,-0.134498,0
+Pavlovagyrans,2,3,C2,EEM+Raman,,-3.138751,-0.022067,0
+Pavlovagyrans,2,3,C3,EEM+Raman,,-3.100800,-0.304233,0
+Pavlovagyrans,2,3,C4,EEM+Raman,,-3.182226,0.483590,0
+Pavlovagyrans,2,3,C5,EEM+Raman,,-3.279720,-0.195189,0
+Pavlovagyrans,2,3,C6,EEM+Raman,,-3.154285,-0.098089,0
+Pavlovagyrans,2,3,C7,EEM+Raman,,-3.141774,-0.060864,0
+Pavlovagyrans,2,3,C8,EEM+Raman,,-3.068969,-0.046360,0
+Pavlovagyrans,2,3,D1,EEM+Raman,,-3.232598,-0.212752,0
+Pavlovagyrans,2,3,D2,EEM+Raman,,-3.169955,-0.201293,0
+Pavlovagyrans,2,3,D3,EEM+Raman,,-3.225693,-0.103696,0
+Pavlovagyrans,2,3,D4,EEM+Raman,,-2.788681,-0.627000,0
+Pavlovagyrans,2,3,D5,EEM+Raman,,-3.309541,0.304136,0
+Pavlovagyrans,2,3,D6,EEM+Raman,,-3.309541,0.304136,0
+Pavlovagyrans,2,3,D7,EEM+Raman,,-1.897459,1.813363,0
+Pavlovagyrans,2,3,D8,EEM+Raman,,-3.345284,-0.248367,0
+Pavlovagyrans,2,3,E1,EEM+Raman,,-3.246524,-0.160479,0
+Pavlovagyrans,2,3,E2,EEM+Raman,,-3.270192,-0.190497,0
+Pavlovagyrans,2,3,E3,EEM+Raman,,0.207640,1.243688,0
+Pavlovagyrans,2,3,E4,EEM+Raman,,-1.999673,1.507538,0
+Pavlovagyrans,2,3,E5,EEM+Raman,,-1.994491,1.688300,0
+Pavlovagyrans,2,3,E6,EEM+Raman,,-3.211007,-0.161660,0
+Pavlovagyrans,2,3,E7,EEM+Raman,,-1.964254,1.852388,0
+Pavlovagyrans,2,3,E8,EEM+Raman,,-3.188241,-0.187441,0
+Pavlovagyrans,2,3,F1,EEM+Raman,,-3.163447,-0.274940,0
+Pavlovagyrans,2,3,F2,EEM+Raman,,-3.382820,-0.206544,0
+Pavlovagyrans,2,3,F3,EEM+Raman,,-2.898781,-0.561568,0
+Pavlovagyrans,2,3,F4,EEM+Raman,,-3.302401,-0.126882,0
+Pavlovagyrans,2,3,F5,EEM+Raman,,-2.179424,1.473045,0
+Pavlovagyrans,2,3,F6,EEM+Raman,,-3.293471,-0.299993,0
+Pavlovagyrans,2,3,F7,EEM+Raman,,-3.159268,-0.424057,0
+Pavlovagyrans,2,3,F8,EEM+Raman,,-2.056157,1.689238,0
+Pavlovagyrans,2,4,A1,EEM+Raman,,-1.883338,0.567913,0
+Pavlovagyrans,2,4,A10,EEM+Raman,,-2.858395,-0.639513,0
+Pavlovagyrans,2,4,A11,EEM+Raman,,-3.054973,-0.328992,0
+Pavlovagyrans,2,4,A2,EEM+Raman,,-3.001726,-0.386804,0
+Pavlovagyrans,2,4,A3,EEM+Raman,,-3.236774,-0.151190,0
+Pavlovagyrans,2,4,A4,EEM+Raman,,-3.103602,-0.215101,0
+Pavlovagyrans,2,4,A5,EEM+Raman,,-2.765752,-0.266403,0
+Pavlovagyrans,2,4,A6,EEM+Raman,,-2.880883,-0.523714,0
+Pavlovagyrans,2,4,A7,EEM+Raman,,-2.667009,-0.247081,0
+Pavlovagyrans,2,4,A8,EEM+Raman,,-2.895141,-0.519969,0
+Pavlovagyrans,2,4,A9,EEM+Raman,,-3.006418,-0.197192,0
+Pavlovagyrans,2,4,B1,EEM+Raman,,-1.856937,0.819867,0
+Pavlovagyrans,2,4,B10,EEM+Raman,,-3.092373,-0.265901,0
+Pavlovagyrans,2,4,B11,EEM+Raman,,-2.934066,-0.202237,0
+Pavlovagyrans,2,4,B2,EEM+Raman,,-3.314960,-0.095198,0
+Pavlovagyrans,2,4,B3,EEM+Raman,,-3.195133,-0.070815,0
+Pavlovagyrans,2,4,B4,EEM+Raman,,-2.968928,-0.372564,0
+Pavlovagyrans,2,4,B5,EEM+Raman,,-1.762607,1.977593,0
+Pavlovagyrans,2,4,B6,EEM+Raman,,-3.200005,0.000128,0
+Pavlovagyrans,2,4,B7,EEM+Raman,,-3.088606,-0.004900,0
+Pavlovagyrans,2,4,B8,EEM+Raman,,-3.130595,-0.299612,0
+Pavlovagyrans,2,4,B9,EEM+Raman,,-3.038671,-0.488410,0
+Pavlovagyrans,2,4,C1,EEM+Raman,,-3.145937,-0.181662,0
+Pavlovagyrans,2,4,C10,EEM+Raman,,-3.071621,-0.375956,0
+Pavlovagyrans,2,4,C11,EEM+Raman,,-3.116485,-0.058931,0
+Pavlovagyrans,2,4,C2,EEM+Raman,,-3.267322,0.321739,0
+Pavlovagyrans,2,4,C3,EEM+Raman,,-3.271928,-0.086299,0
+Pavlovagyrans,2,4,C4,EEM+Raman,,-3.125722,-0.134665,0
+Pavlovagyrans,2,4,C5,EEM+Raman,,-3.164952,-0.159145,0
+Pavlovagyrans,2,4,C6,EEM+Raman,,-1.958940,1.650227,0
+Pavlovagyrans,2,4,C7,EEM+Raman,,-2.998998,-0.348067,0
+Pavlovagyrans,2,4,C8,EEM+Raman,,-3.105003,-0.237709,0
+Pavlovagyrans,2,4,C9,EEM+Raman,,-3.176560,-0.136535,0
+Pavlovagyrans,2,4,D1,EEM+Raman,,-3.236265,-0.065039,0
+Pavlovagyrans,2,4,D10,EEM+Raman,,-3.218126,-0.176043,0
+Pavlovagyrans,2,4,D11,EEM+Raman,,-3.191234,-0.142305,0
+Pavlovagyrans,2,4,D2,EEM+Raman,,-3.352862,-0.184828,0
+Pavlovagyrans,2,4,D3,EEM+Raman,,-2.964298,-0.513211,0
+Pavlovagyrans,2,4,D4,EEM+Raman,,-3.277232,-0.119795,0
+Pavlovagyrans,2,4,D5,EEM+Raman,,-2.022724,1.464976,0
+Pavlovagyrans,2,4,D6,EEM+Raman,,-2.313992,0.351106,0
+Pavlovagyrans,2,4,D7,EEM+Raman,,-3.373183,-0.234832,0
+Pavlovagyrans,2,4,D8,EEM+Raman,,-3.232536,-0.278824,0
+Pavlovagyrans,2,4,D9,EEM+Raman,,-3.277093,-0.132326,0
+Pavlovagyrans,2,4,E1,EEM+Raman,,-2.140505,-0.090397,0
+Pavlovagyrans,2,4,E10,EEM+Raman,,-2.977223,-0.494218,0
+Pavlovagyrans,2,4,E11,EEM+Raman,,-3.299854,-0.196677,0
+Pavlovagyrans,2,4,E2,EEM+Raman,,-3.389165,-0.236411,0
+Pavlovagyrans,2,4,E3,EEM+Raman,,-3.288227,-0.259402,0
+Pavlovagyrans,2,4,E4,EEM+Raman,,-3.341042,-0.193896,0
+Pavlovagyrans,2,4,E5,EEM+Raman,,-3.289626,-0.055414,0
+Pavlovagyrans,2,4,E6,EEM+Raman,,-3.114267,-0.158766,0
+Pavlovagyrans,2,4,E7,EEM+Raman,,-3.107080,-0.279239,0
+Pavlovagyrans,2,4,E8,EEM+Raman,,-2.782729,-0.882877,0
+Pavlovagyrans,2,4,E9,EEM+Raman,,-3.245767,-0.244219,0
+Pavlovagyrans,2,4,F1,EEM+Raman,,-3.281209,-0.155741,0
+Pavlovagyrans,2,4,F10,EEM+Raman,,-2.989513,-0.837134,0
+Pavlovagyrans,2,4,F11,EEM+Raman,,-3.077519,-0.509312,0
+Pavlovagyrans,2,4,F2,EEM+Raman,,-3.329398,-0.219977,0
+Pavlovagyrans,2,4,F3,EEM+Raman,,-3.142672,-0.477922,0
+Pavlovagyrans,2,4,F4,EEM+Raman,,-3.139059,-0.480749,0
+Pavlovagyrans,2,4,F5,EEM+Raman,,-3.426630,-0.246719,0
+Pavlovagyrans,2,4,F6,EEM+Raman,,-2.236968,1.257506,0
+Pavlovagyrans,2,4,F7,EEM+Raman,,-3.302991,-0.388171,0
+Pavlovagyrans,2,4,F8,EEM+Raman,,-3.219080,-0.191378,0
+Pavlovagyrans,2,4,F9,EEM+Raman,,-3.227548,-0.436963,0
+Pavlovagyrans,2,5,A1,EEM+Raman,,-2.444800,-0.723294,0
+Pavlovagyrans,2,5,A2,EEM+Raman,,-0.131110,-1.561534,0
+Pavlovagyrans,2,5,A3,EEM+Raman,,4.308956,-3.282161,1
+Pavlovagyrans,2,5,A4,EEM+Raman,,5.691424,-1.857919,1
+Pavlovagyrans,2,5,A5,EEM+Raman,,5.205113,-3.153502,1
+Pavlovagyrans,2,5,A6,EEM+Raman,,2.935009,-2.802253,1
+Pavlovagyrans,2,5,A7,EEM+Raman,,3.675393,-2.735692,1
+Pavlovagyrans,2,5,A8,EEM+Raman,,3.616524,-1.784249,1
+Pavlovagyrans,2,5,B1,EEM+Raman,,-2.196852,-0.765216,0
+Pavlovagyrans,2,5,B2,EEM+Raman,,-1.419786,-1.422944,0
+Pavlovagyrans,2,5,B3,EEM+Raman,,2.522974,-2.454457,1
+Pavlovagyrans,2,5,B4,EEM+Raman,,1.950783,-2.368528,1
+Pavlovagyrans,2,5,B5,EEM+Raman,,-0.741865,-1.137750,0
+Pavlovagyrans,2,5,B6,EEM+Raman,,0.376864,-1.684110,1
+Pavlovagyrans,2,5,B7,EEM+Raman,,0.210899,-1.595808,1
+Pavlovagyrans,2,5,B8,EEM+Raman,,-0.144064,-1.260334,0
+Pavlovagyrans,2,5,C1,EEM+Raman,,-2.345522,-1.023240,0
+Pavlovagyrans,2,5,C2,EEM+Raman,,-0.940995,-1.182335,0
+Pavlovagyrans,2,5,C3,EEM+Raman,,0.270730,-1.072200,1
+Pavlovagyrans,2,5,C4,EEM+Raman,,1.065797,-1.952645,1
+Pavlovagyrans,2,5,C5,EEM+Raman,,-0.209576,-1.585292,0
+Pavlovagyrans,2,5,C6,EEM+Raman,,-0.185377,-1.183646,0
+Pavlovagyrans,2,5,C7,EEM+Raman,,-0.717565,-1.514516,0
+Pavlovagyrans,2,5,C8,EEM+Raman,,-0.721371,-0.742149,0
+Pavlovagyrans,2,5,D1,EEM+Raman,,0.048017,-0.953033,0
+Pavlovagyrans,2,5,D2,EEM+Raman,,-0.280520,-1.216504,0
+Pavlovagyrans,2,5,D3,EEM+Raman,,-0.700076,-1.298613,0
+Pavlovagyrans,2,5,D4,EEM+Raman,,-1.108560,-1.137055,0
+Pavlovagyrans,2,5,D5,EEM+Raman,,0.204819,-1.986908,1
+Pavlovagyrans,2,5,D6,EEM+Raman,,0.172051,-1.725801,1
+Pavlovagyrans,2,5,D8,EEM+Raman,,1.388244,-1.867503,1
+Pavlovagyrans,2,5,E1,EEM+Raman,,-2.681402,-0.958679,0
+Pavlovagyrans,2,5,E2,EEM+Raman,,-1.511994,-1.051682,0
+Pavlovagyrans,2,5,E3,EEM+Raman,,0.577439,-1.616188,1
+Pavlovagyrans,2,5,E4,EEM+Raman,,-1.771859,-1.110600,0
+Pavlovagyrans,2,5,E5,EEM+Raman,,1.496746,-1.950375,1
+Pavlovagyrans,2,5,E6,EEM+Raman,,-1.080717,-1.228293,0
+Pavlovagyrans,2,5,E7,EEM+Raman,,0.423149,-1.708797,1
+Pavlovagyrans,2,5,E8,EEM+Raman,,2.221904,-1.857566,1
+Pavlovagyrans,2,5,F1,EEM+Raman,,-2.925455,-0.691416,0
+Pavlovagyrans,2,5,F2,EEM+Raman,,-2.105765,-1.247747,0
+Pavlovagyrans,2,5,F3,EEM+Raman,,-1.436347,-1.377228,0
+Pavlovagyrans,2,5,F4,EEM+Raman,,0.208176,-1.588632,1
+Pavlovagyrans,2,5,F5,EEM+Raman,,-0.369429,-1.602841,0
+Pavlovagyrans,2,5,F6,EEM+Raman,,-0.978720,-1.440537,0
+Pavlovagyrans,2,5,F7,EEM+Raman,,-0.106943,-2.074671,0
+Pavlovagyrans,2,5,F8,EEM+Raman,,-0.500117,-1.722425,0
+Pavlovagyrans,2,6,A1,EEM+Raman,,6.720477,-4.073474,1
+Pavlovagyrans,2,6,A10,EEM+Raman,,8.763021,-3.252726,2
+Pavlovagyrans,2,6,A11,EEM+Raman,,4.699409,-2.733667,1
+Pavlovagyrans,2,6,A2,EEM+Raman,,10.667163,-1.863270,2
+Pavlovagyrans,2,6,A3,EEM+Raman,,2.046478,-1.856007,1
+Pavlovagyrans,2,6,A4,EEM+Raman,,2.834973,-1.659877,1
+Pavlovagyrans,2,6,A5,EEM+Raman,,6.235287,-3.556084,1
+Pavlovagyrans,2,6,A6,EEM+Raman,,1.066049,-1.636172,1
+Pavlovagyrans,2,6,A7,EEM+Raman,,3.750969,-2.285469,1
+Pavlovagyrans,2,6,A8,EEM+Raman,,8.998902,-3.403296,2
+Pavlovagyrans,2,6,A9,EEM+Raman,,12.790229,-0.973310,2
+Pavlovagyrans,2,6,B1,EEM+Raman,,4.627085,-3.304718,1
+Pavlovagyrans,2,6,B10,EEM+Raman,,4.339534,-2.116352,1
+Pavlovagyrans,2,6,B11,EEM+Raman,,1.171399,-1.303447,1
+Pavlovagyrans,2,6,B2,EEM+Raman,,3.068141,-2.732230,1
+Pavlovagyrans,2,6,B3,EEM+Raman,,3.412991,-2.793792,1
+Pavlovagyrans,2,6,B4,EEM+Raman,,0.684219,-2.280642,1
+Pavlovagyrans,2,6,B5,EEM+Raman,,0.868754,-2.034702,1
+Pavlovagyrans,2,6,B6,EEM+Raman,,2.754895,-2.673817,1
+Pavlovagyrans,2,6,B7,EEM+Raman,,0.242840,-1.654725,1
+Pavlovagyrans,2,6,B8,EEM+Raman,,2.404285,-2.116970,1
+Pavlovagyrans,2,6,B9,EEM+Raman,,5.108523,-1.876460,1
+Pavlovagyrans,2,6,C1,EEM+Raman,,2.578545,-2.676440,1
+Pavlovagyrans,2,6,C10,EEM+Raman,,8.106234,-3.912933,2
+Pavlovagyrans,2,6,C11,EEM+Raman,,1.365854,-1.936457,1
+Pavlovagyrans,2,6,C2,EEM+Raman,,1.945068,-2.207689,1
+Pavlovagyrans,2,6,C3,EEM+Raman,,3.348907,-2.439871,1
+Pavlovagyrans,2,6,C4,EEM+Raman,,1.488954,-2.291285,1
+Pavlovagyrans,2,6,C5,EEM+Raman,,-1.021480,-1.303743,0
+Pavlovagyrans,2,6,C6,EEM+Raman,,2.998557,-2.600208,1
+Pavlovagyrans,2,6,C7,EEM+Raman,,0.773874,-2.115871,1
+Pavlovagyrans,2,6,C8,EEM+Raman,,1.505407,-2.101496,1
+Pavlovagyrans,2,6,C9,EEM+Raman,,3.696494,-1.873506,1
+Pavlovagyrans,2,6,D1,EEM+Raman,,0.928953,-1.661991,1
+Pavlovagyrans,2,6,D10,EEM+Raman,,3.734543,-2.447516,1
+Pavlovagyrans,2,6,D11,EEM+Raman,,2.070669,-1.390135,1
+Pavlovagyrans,2,6,D2,EEM+Raman,,0.688603,-2.002935,1
+Pavlovagyrans,2,6,D3,EEM+Raman,,2.292635,-2.409670,1
+Pavlovagyrans,2,6,D4,EEM+Raman,,0.059721,-1.943226,1
+Pavlovagyrans,2,6,D5,EEM+Raman,,1.684413,-1.843097,1
+Pavlovagyrans,2,6,D6,EEM+Raman,,1.048860,-2.218480,1
+Pavlovagyrans,2,6,D7,EEM+Raman,,3.287523,-2.147447,1
+Pavlovagyrans,2,6,D8,EEM+Raman,,0.169667,-1.724797,1
+Pavlovagyrans,2,6,D9,EEM+Raman,,3.955822,-1.382778,1
+Pavlovagyrans,2,6,E1,EEM+Raman,,1.124063,-1.835284,1
+Pavlovagyrans,2,6,E10,EEM+Raman,,1.742392,-1.691152,1
+Pavlovagyrans,2,6,E11,EEM+Raman,,0.479463,-1.764394,1
+Pavlovagyrans,2,6,E2,EEM+Raman,,1.420929,-2.143599,1
+Pavlovagyrans,2,6,E3,EEM+Raman,,-0.440879,-1.716575,0
+Pavlovagyrans,2,6,E4,EEM+Raman,,-0.375620,-1.545856,0
+Pavlovagyrans,2,6,E5,EEM+Raman,,-1.288002,-1.088635,0
+Pavlovagyrans,2,6,E6,EEM+Raman,,0.742379,-1.799910,1
+Pavlovagyrans,2,6,E7,EEM+Raman,,0.908387,-1.562293,1
+Pavlovagyrans,2,6,E8,EEM+Raman,,0.151415,-1.491021,1
+Pavlovagyrans,2,6,E9,EEM+Raman,,1.928781,-2.134536,1
+Pavlovagyrans,2,6,F1,EEM+Raman,,-1.027342,-1.521376,0
+Pavlovagyrans,2,6,F10,EEM+Raman,,2.138694,-2.259333,1
+Pavlovagyrans,2,6,F11,EEM+Raman,,1.049412,-1.948850,1
+Pavlovagyrans,2,6,F2,EEM+Raman,,-1.294271,-1.214664,0
+Pavlovagyrans,2,6,F3,EEM+Raman,,-2.096280,-1.028923,0
+Pavlovagyrans,2,6,F4,EEM+Raman,,0.079333,-1.355021,1
+Pavlovagyrans,2,6,F5,EEM+Raman,,0.324662,-1.744335,1
+Pavlovagyrans,2,6,F6,EEM+Raman,,-0.271915,-1.722766,0
+Pavlovagyrans,2,6,F7,EEM+Raman,,0.127918,-1.533086,1
+Pavlovagyrans,2,6,F8,EEM+Raman,,-0.261270,-1.513098,0
+Pavlovagyrans,2,7,A1,EEM+Raman,,-1.735411,-1.138687,0
+Pavlovagyrans,2,7,A2,EEM+Raman,,-0.190505,-0.783084,0
+Pavlovagyrans,2,7,A3,EEM+Raman,,5.734426,-2.458375,1
+Pavlovagyrans,2,7,A4,EEM+Raman,,2.981744,-2.775230,1
+Pavlovagyrans,2,7,A5,EEM+Raman,,13.056618,-2.860574,2
+Pavlovagyrans,2,7,A6,EEM+Raman,,5.069925,-1.588197,1
+Pavlovagyrans,2,7,A7,EEM+Raman,,0.203835,-1.521463,1
+Pavlovagyrans,2,7,A8,EEM+Raman,,-1.019509,-1.461101,0
+Pavlovagyrans,2,7,B1,EEM+Raman,,-2.011627,-1.204080,0
+Pavlovagyrans,2,7,B2,EEM+Raman,,3.251520,-1.983582,1
+Pavlovagyrans,2,7,B3,EEM+Raman,,1.288721,-3.424639,1
+Pavlovagyrans,2,7,B4,EEM+Raman,,2.275100,-1.371590,1
+Pavlovagyrans,2,7,B5,EEM+Raman,,7.066389,-3.048720,1
+Pavlovagyrans,2,7,B6,EEM+Raman,,6.382721,-2.617286,1
+Pavlovagyrans,2,7,B7,EEM+Raman,,5.169158,-2.547655,1
+Pavlovagyrans,2,7,B8,EEM+Raman,,3.501392,-2.649632,1
+Pavlovagyrans,2,7,C1,EEM+Raman,,-2.657043,-0.519911,0
+Pavlovagyrans,2,7,C2,EEM+Raman,,-1.927902,-1.605419,0
+Pavlovagyrans,2,7,C3,EEM+Raman,,5.073468,-2.736837,1
+Pavlovagyrans,2,7,C4,EEM+Raman,,2.223273,-2.158448,1
+Pavlovagyrans,2,7,C5,EEM+Raman,,4.558582,-2.442700,1
+Pavlovagyrans,2,7,C6,EEM+Raman,,0.781397,-1.835124,1
+Pavlovagyrans,2,7,C7,EEM+Raman,,3.042791,-2.101260,1
+Pavlovagyrans,2,7,C8,EEM+Raman,,-0.452302,-1.273659,0
+Pavlovagyrans,2,7,D1,EEM+Raman,,-2.625276,-0.669099,0
+Pavlovagyrans,2,7,D2,EEM+Raman,,2.531842,-2.073194,1
+Pavlovagyrans,2,7,D3,EEM+Raman,,3.073579,-2.932800,1
+Pavlovagyrans,2,7,D4,EEM+Raman,,4.499171,-1.348054,1
+Pavlovagyrans,2,7,D5,EEM+Raman,,0.419305,-1.088187,1
+Pavlovagyrans,2,7,D6,EEM+Raman,,4.818449,-2.990384,1
+Pavlovagyrans,2,7,D7,EEM+Raman,,9.633413,-2.070160,2
+Pavlovagyrans,2,7,D8,EEM+Raman,,7.292147,-3.485400,1
+Pavlovagyrans,2,7,E1,EEM+Raman,,-2.587341,-0.642930,0
+Pavlovagyrans,2,7,E2,EEM+Raman,,-1.074922,-1.465313,0
+Pavlovagyrans,2,7,E3,EEM+Raman,,2.864651,-1.929325,1
+Pavlovagyrans,2,7,E4,EEM+Raman,,2.023544,-1.825933,1
+Pavlovagyrans,2,7,E5,EEM+Raman,,3.460051,-3.375976,1
+Pavlovagyrans,2,7,E6,EEM+Raman,,1.270996,-2.231018,1
+Pavlovagyrans,2,7,E7,EEM+Raman,,4.340713,-2.260482,1
+Pavlovagyrans,2,7,E8,EEM+Raman,,0.650240,-2.005630,1
+Pavlovagyrans,2,7,F1,EEM+Raman,,-2.157770,-1.030732,0
+Pavlovagyrans,2,7,F2,EEM+Raman,,1.087409,-1.190699,1
+Pavlovagyrans,2,7,F3,EEM+Raman,,2.692555,-1.584736,1
+Pavlovagyrans,2,7,F4,EEM+Raman,,0.344511,-2.115828,1
+Pavlovagyrans,2,7,F5,EEM+Raman,,0.819915,-1.485944,1
+Pavlovagyrans,2,7,F6,EEM+Raman,,0.945840,-1.802864,1
+Pavlovagyrans,2,7,F7,EEM+Raman,,0.845688,-2.175475,1
+Pavlovagyrans,2,7,F8,EEM+Raman,,0.533168,-1.962340,1
+Pavlovagyrans,2,8,A1,EEM+Raman,,16.027220,-5.112335,2
+Pavlovagyrans,2,8,A10,EEM+Raman,,11.952844,-3.276771,2
+Pavlovagyrans,2,8,A11,EEM+Raman,,9.198412,-0.182622,2
+Pavlovagyrans,2,8,A2,EEM+Raman,,4.076312,-2.720496,1
+Pavlovagyrans,2,8,A3,EEM+Raman,,2.040250,-1.506141,1
+Pavlovagyrans,2,8,A4,EEM+Raman,,7.567759,-4.021844,1
+Pavlovagyrans,2,8,A5,EEM+Raman,,4.403240,-2.689018,1
+Pavlovagyrans,2,8,A6,EEM+Raman,,4.226445,-2.455918,1
+Pavlovagyrans,2,8,A7,EEM+Raman,,4.091469,-1.148997,1
+Pavlovagyrans,2,8,A8,EEM+Raman,,13.183343,-4.893713,2
+Pavlovagyrans,2,8,A9,EEM+Raman,,15.691615,-0.818239,2
+Pavlovagyrans,2,8,B1,EEM+Raman,,5.722341,-3.144256,1
+Pavlovagyrans,2,8,B10,EEM+Raman,,4.606200,-2.687799,1
+Pavlovagyrans,2,8,B11,EEM+Raman,,-0.308192,-1.316780,0
+Pavlovagyrans,2,8,B2,EEM+Raman,,4.380555,-2.286688,1
+Pavlovagyrans,2,8,B3,EEM+Raman,,1.054941,-1.372497,1
+Pavlovagyrans,2,8,B4,EEM+Raman,,0.319590,-0.729275,1
+Pavlovagyrans,2,8,B5,EEM+Raman,,4.280321,-1.462582,1
+Pavlovagyrans,2,8,B6,EEM+Raman,,0.143698,-1.903510,1
+Pavlovagyrans,2,8,B7,EEM+Raman,,1.921967,-1.605912,1
+Pavlovagyrans,2,8,B8,EEM+Raman,,1.066784,-1.105694,1
+Pavlovagyrans,2,8,B9,EEM+Raman,,5.916819,-0.624615,1
+Pavlovagyrans,2,8,C1,EEM+Raman,,3.683844,-2.287075,1
+Pavlovagyrans,2,8,C10,EEM+Raman,,8.215498,-3.313850,2
+Pavlovagyrans,2,8,C11,EEM+Raman,,7.605773,-2.729663,2
+Pavlovagyrans,2,8,C2,EEM+Raman,,4.949293,-1.652865,1
+Pavlovagyrans,2,8,C3,EEM+Raman,,3.476050,-1.949106,1
+Pavlovagyrans,2,8,C4,EEM+Raman,,-0.024111,-1.609576,0
+Pavlovagyrans,2,8,C5,EEM+Raman,,2.422297,-0.903641,1
+Pavlovagyrans,2,8,C6,EEM+Raman,,2.427718,-1.431873,1
+Pavlovagyrans,2,8,C7,EEM+Raman,,2.417665,-1.478913,1
+Pavlovagyrans,2,8,C8,EEM+Raman,,4.934076,-2.214868,1
+Pavlovagyrans,2,8,C9,EEM+Raman,,2.947288,-1.317339,1
+Pavlovagyrans,2,8,D1,EEM+Raman,,2.872317,-2.613831,1
+Pavlovagyrans,2,8,D10,EEM+Raman,,8.081450,-3.613207,2
+Pavlovagyrans,2,8,D11,EEM+Raman,,7.898805,-3.896706,2
+Pavlovagyrans,2,8,D2,EEM+Raman,,2.462574,-1.825790,1
+Pavlovagyrans,2,8,D3,EEM+Raman,,3.814349,-1.962148,1
+Pavlovagyrans,2,8,D4,EEM+Raman,,-1.291803,-0.917177,0
+Pavlovagyrans,2,8,D5,EEM+Raman,,1.747989,-0.980193,1
+Pavlovagyrans,2,8,D6,EEM+Raman,,0.239391,-1.535369,1
+Pavlovagyrans,2,8,D7,EEM+Raman,,2.666711,-1.336850,1
+Pavlovagyrans,2,8,D8,EEM+Raman,,5.563279,-1.107744,1
+Pavlovagyrans,2,8,D9,EEM+Raman,,3.022346,-1.227352,1
+Pavlovagyrans,2,8,E1,EEM+Raman,,8.029180,-3.361048,2
+Pavlovagyrans,2,8,E10,EEM+Raman,,7.963248,-2.290093,2
+Pavlovagyrans,2,8,E11,EEM+Raman,,3.815742,-0.996969,1
+Pavlovagyrans,2,8,E2,EEM+Raman,,11.343214,-4.523750,2
+Pavlovagyrans,2,8,E3,EEM+Raman,,3.243623,-2.060097,1
+Pavlovagyrans,2,8,E4,EEM+Raman,,3.722090,-2.150503,1
+Pavlovagyrans,2,8,E5,EEM+Raman,,-0.371495,-1.055692,0
+Pavlovagyrans,2,8,E6,EEM+Raman,,-1.035604,-1.443004,0
+Pavlovagyrans,2,8,E7,EEM+Raman,,0.135326,-1.850367,1
+Pavlovagyrans,2,8,E8,EEM+Raman,,2.445261,-1.529133,1
+Pavlovagyrans,2,8,E9,EEM+Raman,,5.423625,-2.478856,1
+Pavlovagyrans,2,8,F1,EEM+Raman,,-0.383727,-1.347729,0
+Pavlovagyrans,2,8,F10,EEM+Raman,,1.916968,-1.115480,1
+Pavlovagyrans,2,8,F11,EEM+Raman,,4.869094,-1.949559,1
+Pavlovagyrans,2,8,F2,EEM+Raman,,-0.185605,-0.522301,0
+Pavlovagyrans,2,8,F3,EEM+Raman,,1.393070,-1.870935,1
+Pavlovagyrans,2,8,F4,EEM+Raman,,-0.449059,-0.433149,0
+Pavlovagyrans,2,8,F5,EEM+Raman,,-0.576137,-0.544157,0
+Pavlovagyrans,2,8,F6,EEM+Raman,,3.731736,-2.308053,1
+Pavlovagyrans,2,8,F7,EEM+Raman,,-1.193267,-0.554648,0
+Pavlovagyrans,2,8,F8,EEM+Raman,,2.876751,-0.573645,1
+Pavlovagyrans,2,8,F9,EEM+Raman,,5.018225,-2.523813,1
+Pavlovagyrans,3,1,A1,EEM+Raman,,6.218892,-1.270756,1
+Pavlovagyrans,3,1,A2,EEM+Raman,,3.720544,-2.408024,1
+Pavlovagyrans,3,1,A3,EEM+Raman,,4.272924,-2.241697,1
