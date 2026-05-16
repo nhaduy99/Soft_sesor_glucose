@@ -29,6 +29,8 @@ Open the main supervised report here:
   - Rhamnose: 16.4%
   - Xylose: 11.7%
   - Glucose: 22.7%
+- Added project maintenance files: `PROJECT_CONTEXT.md`, `DECISIONS.md`, and `SESSION_HANDOFF.md`.
+- Added an explicit rule to `AGENTS.md`: at the end of every task, update `SESSION_HANDOFF.md` so the next Codex session can continue without chat history.
 
 ## Commands Recently Run
 ```bash

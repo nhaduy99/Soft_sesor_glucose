@@ -40,3 +40,5 @@ Before finishing a task:
 4. Update `TODO.md` if tasks changed.
 5. Update `SESSION_HANDOFF.md` with the latest status, commands run, and next action.
 6. Commit and push when the user asked for repo-visible progress or project state changes.
+
+At the end of every task, update `SESSION_HANDOFF.md` so the next Codex session can continue without chat history.
