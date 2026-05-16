@@ -37,6 +37,7 @@ Open the comprehensive visual modelling report here:
 - Added an explicit rule to `AGENTS.md`: at the end of every task, update `SESSION_HANDOFF.md` so the next Codex session can continue without chat history.
 - Continued optimization with distance-normalized kNN and focused RBF/Laplacian kernel ridge. Latest confirmed results did not reach the requested extra 20% RMSE reduction beyond the previous best.
 - Generated `supervised_monosaccharides/comprehensive_modeling_report.html` with predicted-vs-true scatter plots, residual plots, metric bar charts, top-model tables, and pipeline documentation.
+- Inserted processed spectroscopy visual samples into `supervised_monosaccharides/comprehensive_modeling_report.html`: annotated Raman overlays and EEM heatmaps with analysis of monosaccharide signal interpretation.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |

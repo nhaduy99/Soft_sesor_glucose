@@ -5,6 +5,8 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
+RAW_DIR = ROOT / "data" / "raw" / "Emilie_SoftSensor"
+TARGET_FEATURES_CSV = ROOT / "features" / "monosaccharide_interpretable_targets.csv"
 OUT_DIR = ROOT / "supervised_monosaccharides"
 BEST_MODELS_CSV = OUT_DIR / "best_models.csv"
 METRICS_SUMMARY_CSV = OUT_DIR / "model_search_metrics_summary.csv"
@@ -29,6 +31,49 @@ COLORS = {
 def read_csv(path):
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
+
+
+def find_raw_file(path_text):
+    name = Path(path_text).name
+    if not name:
+        return None
+    matches = list(RAW_DIR.rglob(name))
+    return matches[0] if matches else None
+
+
+def parse_raman(path):
+    xs, ys = [], []
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        for row in csv.reader(handle):
+            if len(row) >= 2:
+                try:
+                    xs.append(float(row[0]))
+                    ys.append(float(row[1]))
+                except ValueError:
+                    pass
+    return xs, ys
+
+
+def parse_eem(path):
+    with path.open("r", encoding="utf-8", newline="") as handle:
+        rows = list(csv.reader(handle))
+    emission = [fnum(v) for v in rows[0][1:]]
+    excitation = []
+    values = []
+    over = []
+    for row in rows[1:]:
+        excitation.append(fnum(row[0]))
+        val_row, over_row = [], []
+        for cell in row[1:]:
+            if str(cell).strip().upper() == "OVER":
+                val_row.append(math.nan)
+                over_row.append(True)
+            else:
+                val_row.append(fnum(cell))
+                over_row.append(False)
+        values.append(val_row)
+        over.append(over_row)
+    return emission, excitation, values, over
 
 
 def fnum(value, default=math.nan):
@@ -185,6 +230,136 @@ def bar_chart_svg(rows, value_key, title, y_label, percent=False):
     return svg
 
 
+def select_spectroscopy_samples(rows):
+    wanted = [
+        ("Rha (5)", "Rhamnose 5 g/L"),
+        ("Xyl (5)", "Xylose 5 g/L"),
+        ("Glu (5)", "Glucose 5 g/L"),
+        ("MM f/2 (1)", "Master mix 1 g/L each"),
+    ]
+    selected = []
+    for label, display in wanted:
+        candidates = [r for r in rows if r.get("legend_treatment_label") == label]
+        chosen = None
+        for row in candidates:
+            eem_path = find_raw_file(row.get("eem_file", ""))
+            raman_path = find_raw_file(row.get("raman_file", ""))
+            if eem_path or raman_path:
+                chosen = dict(row)
+                chosen["_display_label"] = display
+                chosen["_eem_path"] = eem_path
+                chosen["_raman_path"] = raman_path
+                break
+        if chosen:
+            selected.append(chosen)
+    return selected
+
+
+def polyline(points, color, width=2.0, opacity=0.9):
+    if not points:
+        return ""
+    d = " ".join(f"{x:.1f},{y:.1f}" for x, y in points)
+    return f'<polyline points="{d}" fill="none" stroke="{color}" stroke-width="{width}" opacity="{opacity}"/>'
+
+
+def raman_overlay_svg(samples):
+    width, height = 860, 470
+    px, py, pw, ph = 76, 48, 670, 300
+    spectra = []
+    for sample in samples:
+        path = sample.get("_raman_path")
+        if path:
+            xs, ys = parse_raman(path)
+            cropped = [(x, y) for x, y in zip(xs, ys) if 500 <= x <= 2000]
+            if cropped:
+                spectra.append((sample, cropped))
+    all_x = [x for _, spec in spectra for x, _ in spec]
+    all_y = [y for _, spec in spectra for _, y in spec]
+    x_lo, x_hi = 500, 2000
+    y_lo, y_hi = nice_bounds(all_y, include_zero=True)
+    colors = ["#2f7d7e", "#7a4e9f", "#b5651d", "#2d5f9a"]
+    lines, legend = [], []
+    for idx, (sample, spec) in enumerate(spectra):
+        color = colors[idx % len(colors)]
+        pts = [(scale(x, x_lo, x_hi, px, px + pw), scale(y, y_lo, y_hi, py + ph, py)) for x, y in spec]
+        lines.append(polyline(pts, color, width=2.0, opacity=0.82))
+        ly = py + 22 * idx
+        legend.append(f'<rect x="{px+pw+24}" y="{ly-11}" width="13" height="13" fill="{color}"/>')
+        legend.append(f'<text x="{px+pw+44}" y="{ly}" font-size="12">{esc(sample["_display_label"])}</text>')
+    windows = [
+        (735, "C-C/C-O region"),
+        (905, "sugar ring"),
+        (1156, "C-O-C / glycosidic"),
+        (1408, "CH bending"),
+        (1523, "matrix band"),
+    ]
+    annotations = []
+    for xval, label in windows:
+        x = scale(xval, x_lo, x_hi, px, px + pw)
+        annotations.append(f'<line x1="{x:.1f}" y1="{py}" x2="{x:.1f}" y2="{py+ph}" stroke="#44546a" stroke-dasharray="4 4" opacity="0.55"/>')
+        annotations.append(f'<text x="{x+4:.1f}" y="{py+16}" font-size="11" fill="#44546a">{esc(label)}</text>')
+    return f"""<svg viewBox="0 0 {width} {height}" role="img" aria-label="Annotated Raman spectra for monosaccharide standards">
+    {axis_svg(px, py, pw, ph, "Raman shift (cm-1), cropped to useful 500-2000 range", "Intensity", "Processed Raman signal examples")}
+    {''.join(annotations)}
+    {''.join(lines)}
+    {''.join(legend)}
+    <text x="{px}" y="{py+ph+66}" font-size="13" fill="#5d6d7e">Annotated vertical guides mark candidate carbohydrate-sensitive regions used by the interpretable Raman feature windows. Raman carries the more direct monosaccharide signal, while mixtures and matrix effects change relative band intensity.</text>
+    </svg>"""
+
+
+def eem_heatmap_svg(sample):
+    path = sample.get("_eem_path")
+    if not path:
+        return ""
+    emission, excitation, values, over = parse_eem(path)
+    width, height = 650, 500
+    px, py, pw, ph = 82, 56, 440, 310
+    valid = [v for row in values for v in row if math.isfinite(v)]
+    lo, hi = nice_bounds(valid, include_zero=True)
+    n_ex = len(excitation)
+    n_em = len(emission)
+    cw, ch = pw / max(1, n_em), ph / max(1, n_ex)
+    cells = []
+    for i, row in enumerate(values):
+        for j, value in enumerate(row):
+            x = px + j * cw
+            y = py + i * ch
+            if over[i][j]:
+                fill = "#111827"
+                opacity = 0.92
+            elif not math.isfinite(value) or emission[j] <= excitation[i] + 20:
+                fill = "#e5e7eb"
+                opacity = 1.0
+            else:
+                t = max(0.0, min(1.0, (value - lo) / (hi - lo))) if hi > lo else 0.0
+                r = int(245 - 200 * t)
+                g = int(248 - 120 * t)
+                b = int(251 - 20 * t)
+                fill = f"rgb({r},{g},{b})"
+                opacity = 1.0
+            cells.append(f'<rect x="{x:.2f}" y="{y:.2f}" width="{cw+0.2:.2f}" height="{ch+0.2:.2f}" fill="{fill}" opacity="{opacity}"/>')
+    ex_ticks = []
+    for idx in (0, len(emission)//2, len(emission)-1):
+        x = px + idx * cw + cw / 2
+        ex_ticks.append(f'<text x="{x:.1f}" y="{py+ph+20}" text-anchor="middle" font-size="11">{emission[idx]:.0f}</text>')
+    for idx in (0, len(excitation)//2, len(excitation)-1):
+        y = py + idx * ch + ch / 2
+        ex_ticks.append(f'<text x="{px-10}" y="{y+4:.1f}" text-anchor="end" font-size="11">{excitation[idx]:.0f}</text>')
+    return f"""<svg viewBox="0 0 {width} {height}" role="img" aria-label="Annotated EEM heatmap for {esc(sample['_display_label'])}">
+    <text x="{width/2}" y="28" text-anchor="middle" font-size="18" font-weight="700">EEM processed matrix: {esc(sample['_display_label'])}</text>
+    <rect x="{px}" y="{py}" width="{pw}" height="{ph}" fill="#fff" stroke="#d6dde5"/>
+    {''.join(cells)}
+    <rect x="{px}" y="{py}" width="{pw}" height="{ph}" fill="none" stroke="#17202a"/>
+    <text x="{px+pw/2}" y="{py+ph+42}" text-anchor="middle" font-size="13">Emission wavelength (nm)</text>
+    <text x="{px-52}" y="{py+ph/2}" text-anchor="middle" font-size="13" transform="rotate(-90 {px-52} {py+ph/2})">Excitation wavelength (nm)</text>
+    {''.join(ex_ticks)}
+    <rect x="{px+pw+34}" y="{py+4}" width="16" height="16" fill="#111827"/><text x="{px+pw+58}" y="{py+17}" font-size="12">OVER detector saturation</text>
+    <rect x="{px+pw+34}" y="{py+30}" width="16" height="16" fill="#e5e7eb"/><text x="{px+pw+58}" y="{py+43}" font-size="12">Masked scatter/invalid region</text>
+    <rect x="{px+pw+34}" y="{py+56}" width="16" height="16" fill="rgb(45,128,231)"/><text x="{px+pw+58}" y="{py+69}" font-size="12">Higher fluorescence intensity</text>
+    <text x="{px}" y="{py+ph+76}" font-size="13" fill="#5d6d7e">EEM is an indirect process-state signal for monosaccharides: sugars are weakly fluorescent, so useful information may come from matrix interactions, algae metabolites, or spiked-culture changes rather than a single direct sugar peak.</text>
+    </svg>"""
+
+
 def top_models_table(metrics_rows, target, limit=8):
     rows = [r for r in metrics_rows if r["target"] == target]
     rows = sorted(rows, key=lambda r: fnum(r["mean_rmse"]))[:limit]
@@ -210,6 +385,8 @@ def build_report():
     optimization_rows = read_csv(OPTIMIZATION_CSV)
     prediction_rows = read_csv(PREDICTIONS_CSV)
     target_summary = read_csv(TARGET_SUMMARY_CSV)
+    target_feature_rows = read_csv(TARGET_FEATURES_CSV)
+    spectroscopy_samples = select_spectroscopy_samples(target_feature_rows)
 
     best_keys = {best_key(row) for row in best_models}
     best_predictions = [row for row in prediction_rows if best_key(row) in best_keys]
@@ -270,6 +447,12 @@ def build_report():
         "Improvement",
         percent=True,
     )
+    raman_example_svg = raman_overlay_svg(spectroscopy_samples)
+    eem_example_sections = "\n".join(
+        f'<section class="panel">{eem_heatmap_svg(sample)}</section>'
+        for sample in spectroscopy_samples[:3]
+        if sample.get("_eem_path")
+    )
 
     report = f"""<!doctype html>
 <html lang="en">
@@ -316,6 +499,22 @@ def build_report():
     <section class="panel"><h3>5. Training</h3><p>Pure-NumPy Ridge, PCR, PLS1, weighted kNN, and focused kernel-ridge searches are evaluated over repeated grouped splits.</p></section>
     <section class="panel"><h3>6. Optimization</h3><p>Distance metrics, row-wise normalization, log targets, fusion features, and Laplacian/RBF kernels were compared.</p></section>
   </div>
+
+  <h2>Processed Spectroscopy Signal Examples</h2>
+  <section class="callout">
+    <strong>How to read these images:</strong> Raman spectra are cropped to 500-2000 cm-1 because the data description says this is the useful measured range. EEM matrices show fluorescence intensity after marking saturated <code>OVER</code> cells and near-diagonal scatter/invalid regions. These examples are standards or known mixtures, so their labels provide the calibration meaning for the model.
+  </section>
+  <section class="panel">
+    {raman_example_svg}
+    <p><strong>Raman analysis.</strong> The overlaid standards show why Raman is the direct-signal modality for monosaccharides. The annotated regions correspond to carbohydrate-sensitive windows used in the interpretable feature export: lower-wavenumber ring/C-C/C-O regions, the 900 cm-1 sugar-ring region, and mid-range C-O-C/CH bands. Differences between pure sugars and master mix are not a single isolated peak; the model uses relative intensity patterns across windows and full-spectrum features.</p>
+  </section>
+  <div class="grid">
+    {eem_example_sections}
+  </div>
+  <section class="panel">
+    <h3>EEM image analysis</h3>
+    <p>The EEM heatmaps show the processed 15 x 19 excitation-emission matrices used by the EEM feature sets. Dark cells are detector saturation (<code>OVER</code>) and grey cells are excluded scatter/invalid regions. Because rhamnose, xylose, and glucose are weakly fluorescent, the EEM signal is best interpreted as an indirect matrix/process-state signature rather than a direct monosaccharide peak. This explains why EEM-only models can help for xylose and glucose in the current standard/spike set, while rhamnose benefits from Raman+EEM fusion.</p>
+  </section>
 
   <h2>Target Coverage</h2>
   <section class="panel">

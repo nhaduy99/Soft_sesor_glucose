@@ -20,6 +20,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Added `train_monosaccharide_softsensor.py` and generated supervised standard/spike calibration outputs in `supervised_monosaccharides/`. The iterative search improved RMSE versus the initial linear/no-log/all-known baseline by 16.4% for rhamnose, 11.7% for xylose, and 22.7% for glucose.
 - Ran a further optimization pass with cosine/correlation/Manhattan kNN, row-wise normalization, and focused RBF/Laplacian kernel ridge. Latest confirmed results improved the previous best by 2.4% for rhamnose, 0.4% for xylose, and 5.9% for glucose; the requested additional 20% improvement was not reached with the current standard/spike labels.
 - Added `generate_supervised_visual_report.py` and generated `supervised_monosaccharides/comprehensive_modeling_report.html` with predicted-vs-true scatter plots, residual plots, RMSE/improvement bar charts, top-model tables, and an end-to-end modelling pipeline summary.
+- Extended the comprehensive report with processed spectroscopy examples: annotated Raman overlays for monosaccharide standards/mixtures, EEM heatmaps for rhamnose/xylose/glucose examples, saturation/scatter annotations, and written image analysis explaining direct Raman sugar signals versus indirect EEM process-state signals.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |

@@ -30,3 +30,4 @@
   - error by batch / experiment
 - Add explicit scientific interpretation notes for the most influential Raman and EEM features from supervised loadings and selected kNN features.
 - Extend `supervised_monosaccharides/comprehensive_modeling_report.html` after culture-target training so it separates standards, spikes, and true culture samples.
+- Add external reference assignments for Raman bands if a publication-ready spectral interpretation section is required.
