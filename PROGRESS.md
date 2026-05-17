@@ -72,6 +72,11 @@ The filtered HTML and DOCX reports were regenerated with beginner-facing explana
 - Restyled SVG plots toward a restrained Nature-style presentation: white/neutral panels, clear left/bottom axes, light gridlines, target-specific color palette, explicit x/y labels, and figure captions.
 - Regenerated filtered PARAFAC rank-6 excitation/emission loading plots and component maps with axis labels and notes explaining component intensity.
 
+## Latest report correction
+Fixed two filtered-report issues:
+- The dependency-backed rhamnose result was present in `dependency_model_comparison_summary.csv` but hidden in the HTML/DOCX because the report only displayed the first globally sliced dependency rows. Reports now include a best-dependency-result-per-target table, showing rhamnose `fusion_full / sklearn_plsr / n_components=5,max_features=192` with RMSE 0.3598.
+- Figure 3 had no rhamnose points because the filtered best pure-NumPy model was ridge, while `example_predictions_seed0.csv` only stored seed-0 predictions for kNN/KRR candidates. Added `export_best_model_predictions.py` to export compact seed-0 predictions for the selected best models. The refreshed filtered report now plots 37 rhamnose points, 35 xylose points, and 17 glucose points.
+
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
 - `eem_raman_hplc_inventory_enriched.csv`: master enriched inventory used as the central join table.
@@ -100,6 +105,7 @@ The filtered HTML and DOCX reports were regenerated with beginner-facing explana
 - `eem_parafac_features.py`: pure-NumPy EEM PARAFAC feature export and rank-selection workflow.
 - `train_preprocessed_models.py`: compact model comparison for Raman-preprocessed, EEM-PARAFAC, and fused feature sets versus the last best models.
 - `compare_dependency_models.py`: optional dependency-backed model comparison runner for scikit-learn PLSR/SVR and XGBoost.
+- `export_best_model_predictions.py`: compact seed-0 prediction exporter for the selected best pure-NumPy models, used by reports to avoid empty scatter panels when the best model is ridge/PCR/PLS.
 - `rhamnose_ml/scripts/train_baseline.py`: starter baseline training entry point for supervised Rhamnose prediction.
 - `rhamnose_ml/src/rhamnose_ml/train.py`: baseline training pipeline using PLS with grouped train/test splitting.
 

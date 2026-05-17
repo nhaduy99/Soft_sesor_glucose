@@ -1,5 +1,39 @@
 # SESSION_HANDOFF.md
 
+## Latest Task - 2026-05-17 Report Correction
+User asked why the filtered report did not show the best dependency-backed rhamnose result and why Figure 3 had no rhamnose points.
+
+Root causes:
+- `dependency_model_comparison_summary.csv` contained the rhamnose `fusion_full / sklearn_plsr / n_components=5,max_features=192` result with RMSE 0.3598, but the report displayed a sliced dependency table where target ordering hid that row.
+- Figure 3 used `example_predictions_seed0.csv`, which only stored kNN/KRR seed-0 predictions. The filtered rhamnose best pure-NumPy model is ridge, so there were no matching rhamnose prediction rows to plot.
+
+Fixes completed:
+- Added `export_best_model_predictions.py`, which exports compact seed-0 predictions only for rows in `best_models.csv`.
+- Updated `generate_supervised_visual_report.py` and `generate_docx_model_report.py` to use `best_model_predictions_seed0.csv` when available.
+- Updated `compare_dependency_models.py` to export `dependency_model_predictions_seed0.csv`.
+- Updated the HTML/DOCX dependency section to show a best-dependency-result-per-target table before the top global rows.
+- Regenerated filtered HTML and DOCX reports.
+
+Validation:
+- `supervised_monosaccharides_exclude_rha5/best_model_predictions_seed0.csv` now has rhamnose 37 rows, xylose 35 rows, glucose 17 rows.
+- HTML parse passed and contains `0.3598`.
+- HTML now contains the dependency-backed predicted-vs-true section.
+- DOCX parse passed.
+
+Commands run:
+```powershell
+conda run -n base python -m py_compile export_best_model_predictions.py compare_dependency_models.py generate_supervised_visual_report.py generate_docx_model_report.py train_monosaccharide_softsensor.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python export_best_model_predictions.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python compare_dependency_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python generate_supervised_visual_report.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; $env:REPORT_DOCX_NAME='monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; conda run -n base python generate_docx_model_report.py
+```
+
+Exact next command to continue later:
+```powershell
+git status --short
+```
+
 ## Current State
 The project is on GitHub and synced on branch `main`.
 

@@ -24,6 +24,7 @@ PREPROCESSED_BEST = OUT_DIR / "preprocessed_model_best_vs_last.csv"
 OPTIMIZATION = OUT_DIR / "optimization_improvement_summary.csv"
 TARGET_SUMMARY = OUT_DIR / "target_summary.csv"
 PREDICTIONS = OUT_DIR / "example_predictions_seed0.csv"
+BEST_PREDICTIONS = OUT_DIR / "best_model_predictions_seed0.csv"
 DEPENDENCY_SUMMARY = OUT_DIR / "dependency_model_comparison_summary.csv"
 PARAFAC_FEATURE_DIR = ROOT / ("features/eem_parafac_exclude_rha5" if EXCLUDE_RHA5 else "features/eem_parafac")
 PARAFAC_SUMMARY = PARAFAC_FEATURE_DIR / "parafac_rank_summary.csv"
@@ -54,6 +55,24 @@ def fnum(value, default=math.nan):
 
 def xesc(value):
     return escape(str(value), {"'": "&apos;", '"': "&quot;"})
+
+
+def normalize_config(config):
+    parts = []
+    for item in str(config).split(","):
+        if "=" not in item:
+            parts.append(item.strip())
+            continue
+        key, value = item.split("=", 1)
+        text = value.strip()
+        try:
+            number = float(text)
+            if math.isfinite(number):
+                text = f"{number:g}"
+        except ValueError:
+            pass
+        parts.append(f"{key.strip()}={text}")
+    return ",".join(parts)
 
 
 def nice_range(values, include_zero=False):
@@ -167,12 +186,13 @@ def improvement_svg(pre_rows):
 
 
 def predictions_by_target(best_rows):
-    best_keys = {(r["target"], r["cohort"], r["feature_set"], r["model"], r["config"]) for r in best_rows}
+    best_keys = {(r["target"], r["cohort"], r["feature_set"], r["model"], normalize_config(r["config"])) for r in best_rows}
     out = {target: [] for target in TARGET_LABELS}
-    with PREDICTIONS.open("r", encoding="utf-8-sig", newline="") as handle:
+    path = BEST_PREDICTIONS if BEST_PREDICTIONS.exists() else PREDICTIONS
+    with path.open("r", encoding="utf-8-sig", newline="") as handle:
         reader = csv.DictReader(handle)
         for row in reader:
-            key = (row["target"], row["cohort"], row["feature_set"], row["model"], row["config"])
+            key = (row["target"], row["cohort"], row["feature_set"], row["model"], normalize_config(row["config"]))
             if key in best_keys:
                 out[row["target"]].append(row)
     return out
@@ -426,9 +446,29 @@ def build_report():
     doc.add_svg("scatter_best", scatter_svg(preds), 7.2, 2.5)
     doc.add_caption("Figure 3. Predicted versus true concentrations. Points close to the diagonal indicate better agreement between model prediction and known standard/spike concentration.")
     if dependency_rows:
+        dependency_best = []
+        for target in TARGET_LABELS:
+            rows = [row for row in dependency_rows if row.get("target") == target]
+            if rows:
+                dependency_best.append(min(rows, key=lambda row: fnum(row.get("mean_rmse"))))
         top_dependency = sorted(dependency_rows, key=lambda row: fnum(row.get("mean_rmse")))[:12]
         doc.add_heading("Dependency-Backed Model Comparison", 2)
-        doc.add_paragraph("This comparison uses Conda base packages when available: scikit-learn PLSR/SVR and XGBoost.")
+        doc.add_paragraph("This comparison uses Conda base packages when available: scikit-learn PLSR/SVR and XGBoost. The first table shows the best dependency-backed result for each target so strong target-specific results are not hidden by CSV ordering.")
+        doc.add_table([
+            ["Target", "Feature set", "Model", "Config", "RMSE", "R2"],
+            *[
+                [
+                    TARGET_LABELS.get(r["target"], r["target"]),
+                    r["feature_set"],
+                    r["model"],
+                    r["config"],
+                    f"{fnum(r['mean_rmse']):.4f}",
+                    f"{fnum(r['mean_r2']):.3f}",
+                ]
+                for r in sorted(dependency_best, key=lambda row: fnum(row.get("mean_rmse")))
+            ],
+        ])
+        doc.add_paragraph("Top dependency-backed rows by RMSE:")
         doc.add_table([
             ["Target", "Feature set", "Model", "Config", "RMSE", "R2"],
             *[

@@ -14,9 +14,11 @@ BEST_MODELS_CSV = OUT_DIR / "best_models.csv"
 METRICS_SUMMARY_CSV = OUT_DIR / "model_search_metrics_summary.csv"
 OPTIMIZATION_CSV = OUT_DIR / "optimization_improvement_summary.csv"
 PREDICTIONS_CSV = OUT_DIR / "example_predictions_seed0.csv"
+BEST_PREDICTIONS_CSV = OUT_DIR / "best_model_predictions_seed0.csv"
 TARGET_SUMMARY_CSV = OUT_DIR / "target_summary.csv"
 PREPROCESSED_BEST_CSV = OUT_DIR / "preprocessed_model_best_vs_last.csv"
 DEPENDENCY_SUMMARY_CSV = OUT_DIR / "dependency_model_comparison_summary.csv"
+DEPENDENCY_PREDICTIONS_CSV = OUT_DIR / "dependency_model_predictions_seed0.csv"
 PARAFAC_FEATURE_DIR = ROOT / ("features/eem_parafac_exclude_rha5" if os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"} else "features/eem_parafac")
 PARAFAC_SUMMARY_CSV = PARAFAC_FEATURE_DIR / "parafac_rank_summary.csv"
 REPORT_HTML = OUT_DIR / "comprehensive_modeling_report.html"
@@ -96,13 +98,31 @@ def esc(value):
     return html.escape(str(value))
 
 
+def normalize_config(config):
+    parts = []
+    for item in str(config).split(","):
+        if "=" not in item:
+            parts.append(item.strip())
+            continue
+        key, value = item.split("=", 1)
+        text = value.strip()
+        try:
+            number = float(text)
+            if math.isfinite(number):
+                text = f"{number:g}"
+        except ValueError:
+            pass
+        parts.append(f"{key.strip()}={text}")
+    return ",".join(parts)
+
+
 def best_key(row):
     return (
         row["target"],
         row["cohort"],
         row["feature_set"],
         row["model"],
-        row["config"],
+        normalize_config(row["config"]),
     )
 
 
@@ -443,10 +463,11 @@ def build_report():
     best_models = read_csv(BEST_MODELS_CSV)
     metrics_rows = read_csv(METRICS_SUMMARY_CSV)
     optimization_rows = read_csv(OPTIMIZATION_CSV)
-    prediction_rows = read_csv(PREDICTIONS_CSV)
+    prediction_rows = read_csv(BEST_PREDICTIONS_CSV) if BEST_PREDICTIONS_CSV.exists() else read_csv(PREDICTIONS_CSV)
     target_summary = read_csv(TARGET_SUMMARY_CSV)
     preprocessed_best = read_csv(PREPROCESSED_BEST_CSV) if PREPROCESSED_BEST_CSV.exists() else []
     dependency_summary = read_csv(DEPENDENCY_SUMMARY_CSV) if DEPENDENCY_SUMMARY_CSV.exists() else []
+    dependency_predictions = read_csv(DEPENDENCY_PREDICTIONS_CSV) if DEPENDENCY_PREDICTIONS_CSV.exists() else []
     parafac_summary = read_csv(PARAFAC_SUMMARY_CSV) if PARAFAC_SUMMARY_CSV.exists() else []
     baseline_best_path = BASELINE_OUT_DIR / "best_models.csv"
     baseline_best = read_csv(baseline_best_path) if OUT_DIR != BASELINE_OUT_DIR and baseline_best_path.exists() else []
@@ -459,9 +480,21 @@ def build_report():
         target: [row for row in best_predictions if row["target"] == target]
         for target in TARGET_LABELS
     }
+    dependency_best = []
+    for target in TARGET_LABELS:
+        rows = [row for row in dependency_summary if row.get("target") == target]
+        if rows:
+            dependency_best.append(min(rows, key=lambda row: fnum(row.get("mean_rmse"))))
+    dependency_best_keys = {best_key(row) for row in dependency_best}
+    dependency_best_predictions = [row for row in dependency_predictions if best_key(row) in dependency_best_keys]
+    dependency_predictions_by_target = {
+        target: [row for row in dependency_best_predictions if row["target"] == target]
+        for target in TARGET_LABELS
+    }
 
     scatter_sections = []
     residual_sections = []
+    dependency_scatter_sections = []
     top_model_sections = []
     for target in TARGET_LABELS:
         rows = predictions_by_target.get(target, [])
@@ -474,6 +507,17 @@ def build_report():
             residual_sections.append(
                 f'<section class="panel">{residual_svg(target, rows)}'
                 + caption("Residual diagnostic", f"{TARGET_LABELS[target]} residuals plotted against true concentration. Random scatter around zero is preferred.")
+                + "</section>"
+            )
+        dep_rows = dependency_predictions_by_target.get(target, [])
+        if dep_rows:
+            dep_model = next((row for row in dependency_best if row["target"] == target), {})
+            dependency_scatter_sections.append(
+                f'<section class="panel">{predicted_vs_true_svg(target, dep_rows)}'
+                + caption(
+                    "Dependency-backed predicted versus true concentrations",
+                    f"{TARGET_LABELS[target]} seed-0 predictions for {esc(dep_model.get('feature_set', ''))} / {esc(dep_model.get('model', ''))} ({esc(dep_model.get('config', ''))}).",
+                )
                 + "</section>"
             )
         top_model_sections.append(
@@ -549,6 +593,11 @@ def build_report():
         f"<td>{fnum(r['additional_improvement_vs_last_best_pct']):.1f}%</td>"
         f"<td>{esc(r.get('met_5pct_vs_last_best', ''))}</td><td>{esc(r['met_10pct_vs_last_best'])}</td></tr>"
         for r in preprocessed_best
+    )
+    dependency_best_rows = "\n".join(
+        f"<tr><td>{esc(TARGET_LABELS.get(r['target'], r['target']))}</td><td>{esc(r['feature_set'])}</td>"
+        f"<td>{esc(r['model'])}</td><td>{esc(r['config'])}</td><td>{fnum(r['mean_rmse']):.4f}</td><td>{fnum(r['mean_r2']):.3f}</td></tr>"
+        for r in sorted(dependency_best, key=lambda row: fnum(row.get("mean_rmse")))
     )
     dependency_rows = "\n".join(
         f"<tr><td>{esc(TARGET_LABELS.get(r['target'], r['target']))}</td><td>{esc(r['feature_set'])}</td>"
@@ -735,7 +784,9 @@ def build_report():
     {''.join(parafac_svgs)}
   </div>
 
-  {'<h2>Dependency-Backed Model Comparison</h2><section class="panel"><p>This section uses Conda base packages when installed: scikit-learn PLSR/SVR and XGBoost.</p><table><tr><th>Target</th><th>Feature set</th><th>Model</th><th>Config</th><th>RMSE</th><th>R2</th></tr>' + dependency_rows + '</table></section>' if dependency_rows else ''}
+  {'<h2>Dependency-Backed Model Comparison</h2><section class="panel"><p>This section uses Conda base packages when installed: scikit-learn PLSR/SVR and XGBoost. The first table shows the best dependency-backed result for each target, so the rhamnose fusion-full PLSR result is visible even when glucose rows appear first in the raw CSV.</p><h3>Best dependency-backed result per target</h3><table><tr><th>Target</th><th>Feature set</th><th>Model</th><th>Config</th><th>RMSE</th><th>R2</th></tr>' + dependency_best_rows + '</table><h3>Top dependency-backed rows by RMSE</h3><table><tr><th>Target</th><th>Feature set</th><th>Model</th><th>Config</th><th>RMSE</th><th>R2</th></tr>' + dependency_rows + '</table></section>' if dependency_rows else ''}
+
+  {'<h2>Dependency-Backed Predicted vs True Plots</h2><div class="grid">' + ''.join(dependency_scatter_sections) + '</div>' if dependency_scatter_sections else ''}
 
   <h2>Predicted vs True Scatter Plots</h2>
   <div class="grid">{''.join(scatter_sections)}</div>

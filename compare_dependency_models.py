@@ -9,6 +9,7 @@ import numpy as np
 from train_monosaccharide_softsensor import (
     FEATURES_DIR,
     FULL_CSV,
+    ID_COLUMNS,
     INTERPRETABLE_CSV,
     TARGETS,
     aggregate_metrics,
@@ -34,6 +35,7 @@ ROOT = Path(__file__).resolve().parent
 OUT_DIR = ROOT / os.environ.get("SUPERVISED_OUT_DIR", "supervised_monosaccharides")
 OUT_CSV = OUT_DIR / "dependency_model_comparison.csv"
 OUT_SUMMARY = OUT_DIR / "dependency_model_comparison_summary.csv"
+OUT_PREDICTIONS = OUT_DIR / "dependency_model_predictions_seed0.csv"
 OUT_HTML = OUT_DIR / "dependency_model_comparison.html"
 EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 
@@ -118,6 +120,7 @@ def run_dependency_models():
         ("fusion_full", full_rows, list(full_rows[0].keys())),
     ]
     all_metrics = []
+    all_predictions = []
     for feature_set, rows, fields in plans:
         cols = feature_columns(fields, feature_set)
         if not cols:
@@ -180,6 +183,24 @@ def run_dependency_models():
                             else float("nan"),
                         }
                     )
+                    if seed == 0:
+                        pred_arr = np.asarray(pred, dtype=float)
+                        for local_idx, row_idx in enumerate(test_idx):
+                            src = kept[row_idx]
+                            pred_row = {key: src.get(key, "") for key in ID_COLUMNS}
+                            pred_row.update(
+                                {
+                                    "target": target,
+                                    "cohort": "all_known",
+                                    "feature_set": feature_set,
+                                    "model": model_name,
+                                    "config": config,
+                                    "y_true": f"{float(y_test[local_idx]):.8g}",
+                                    "y_pred": f"{float(pred_arr[local_idx]):.8g}",
+                                    "residual": f"{float(y_test[local_idx] - pred_arr[local_idx]):.8g}",
+                                }
+                            )
+                            all_predictions.append(pred_row)
     if not all_metrics:
         raise RuntimeError("Dependency models were available but produced no metrics.")
     summary = aggregate_metrics(all_metrics)
@@ -189,6 +210,8 @@ def run_dependency_models():
         [{key: (f"{value:.8g}" if isinstance(value, float) else value) for key, value in row.items()} for row in summary],
         list(summary[0].keys()),
     )
+    if all_predictions:
+        write_csv(OUT_PREDICTIONS, all_predictions, list(all_predictions[0].keys()))
     rows = "".join(
         f"<tr><td>{r['target']}</td><td>{r['feature_set']}</td><td>{r['model']}</td><td>{r['config']}</td><td>{r['mean_rmse']:.4f}</td><td>{r['mean_r2']:.3f}</td></tr>"
         for r in sorted(summary, key=lambda row: row["mean_rmse"])[:30]
