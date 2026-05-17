@@ -1,5 +1,56 @@
 # SESSION_HANDOFF.md
 
+## Latest Task - 2026-05-17 Rhamnose-Only Model Comparison
+User requested a dedicated rhamnose-only folder comparing all models with different combined input strategies, including EEM, Raman, processed data, feature data, statistical models, ML, DL-style models, clear pipeline, visualisations, explanations, analysis, and academic reports.
+
+Completed:
+- Added `rhamnose_only_model_comparison.py`.
+- Generated `rhamnose_model_comparison/`.
+- Compared 12 input strategies:
+  - EEM interpretable
+  - Raman interpretable
+  - EEM + Raman interpretable
+  - EEM unfolded full
+  - Raman full
+  - EEM + Raman full
+  - Processed Raman
+  - EEM PARAFAC scores
+  - Processed Raman + PARAFAC
+  - EEM interpretable + PARAFAC
+  - EEM full + processed Raman
+  - EEM full + PARAFAC
+- Compared statistical, chemometric, ML, XGBoost, and ANN/MLP model families using grouped train/test splits.
+- Generated:
+  - `rhamnose_model_comparison/rhamnose_model_metrics_by_split.csv`
+  - `rhamnose_model_comparison/rhamnose_model_metrics_summary.csv`
+  - `rhamnose_model_comparison/rhamnose_model_predictions_split0.csv`
+  - `rhamnose_model_comparison/figures/`
+  - `rhamnose_model_comparison/rhamnose_model_comparison_report.html`
+  - `rhamnose_model_comparison/rhamnose_model_comparison_report.docx`
+  - `rhamnose_model_comparison/README.md`
+
+Best result:
+- Feature strategy: `EEM full + PARAFAC`
+- Model: `Random forest`
+- Config: `n=250,max_depth=4`
+- Mean grouped-CV RMSE: `0.3438` g/L
+- Mean grouped-CV R2: `0.193`
+
+Validation:
+- HTML report parsed successfully: size `896280` bytes.
+- DOCX parsed successfully with 6 embedded figures.
+- Conda base command used for all Python runs.
+
+Exact command to rerun:
+```powershell
+conda run -n base python rhamnose_only_model_comparison.py
+```
+
+Important caveat:
+The rhamnose-only comparison still uses standards/known spike labels and excludes `Rha (5)` examples. It is not final culture-sample biological validation until quantitative HPLC culture concentrations are merged.
+
+---
+
 ## Latest Task - 2026-05-17 Report Correction
 User asked why the filtered report did not show the best dependency-backed rhamnose result and why Figure 3 had no rhamnose points.
 

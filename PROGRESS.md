@@ -77,6 +77,17 @@ Fixed two filtered-report issues:
 - The dependency-backed rhamnose result was present in `dependency_model_comparison_summary.csv` but hidden in the HTML/DOCX because the report only displayed the first globally sliced dependency rows. Reports now include a best-dependency-result-per-target table, showing rhamnose `fusion_full / sklearn_plsr / n_components=5,max_features=192` with RMSE 0.3598.
 - Figure 3 had no rhamnose points because the filtered best pure-NumPy model was ridge, while `example_predictions_seed0.csv` only stored seed-0 predictions for kNN/KRR candidates. Added `export_best_model_predictions.py` to export compact seed-0 predictions for the selected best models. The refreshed filtered report now plots 37 rhamnose points, 35 xylose points, and 17 glucose points.
 
+## Rhamnose-only academic comparison
+Created `rhamnose_model_comparison/` for a focused rhamnose-only comparison across input strategies and model families. The workflow excludes `Rha (5)` examples and compares EEM, Raman, processed Raman, EEM PARAFAC, and fusion inputs using grouped splits.
+
+Best result from the new comparison:
+
+| Feature strategy | Model family | Model | Mean RMSE | Mean R2 |
+|---|---|---|---:|---:|
+| EEM full + PARAFAC | ML | Random forest, 250 trees, max depth 4 | 0.3438 | 0.193 |
+
+This improves on the previous visible rhamnose dependency-backed result of 0.3598 RMSE from `fusion_full / sklearn_plsr / n_components=5`. The result should still be treated as standards/spikes calibration evidence until quantitative culture-sample HPLC targets are merged.
+
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
 - `eem_raman_hplc_inventory_enriched.csv`: master enriched inventory used as the central join table.
@@ -106,6 +117,8 @@ Fixed two filtered-report issues:
 - `train_preprocessed_models.py`: compact model comparison for Raman-preprocessed, EEM-PARAFAC, and fused feature sets versus the last best models.
 - `compare_dependency_models.py`: optional dependency-backed model comparison runner for scikit-learn PLSR/SVR and XGBoost.
 - `export_best_model_predictions.py`: compact seed-0 prediction exporter for the selected best pure-NumPy models, used by reports to avoid empty scatter panels when the best model is ridge/PCR/PLS.
+- `rhamnose_only_model_comparison.py`: rhamnose-only academic comparison runner for EEM, Raman, processed, PARAFAC, and fusion inputs across statistical, chemometric, ML, XGBoost, and ANN/MLP models.
+- `rhamnose_model_comparison/`: rhamnose-only comparison folder containing metrics, predictions, figures, HTML report, DOCX report, and README.
 - `rhamnose_ml/scripts/train_baseline.py`: starter baseline training entry point for supervised Rhamnose prediction.
 - `rhamnose_ml/src/rhamnose_ml/train.py`: baseline training pipeline using PLS with grouped train/test splitting.
 

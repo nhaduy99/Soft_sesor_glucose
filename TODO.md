@@ -32,6 +32,7 @@
   - rerun rank selection after quantitative HPLC culture targets are merged
 
 ## Reporting
+- Review `rhamnose_model_comparison/rhamnose_model_comparison_report.html` and `rhamnose_model_comparison/rhamnose_model_comparison_report.docx` as the focused academic rhamnose-only model comparison.
 - Review the refreshed filtered HTML report after the Nature-style visualization update: `supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html`.
 - Review the refreshed filtered Word report after the beginner explanations and detailed pipeline diagrams were added: `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx`.
 - Review `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx` in Word and refine wording/figures for the intended audience if it will be used as a thesis or publication appendix.
@@ -44,3 +45,4 @@
 - Add explicit scientific interpretation notes for the most influential Raman and EEM features from supervised loadings and selected kNN features.
 - Extend `supervised_monosaccharides/comprehensive_modeling_report.html` after culture-target training so it separates standards, spikes, and true culture samples.
 - Add external reference assignments for Raman bands if a publication-ready spectral interpretation section is required.
+- For the rhamnose-only comparison, add final publication discussion after culture-sample HPLC targets are available; current results remain standards/spikes calibration evidence.
