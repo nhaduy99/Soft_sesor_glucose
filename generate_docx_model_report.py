@@ -34,9 +34,9 @@ TARGET_LABELS = {
     "glucose_gL": "Glucose",
 }
 COLORS = {
-    "rhamnose_gL": "#2f7d7e",
-    "xylose_gL": "#7a4e9f",
-    "glucose_gL": "#b5651d",
+    "rhamnose_gL": "#0072B2",
+    "xylose_gL": "#009E73",
+    "glucose_gL": "#D55E00",
 }
 
 
@@ -87,14 +87,16 @@ def svg_wrap(width, height, body):
 
 def pipeline_svg():
     boxes = [
-        (30, 60, 160, 72, "#e7f4f4", "Raw EEM", "15 x 19 matrices"),
-        (30, 180, 160, 72, "#f0e9f7", "Raw Raman", "500-2000 cm-1"),
-        (250, 60, 185, 72, "#eef5ff", "EEM cleaning", "OVER + scatter mask"),
-        (250, 180, 185, 72, "#fff6e8", "Raman preprocessing", "ALS + SG + SNV"),
-        (500, 60, 185, 72, "#eef5ff", "PARAFAC / unfolded", "EEM scores or cells"),
-        (500, 180, 185, 72, "#fff6e8", "Raman features", "windows or spectrum"),
-        (750, 120, 170, 80, "#f7f7f7", "Model search", "PLS, kNN, KRR"),
-        (980, 120, 190, 80, "#eaf7ef", "Soft-sensor output", "Rha, Xyl, Glu g/L"),
+        (30, 55, 160, 72, "#EAF3F8", "Raw EEM", "fluorescence maps"),
+        (30, 185, 160, 72, "#F8F1E7", "Raw Raman", "500-2000 cm-1"),
+        (240, 55, 190, 72, "#FFFFFF", "EEM cleaning", "OVER + scatter mask"),
+        (240, 185, 190, 72, "#FFFFFF", "Raman preprocessing", "spikes, ALS, SG, SNV"),
+        (480, 25, 190, 72, "#EAF3F8", "Unfolded EEM", "matrix cells"),
+        (480, 110, 190, 72, "#EAF3F8", "PARAFAC scores", "component features"),
+        (480, 215, 190, 72, "#F8F1E7", "Raman features", "windows + spectrum"),
+        (730, 85, 170, 72, "#F3F4F6", "Fusion table", "plate/well join"),
+        (730, 200, 170, 72, "#F3F4F6", "Model comparison", "PLSR, SVR, XGB"),
+        (960, 142, 185, 82, "#EAF7EF", "Predictions", "Rha, Xyl, Glu g/L"),
     ]
     body = ['<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#44546a"/></marker></defs>']
     for x, y, w, h, fill, title, subtitle in boxes:
@@ -102,12 +104,14 @@ def pipeline_svg():
         body.append(f'<text x="{x+w/2}" y="{y+30}" text-anchor="middle" font-size="16" font-weight="700" fill="#17202a">{html.escape(title)}</text>')
         body.append(f'<text x="{x+w/2}" y="{y+54}" text-anchor="middle" font-size="12" fill="#34495e">{html.escape(subtitle)}</text>')
     lines = [
-        (190, 96, 250, 96), (190, 216, 250, 216), (435, 96, 500, 96), (435, 216, 500, 216),
-        (685, 96, 750, 150), (685, 216, 750, 170), (920, 160, 980, 160)
+        (190, 91, 240, 91), (190, 221, 240, 221), (430, 91, 480, 61), (430, 91, 480, 146),
+        (430, 221, 480, 251), (670, 61, 730, 121), (670, 146, 730, 121), (670, 251, 730, 236),
+        (900, 121, 960, 172), (900, 236, 960, 193)
     ]
     for x1, y1, x2, y2 in lines:
         body.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#44546a" stroke-width="2.2" marker-end="url(#arrow)"/>')
-    return svg_wrap(1200, 320, "\n".join(body))
+    body.append('<text x="590" y="304" text-anchor="middle" font-size="12">Raman is the direct sugar signal; EEM and PARAFAC describe fluorescence/process-state structure.</text>')
+    return svg_wrap(1200, 330, "\n".join(body))
 
 
 def result_bars_svg(best_rows, pre_rows):
@@ -225,6 +229,9 @@ class DocxWriter:
 
     def add_page_break(self):
         self.body.append('<w:p><w:r><w:br w:type="page"/></w:r></w:p>')
+
+    def add_caption(self, text):
+        self.add_paragraph(text, italic=True)
 
     def add_table(self, rows):
         cells = []
@@ -355,6 +362,7 @@ def build_report():
         "This filtered report tests how sensitive the soft-sensor calibration is to removing the high-concentration Rha (5) examples. The comparison is important biologically because high-concentration standards can dominate regression structure and may make performance appear stronger than it would be in lower-concentration or culture-like regimes."
     )
     doc.add_svg("pipeline_overview", pipeline_svg(), 7.2, 1.9)
+    doc.add_caption("Figure 1. Detailed soft-sensor pipeline. Raman spectra provide direct carbohydrate information; EEM/PARAFAC features capture fluorescence and process-state information.")
     doc.add_page_break()
 
     doc.add_heading("2. Data Context and Biological Interpretation", 1)
@@ -370,6 +378,9 @@ def build_report():
     doc.add_heading("3. Processing and Feature Engineering Pipeline", 1)
     doc.add_paragraph(
         "The pipeline starts with raw EEM matrices and Raman spectra copied into the repository. The inventory builder joins raw files with metadata workbooks and treatment legends. Feature export then creates compact interpretable features and high-dimensional spectral matrices. Recent preprocessing additions make the Raman branch more chemically defensible and the EEM branch more suitable for component interpretation."
+    )
+    doc.add_paragraph(
+        "For a newcomer: the SciPy Raman path uses established scientific routines. ALS estimates and removes a smooth background; Savitzky-Golay smoothing reduces noise while preserving peak shape; SNV rescales each spectrum so models compare spectral shape rather than brightness."
     )
     doc.add_table([
         ["Feature group", "Input", "Processing", "Model output role"],
@@ -408,10 +419,12 @@ def build_report():
         doc.add_table(compare)
         doc.add_paragraph("Positive RMSE change means the filtered run improved relative to the previous report; negative means the filtered run worsened.")
     doc.add_svg("rmse_bars", result_bars_svg(best_rows, pre_rows), 7.0, 3.0)
+    doc.add_caption("Figure 2. RMSE comparison. The y-axis is RMSE in g/L, so lower bars indicate better concentration prediction.")
     doc.add_paragraph(
         "The current project-level best models are not identical across targets, which is biologically plausible. Rhamnose benefits most from Raman + EEM full fusion, suggesting that direct Raman sugar information and EEM matrix-state information are both useful. Xylose is best with full EEM features and Laplacian kernel ridge regression, possibly reflecting strong covariance with fluorescence/process-state patterns in the standards/spikes. Glucose is best in the original search with compact EEM interpretable features, but the later preprocessed Raman kernel-ridge model improves glucose RMSE to 0.5094 g/L."
     )
     doc.add_svg("scatter_best", scatter_svg(preds), 7.2, 2.5)
+    doc.add_caption("Figure 3. Predicted versus true concentrations. Points close to the diagonal indicate better agreement between model prediction and known standard/spike concentration.")
     if dependency_rows:
         top_dependency = sorted(dependency_rows, key=lambda row: fnum(row.get("mean_rmse")))[:12]
         doc.add_heading("Dependency-Backed Model Comparison", 2)
@@ -441,6 +454,7 @@ def build_report():
         *[[TARGET_LABELS[r["target"]], r["feature_set"], r["model"], f"{fnum(r['mean_rmse']):.4f}", f"{fnum(r['last_best_rmse']):.4f}", f"{fnum(r['additional_improvement_vs_last_best_pct']):.1f}%", r["met_5pct_vs_last_best"]] for r in pre_rows],
     ])
     doc.add_svg("improvement_extension", improvement_svg(pre_rows), 6.8, 2.7)
+    doc.add_caption("Figure 4. Additional improvement from preprocessing and PARAFAC features relative to the current baseline. Positive values indicate lower RMSE.")
     doc.add_table([
         ["Rank", "Reconstruction error", "Split-half stability", "Prediction RMSE mean", "Selected"],
         *[[r["rank"], r["reconstruction_error"], r["split_half_stability"], r["prediction_rmse_mean"], r["selected_rank"]] for r in parafac_rows],
@@ -460,6 +474,7 @@ def build_report():
     for src, name in parafac_figures:
         if src.exists():
             doc.add_svg(name, src.read_text(encoding="utf-8"), 5.9, 3.1)
+            doc.add_caption(f"PARAFAC visualisation: {src.stem}. Excitation and emission plots show wavelength loadings; component maps show the fluorescence pattern represented by one component.")
     doc.add_page_break()
 
     doc.add_heading("7. Strengths of the Current Method", 1)

@@ -29,10 +29,12 @@ TARGET_LABELS = {
 }
 
 COLORS = {
-    "rhamnose_gL": "#2f7d7e",
-    "xylose_gL": "#7a4e9f",
-    "glucose_gL": "#b5651d",
+    "rhamnose_gL": "#0072B2",
+    "xylose_gL": "#009E73",
+    "glucose_gL": "#D55E00",
 }
+INK = "#111111"
+GRID = "#E5E7EB"
 
 
 def read_csv(path):
@@ -129,14 +131,60 @@ def nice_bounds(values, include_zero=False):
 
 
 def axis_svg(x, y, w, h, x_label, y_label, title):
+    ticks = []
+    for frac in (0, 0.25, 0.5, 0.75, 1.0):
+        tx = x + frac * w
+        ty = y + frac * h
+        ticks.append(f'<line x1="{tx:.1f}" y1="{y+h}" x2="{tx:.1f}" y2="{y+h+5}" stroke="{INK}" stroke-width="1"/>')
+        ticks.append(f'<line x1="{x-5}" y1="{ty:.1f}" x2="{x}" y2="{ty:.1f}" stroke="{INK}" stroke-width="1"/>')
+        if frac not in (0, 1):
+            ticks.append(f'<line x1="{tx:.1f}" y1="{y}" x2="{tx:.1f}" y2="{y+h}" stroke="{GRID}" stroke-width="0.8"/>')
+            ticks.append(f'<line x1="{x}" y1="{ty:.1f}" x2="{x+w}" y2="{ty:.1f}" stroke="{GRID}" stroke-width="0.8"/>')
     return f"""
-    <rect x="{x}" y="{y}" width="{w}" height="{h}" fill="#fff" stroke="#d6dde5"/>
-    <line x1="{x}" y1="{y+h}" x2="{x+w}" y2="{y+h}" stroke="#17202a"/>
-    <line x1="{x}" y1="{y}" x2="{x}" y2="{y+h}" stroke="#17202a"/>
-    <text x="{x+w/2}" y="{y+h+42}" text-anchor="middle" font-size="14">{esc(x_label)}</text>
-    <text x="{x-48}" y="{y+h/2}" text-anchor="middle" font-size="14" transform="rotate(-90 {x-48} {y+h/2})">{esc(y_label)}</text>
-    <text x="{x+w/2}" y="28" text-anchor="middle" font-size="18" font-weight="700">{esc(title)}</text>
+    <rect x="{x}" y="{y}" width="{w}" height="{h}" fill="#fff"/>
+    {''.join(ticks)}
+    <line x1="{x}" y1="{y+h}" x2="{x+w}" y2="{y+h}" stroke="{INK}" stroke-width="1.6"/>
+    <line x1="{x}" y1="{y}" x2="{x}" y2="{y+h}" stroke="{INK}" stroke-width="1.6"/>
+    <text x="{x+w/2}" y="{y+h+42}" text-anchor="middle" font-size="13">{esc(x_label)}</text>
+    <text x="{x-48}" y="{y+h/2}" text-anchor="middle" font-size="13" transform="rotate(-90 {x-48} {y+h/2})">{esc(y_label)}</text>
+    <text x="{x+w/2}" y="28" text-anchor="middle" font-size="17" font-weight="700">{esc(title)}</text>
     """
+
+
+def caption(label, text):
+    return f'<p class="figcap"><strong>{esc(label)}.</strong> {esc(text)}</p>'
+
+
+def pipeline_diagram_svg():
+    width, height = 1180, 470
+    body = ["""
+    <defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#333"/></marker></defs>
+    <text x="590" y="28" text-anchor="middle" font-size="18" font-weight="700">End-to-end soft-sensor modelling workflow</text>
+    """]
+    boxes = [
+        (30, 70, 170, 82, "#EAF3F8", "Raw EEM", "Excitation-emission matrices"),
+        (30, 260, 170, 82, "#F8F1E7", "Raw Raman", "Spectra, 500-2000 cm-1"),
+        (245, 70, 205, 82, "#F7F7F7", "EEM cleaning", "OVER + scatter mask"),
+        (245, 260, 205, 82, "#F7F7F7", "Raman preprocessing", "spikes, ALS, SG, SNV"),
+        (500, 38, 205, 82, "#EAF3F8", "Unfolded EEM", "all matrix cells"),
+        (500, 140, 205, 82, "#EAF3F8", "PARAFAC scores", "interpretable components"),
+        (500, 260, 205, 82, "#F8F1E7", "Raman features", "windows + full spectrum"),
+        (755, 105, 180, 82, "#F3F4F6", "Fusion table", "join by plate/well"),
+        (755, 260, 180, 82, "#F3F4F6", "Model comparison", "PLSR, SVR, XGB, kNN"),
+        (985, 175, 165, 92, "#EAF7EF", "Predictions", "Rha, Xyl, Glu g/L"),
+    ]
+    for x, y, w, h, fill, title, sub in boxes:
+        body.append(f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="4" fill="{fill}" stroke="#333" stroke-width="1.1"/>')
+        body.append(f'<text x="{x+w/2}" y="{y+32}" text-anchor="middle" font-size="14" font-weight="700">{esc(title)}</text>')
+        body.append(f'<text x="{x+w/2}" y="{y+58}" text-anchor="middle" font-size="11">{esc(sub)}</text>')
+    for x1, y1, x2, y2 in [
+        (200,111,245,111), (200,301,245,301), (450,111,500,79), (450,111,500,181),
+        (450,301,500,301), (705,79,755,146), (705,181,755,146), (705,301,755,301),
+        (935,146,985,210), (935,301,985,232)
+    ]:
+        body.append(f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#333" stroke-width="1.4" marker-end="url(#arrow)"/>')
+    body.append('<text x="590" y="425" text-anchor="middle" font-size="12">Raman provides direct carbohydrate signal; EEM/PARAFAC provides indirect fluorescence and process-state information.</text>')
+    return f'<svg viewBox="0 0 {width} {height}" role="img" aria-label="Detailed modelling pipeline">{"".join(body)}</svg>'
 
 
 def predicted_vs_true_svg(target, rows):
@@ -229,6 +277,11 @@ def bar_chart_svg(rows, value_key, title, y_label, percent=False):
         bars.append(f'<rect x="{x:.1f}" y="{min(y, zero_y):.1f}" width="{bw:.1f}" height="{h:.1f}" fill="{COLORS[target]}" opacity="0.82"/>')
         bars.append(f'<text x="{x+bw/2:.1f}" y="{py+ph+24}" text-anchor="middle" font-size="12">{esc(label)}</text>')
         bars.append(f'<text x="{x+bw/2:.1f}" y="{min(y, zero_y)-8:.1f}" text-anchor="middle" font-size="12">{val:.2f}{suffix}</text>')
+    for frac in (0, 0.25, 0.5, 0.75, 1.0):
+        val = lo + frac * (hi - lo)
+        ty = scale(val, lo, hi, py + ph, py)
+        bars.append(f'<line x1="{px-5}" y1="{ty:.1f}" x2="{px}" y2="{ty:.1f}" stroke="{INK}" stroke-width="1"/>')
+        bars.append(f'<text x="{px-10}" y="{ty+4:.1f}" text-anchor="end" font-size="11">{val:.1f}{"%" if percent else ""}</text>')
     svg = f"""<svg viewBox="0 0 {width} {height}" role="img" aria-label="{esc(title)} bar chart">
     {axis_svg(px, py, pw, ph, "", y_label, title)}
     <line x1="{px}" y1="{zero_y:.1f}" x2="{px+pw}" y2="{zero_y:.1f}" stroke="#44546a" stroke-width="1.5"/>
@@ -413,8 +466,16 @@ def build_report():
     for target in TARGET_LABELS:
         rows = predictions_by_target.get(target, [])
         if rows:
-            scatter_sections.append(f'<section class="panel">{predicted_vs_true_svg(target, rows)}</section>')
-            residual_sections.append(f'<section class="panel">{residual_svg(target, rows)}</section>')
+            scatter_sections.append(
+                f'<section class="panel">{predicted_vs_true_svg(target, rows)}'
+                + caption("Predicted versus true concentrations", f"{TARGET_LABELS[target]} model predictions on the held-out grouped split. Points near the diagonal indicate better agreement.")
+                + "</section>"
+            )
+            residual_sections.append(
+                f'<section class="panel">{residual_svg(target, rows)}'
+                + caption("Residual diagnostic", f"{TARGET_LABELS[target]} residuals plotted against true concentration. Random scatter around zero is preferred.")
+                + "</section>"
+            )
         top_model_sections.append(
             f"""
             <section class="panel">
@@ -545,7 +606,7 @@ def build_report():
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Comprehensive Monosaccharide Soft-Sensor Modelling Report</title>
   <style>
-    body {{ margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f6f8fb; color: #17202a; line-height: 1.5; }}
+    body {{ margin: 0; font-family: Arial, Helvetica, sans-serif; background: #f7f7f7; color: #111; line-height: 1.5; }}
     main {{ max-width: 1220px; margin: 0 auto; padding: 28px 22px 48px; }}
     h1 {{ margin: 0 0 8px; font-size: 30px; }}
     h2 {{ margin: 34px 0 12px; font-size: 22px; }}
@@ -553,12 +614,13 @@ def build_report():
     .muted {{ color: #5d6d7e; }}
     .grid {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }}
     .grid3 {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }}
-    .panel {{ background: #fff; border: 1px solid #d6dde5; border-radius: 8px; padding: 16px; margin: 14px 0; overflow-x: auto; }}
-    .callout {{ border-left: 4px solid #2d5f9a; background: #eef5ff; padding: 12px 14px; margin: 14px 0; }}
-    .warn {{ border-left-color: #a85d00; background: #fff6e8; }}
+    .panel {{ background: #fff; border: 1px solid #d9d9d9; border-radius: 4px; padding: 16px; margin: 14px 0; overflow-x: auto; }}
+    .callout {{ border-left: 4px solid #333; background: #f0f4f7; padding: 12px 14px; margin: 14px 0; }}
+    .warn {{ border-left-color: #777; background: #f8f8f8; }}
+    .figcap {{ margin: 8px 0 0; color: #333; font-size: 13px; }}
     table {{ border-collapse: collapse; width: 100%; background: #fff; font-size: 14px; }}
-    th, td {{ border: 1px solid #d6dde5; padding: 8px 9px; text-align: left; vertical-align: top; }}
-    th {{ background: #eef3f8; }}
+    th, td {{ border: 1px solid #d9d9d9; padding: 8px 9px; text-align: left; vertical-align: top; }}
+    th {{ background: #efefef; }}
     code {{ background: #eef3f8; border-radius: 4px; padding: 1px 4px; }}
     svg {{ width: 100%; height: auto; }}
     ol, ul {{ margin-top: 6px; }}
@@ -575,6 +637,10 @@ def build_report():
   </section>
 
   <h2>Pipeline Summary</h2>
+  <section class="panel">
+    {pipeline_diagram_svg()}
+    {caption("Pipeline diagram", "Detailed flow of the current soft-sensor analysis. The filtered report excludes Rha (5) samples before model fitting; PARAFAC is fitted only on the filtered EEM cube.")}
+  </section>
   <div class="grid3">
     <section class="panel"><h3>1. Raw inputs</h3><p>EEM CSV matrices, Raman spectra, data-description workbooks, and plate/well metadata.</p></section>
     <section class="panel"><h3>2. Inventory</h3><p>Files are joined by filename structure, experiment, plate, well, modality, and legend labels.</p></section>
@@ -586,10 +652,14 @@ def build_report():
 
   <h2>Processed Spectroscopy Signal Examples</h2>
   <section class="callout">
+    <strong>Newcomer explanation:</strong> The SciPy Raman path means the same chemistry steps are now performed using tested scientific routines where available. ALS estimates a smooth background curve and subtracts it; Savitzky-Golay smooths the spectrum while preserving peak shape; SNV rescales each spectrum so models focus on shape rather than absolute brightness.
+  </section>
+  <section class="callout">
     <strong>How to read these images:</strong> Raman spectra are cropped to 500-2000 cm-1 because the data description says this is the useful measured range. EEM matrices show fluorescence intensity after marking saturated <code>OVER</code> cells and near-diagonal scatter/invalid regions. These examples are standards or known mixtures, so their labels provide the calibration meaning for the model.
   </section>
   <section class="panel">
     {raman_example_svg}
+    {caption("Raman spectra", "Representative Raman spectra over the modelled 500-2000 cm-1 range. The x-axis is Raman shift and the y-axis is intensity; annotated windows mark carbohydrate-sensitive regions.")}
     <p><strong>Raman analysis.</strong> The overlaid standards show why Raman is the direct-signal modality for monosaccharides. The annotated regions correspond to carbohydrate-sensitive windows used in the interpretable feature export: lower-wavenumber ring/C-C/C-O regions, the 900 cm-1 sugar-ring region, and mid-range C-O-C/CH bands. Differences between pure sugars and master mix are not a single isolated peak; the model uses relative intensity patterns across windows and full-spectrum features.</p>
   </section>
   <div class="grid">
@@ -598,6 +668,9 @@ def build_report():
   <section class="panel">
     <h3>EEM image analysis</h3>
     <p>The EEM heatmaps show the processed 15 x 19 excitation-emission matrices used by the EEM feature sets. Dark cells are detector saturation (<code>OVER</code>) and grey cells are excluded scatter/invalid regions. Because rhamnose, xylose, and glucose are weakly fluorescent, the EEM signal is best interpreted as an indirect matrix/process-state signature rather than a direct monosaccharide peak. This explains why EEM-only models can help for xylose and glucose in the current standard/spike set, while rhamnose benefits from Raman+EEM fusion.</p>
+  </section>
+  <section class="callout">
+    <strong>Newcomer explanation:</strong> PARAFAC is a way to separate a stack of EEM heatmaps into a small number of reusable fluorescence patterns. Each component has an excitation loading, an emission loading, and a sample score. The score is then used like a compact feature for regression.
   </section>
 
   <h2>Target Coverage</h2>
@@ -628,9 +701,9 @@ def build_report():
 
   <h2>Metric Plots</h2>
   <div class="grid">
-    <section class="panel">{rmse_svg}</section>
-    <section class="panel">{improvement_svg}</section>
-    <section class="panel">{extra_improvement_svg}</section>
+    <section class="panel">{rmse_svg}{caption("Best-model RMSE", "Root mean squared error in g/L for each target. Lower values indicate smaller prediction error.")}</section>
+    <section class="panel">{improvement_svg}{caption("Improvement versus baseline", "Percentage RMSE reduction relative to the initial baseline model.")}</section>
+    <section class="panel">{extra_improvement_svg}{caption("Additional improvement", "Additional percentage RMSE reduction relative to the previous best model.")}</section>
   </div>
 
   <h2>Optimization Summary</h2>
@@ -644,6 +717,7 @@ def build_report():
   <h2>Raman Preprocessing and EEM PARAFAC Extensions</h2>
   <section class="panel">
     <p>The latest extension adds Raman preprocessing configurations with cosmic-spike removal, asymmetric least-squares baseline correction, Savitzky-Golay smoothing or derivatives, SNV normalization, and optional area normalization. Every result row stores a <code>preprocessing_config</code>. EEM PARAFAC scores were exported after rank selection using reconstruction error, split-half stability, and prediction performance.</p>
+    <p>Plain-language interpretation: Raman preprocessing cleans the direct sugar spectrum before modelling. EEM PARAFAC compresses each fluorescence heatmap into component scores so the model can use interpretable fluorescence patterns instead of hundreds of raw cells.</p>
     <table>
       <tr><th>Target</th><th>Best new feature set</th><th>Preprocessing config</th><th>Model config</th><th>New RMSE</th><th>Last best RMSE</th><th>Improvement</th><th>Met 5%</th><th>Met 10%</th></tr>
       {preprocessed_rows}
@@ -655,7 +729,7 @@ def build_report():
       <tr><th>Rank</th><th>Reconstruction error</th><th>Split-half stability</th><th>Prediction RMSE mean</th><th>Selected</th></tr>
       {parafac_rows}
     </table>
-    <p>Rank 2 was selected in the current dependency-light PARAFAC run. The PARAFAC score models did not improve rhamnose or xylose over the last best models, but they provide interpretable excitation/emission component structure for later refinement.</p>
+    <p>The selected rank is the number of fluorescence components retained. With TensorLy available in Conda base, the filtered run selected rank 6. PARAFAC is primarily used here for interpretation; it did not beat the best filtered predictive models.</p>
   </section>
   <div class="grid">
     {''.join(parafac_svgs)}
@@ -683,8 +757,8 @@ def build_report():
   <section class="panel">
     <ol>
       <li>Merge quantitative HPLC monosaccharide targets for culture samples.</li>
-      <li>Refine the already-added Raman baseline correction, EEM scatter-region masking, and PARAFAC score features using stronger scientific Python dependencies if available.</li>
-      <li>Compare this pure-NumPy search with scikit-learn PLSR/SVR and XGBoost if dependencies are installed later.</li>
+      <li>Merge quantitative HPLC culture-target concentrations; this is still the main blocker for biological validation.</li>
+      <li>Review dependency-backed PLSR/SVR/XGBoost results target by target before replacing the current filtered baselines.</li>
     </ol>
   </section>
 </main>

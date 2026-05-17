@@ -64,6 +64,14 @@ After enabling TensorLy in Conda base, filtered PARAFAC selected rank 6 using `t
 
 Dependency-backed filtered comparison now runs scikit-learn PLSR/SVR and XGBoost. Best result found so far is rhamnose fusion-full PLSR with 5 components: RMSE 0.3598, improving over the filtered pure-NumPy best rhamnose RMSE of 0.4136. Xylose/glucose dependency-backed results still need target-specific review before replacing the current filtered main baselines.
 
+## Latest report visualization update
+The filtered HTML and DOCX reports were regenerated with beginner-facing explanations and clearer scientific figures:
+- Added a detailed pipeline diagram covering raw EEM/Raman inputs, preprocessing, feature export, fusion, model comparison, and prediction outputs.
+- Added plain-language explanations of the SciPy Raman preprocessing path: cosmic-spike removal, asymmetric least-squares baseline correction, Savitzky-Golay smoothing/derivatives, SNV, and optional area normalization.
+- Added a newbie explanation of EEM PARAFAC as decomposition of the EEM cube into sample scores, excitation loadings, and emission loadings.
+- Restyled SVG plots toward a restrained Nature-style presentation: white/neutral panels, clear left/bottom axes, light gridlines, target-specific color palette, explicit x/y labels, and figure captions.
+- Regenerated filtered PARAFAC rank-6 excitation/emission loading plots and component maps with axis labels and notes explaining component intensity.
+
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
 - `eem_raman_hplc_inventory_enriched.csv`: master enriched inventory used as the central join table.
@@ -97,7 +105,7 @@ Dependency-backed filtered comparison now runs scikit-learn PLSR/SVR and XGBoost
 
 ## Current blockers / bugs
 - No quantitative HPLC monosaccharide target file is currently available for culture-sample supervised training.
-- `scikit-learn`, `pandas`, and `matplotlib` are not installed in the current environment, so advanced analysis was implemented with lower-level tooling.
+- Conda base now imports SciPy, scikit-learn, XGBoost, TensorLy, pandas, and matplotlib using `conda run -n base python`.
 - Some directory listings in PowerShell returned stale snapshots; direct file existence checks were used as fallback validation.
 
 ## Next recommended steps

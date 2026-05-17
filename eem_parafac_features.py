@@ -277,7 +277,7 @@ def svg_polyline(xs, ys, color):
 
 
 def write_loading_plots(rank, model, excitation, emission):
-    colors = ["#2f7d7e", "#7a4e9f", "#b5651d", "#2d5f9a", "#6b7280", "#11845b", "#a43f5f", "#7c5c00"]
+    colors = ["#0072B2", "#009E73", "#D55E00", "#CC79A7", "#56B4E9", "#E69F00", "#000000", "#7F7F7F"]
     for mode, wavelengths, loadings in (
         ("excitation", excitation, model["excitation"]),
         ("emission", emission, model["emission"]),
@@ -288,14 +288,22 @@ def write_loading_plots(rank, model, excitation, emission):
             color = colors[r % len(colors)]
             lines.append(svg_polyline(wavelengths, loadings[:, r], color))
             legend.append(f'<text x="520" y="{62 + r * 18}" font-size="12" fill="{color}">Component {r+1}</text>')
-        svg = f"""<svg viewBox="0 0 680 330" xmlns="http://www.w3.org/2000/svg">
+        tick_labels = []
+        for frac in (0, 0.5, 1):
+            x_pos = 70 + frac * 420
+            wav = float(wavelengths[0] + frac * (wavelengths[-1] - wavelengths[0]))
+            tick_labels.append(f'<line x1="{x_pos:.1f}" y1="260" x2="{x_pos:.1f}" y2="266" stroke="#111"/><text x="{x_pos:.1f}" y="282" text-anchor="middle" font-size="11">{wav:.0f}</text>')
+        svg = f"""<svg viewBox="0 0 680 350" xmlns="http://www.w3.org/2000/svg">
 <rect x="0" y="0" width="680" height="330" fill="#fff"/>
 <text x="340" y="28" text-anchor="middle" font-size="18" font-weight="700">PARAFAC rank {rank}: {mode} loadings</text>
-<rect x="70" y="50" width="420" height="210" fill="#fff" stroke="#17202a"/>
+<line x1="70" y1="260" x2="490" y2="260" stroke="#111" stroke-width="1.5"/>
+<line x1="70" y1="50" x2="70" y2="260" stroke="#111" stroke-width="1.5"/>
 {''.join(lines)}
+{''.join(tick_labels)}
 {''.join(legend)}
 <text x="280" y="302" text-anchor="middle" font-size="13">Wavelength (nm)</text>
 <text x="26" y="160" text-anchor="middle" transform="rotate(-90 26 160)" font-size="13">Loading</text>
+<text x="70" y="335" font-size="11" fill="#333">Figure: component loadings; larger values indicate stronger contribution at that wavelength.</text>
 </svg>"""
         (OUT_DIR / f"rank{rank}_{mode}_loadings.svg").write_text(svg, encoding="utf-8")
 
@@ -312,13 +320,24 @@ def write_component_maps(rank, model, excitation, emission):
                 green = int(248 - 110 * t)
                 blue = int(251 - 10 * t)
                 cells.append(f'<rect x="{72+j*20}" y="{48+i*18}" width="20.2" height="18.2" fill="rgb({red},{green},{blue})"/>')
-        svg = f"""<svg viewBox="0 0 560 380" xmlns="http://www.w3.org/2000/svg">
+        ex_ticks = "".join(
+            f'<text x="66" y="{48+i*(comp.shape[0]-1)*18/2+13:.1f}" text-anchor="end" font-size="10">{float(excitation[int(i*(len(excitation)-1)/2)]):.0f}</text>'
+            for i in range(3)
+        )
+        em_ticks = "".join(
+            f'<text x="{72+i*(comp.shape[1]-1)*20/2:.1f}" y="337" text-anchor="middle" font-size="10">{float(emission[int(i*(len(emission)-1)/2)]):.0f}</text>'
+            for i in range(3)
+        )
+        svg = f"""<svg viewBox="0 0 560 390" xmlns="http://www.w3.org/2000/svg">
 <rect x="0" y="0" width="560" height="380" fill="#fff"/>
 <text x="280" y="28" text-anchor="middle" font-size="18" font-weight="700">PARAFAC rank {rank}, component {r+1}</text>
 <rect x="72" y="48" width="{comp.shape[1]*20}" height="{comp.shape[0]*18}" fill="#fff" stroke="#17202a"/>
 {''.join(cells)}
-<text x="260" y="350" text-anchor="middle" font-size="13">Emission wavelength axis</text>
-<text x="24" y="185" text-anchor="middle" transform="rotate(-90 24 185)" font-size="13">Excitation wavelength axis</text>
+{ex_ticks}
+{em_ticks}
+<text x="260" y="360" text-anchor="middle" font-size="13">Emission wavelength (nm)</text>
+<text x="24" y="185" text-anchor="middle" transform="rotate(-90 24 185)" font-size="13">Excitation wavelength (nm)</text>
+<text x="72" y="382" font-size="11" fill="#333">Figure: component map; darker cells indicate stronger excitation-emission contribution.</text>
 </svg>"""
         (OUT_DIR / f"rank{rank}_component{r+1}_map.svg").write_text(svg, encoding="utf-8")
 

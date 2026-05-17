@@ -80,6 +80,62 @@ Open the dependency availability/comparison report here:
 - Refined preprocessing/model scripts for stronger dependencies when available:
   - `preprocessing_raman.py` now uses SciPy sparse ALS and SciPy Savitzky-Golay if SciPy is installed, with NumPy fallback.
   - `eem_parafac_features.py` now records PARAFAC backend, masks primary and second-order scatter regions, and uses TensorLy non-negative PARAFAC if TensorLy is installed, with NumPy CP-ALS fallback.
+# Session Handoff - 2026-05-17 Report Visualization Update
+
+## Latest Completed Task
+Updated the filtered reports for the `Rha (5)` exclusion workflow with clearer beginner explanations, detailed pipeline diagrams, and Nature-style plot refinements.
+
+Files changed in this task:
+- `generate_supervised_visual_report.py`
+- `generate_docx_model_report.py`
+- `eem_parafac_features.py`
+- `features/eem_parafac_exclude_rha5/rank6_excitation_loadings.svg`
+- `features/eem_parafac_exclude_rha5/rank6_emission_loadings.svg`
+- `features/eem_parafac_exclude_rha5/rank6_component*_map.svg`
+- `supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html`
+- `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx`
+- `PROGRESS.md`
+- `TODO.md`
+- `SESSION_HANDOFF.md`
+
+What changed:
+- Added plain-language explanation of the SciPy Raman preprocessing path: cosmic-spike removal, ALS baseline correction, Savitzky-Golay smoothing/derivatives, SNV, and optional area normalization.
+- Added plain-language explanation of EEM PARAFAC: EEM cube decomposition into sample scores, excitation loadings, and emission loadings.
+- Added a detailed end-to-end pipeline diagram for EEM/Raman inputs, preprocessing, feature extraction, fusion, model comparison, and monosaccharide predictions.
+- Restyled report SVG plots with clearer x/y axes, light gridlines, target-specific colors, and figure captions.
+- Regenerated filtered PARAFAC rank-6 loading plots and component maps with axis labels and explanatory notes.
+
+Commands run:
+```powershell
+conda run -n base python -m py_compile eem_parafac_features.py generate_supervised_visual_report.py generate_docx_model_report.py
+$env:EXCLUDE_RHA5='1'; conda run -n base python eem_parafac_features.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python train_preprocessed_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python compare_dependency_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python generate_supervised_visual_report.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; $env:REPORT_DOCX_NAME='monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; conda run -n base python generate_docx_model_report.py
+conda run -n base python -c "from html.parser import HTMLParser; from pathlib import Path; p=Path('supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html'); HTMLParser().feed(p.read_text(encoding='utf-8')); print('html ok', p.stat().st_size)"
+conda run -n base python -c "import zipfile, xml.etree.ElementTree as ET; p='supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; z=zipfile.ZipFile(p); ET.fromstring(z.read('word/document.xml')); print('docx ok', len([n for n in z.namelist() if n.startswith('word/media/')]))"
+```
+
+Validation:
+- HTML parsed successfully: `html ok 343381`.
+- DOCX parsed successfully: `docx ok 12`.
+- Filtered PARAFAC still selected rank 6 with TensorLy.
+- Filtered preprocessed/PARAFAC comparison remains worse than filtered main baselines: rhamnose 0.4933 RMSE, xylose 0.5544 RMSE, glucose 0.7058 RMSE.
+- Dependency-backed filtered comparison still writes `supervised_monosaccharides_exclude_rha5/dependency_model_comparison_summary.csv`.
+
+Exact next command to continue later:
+```powershell
+git status --short
+```
+
+Recommended next work:
+- Inspect the refreshed HTML/DOCX visually in a browser/Word.
+- Commit and push the current report/figure updates.
+- Continue the scientific interpretation only after a quantitative HPLC culture-sample target table is available.
+
+---
+
   - `compare_dependency_models.py` now runs scikit-learn PLSR/SVR and XGBoost comparisons when those packages are installed.
 - Current dependency check: SciPy, scikit-learn, XGBoost, TensorLy, pandas, and matplotlib are not installed, so dependency-backed model comparison could not run. `supervised_monosaccharides/dependency_model_comparison.csv` records this.
 - Regenerated Raman preprocessing, EEM PARAFAC, focused preprocessed/PARAFAC results, and the comprehensive HTML report. The original DOCX could not be overwritten because Windows denied access, so the refreshed Word report was saved as `supervised_monosaccharides/monosaccharide_softsensor_refined_dependencies_report.docx`.
