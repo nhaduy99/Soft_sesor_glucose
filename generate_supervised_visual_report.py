@@ -1,13 +1,15 @@
 import csv
 import html
 import math
+import os
 from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent
 RAW_DIR = ROOT / "data" / "raw" / "Emilie_SoftSensor"
 TARGET_FEATURES_CSV = ROOT / "features" / "monosaccharide_interpretable_targets.csv"
-OUT_DIR = ROOT / "supervised_monosaccharides"
+OUT_DIR = ROOT / os.environ.get("SUPERVISED_OUT_DIR", "supervised_monosaccharides")
+BASELINE_OUT_DIR = ROOT / "supervised_monosaccharides"
 BEST_MODELS_CSV = OUT_DIR / "best_models.csv"
 METRICS_SUMMARY_CSV = OUT_DIR / "model_search_metrics_summary.csv"
 OPTIMIZATION_CSV = OUT_DIR / "optimization_improvement_summary.csv"
@@ -16,6 +18,7 @@ TARGET_SUMMARY_CSV = OUT_DIR / "target_summary.csv"
 PREPROCESSED_BEST_CSV = OUT_DIR / "preprocessed_model_best_vs_last.csv"
 PARAFAC_SUMMARY_CSV = ROOT / "features" / "eem_parafac" / "parafac_rank_summary.csv"
 REPORT_HTML = OUT_DIR / "comprehensive_modeling_report.html"
+EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 
 TARGET_LABELS = {
     "rhamnose_gL": "Rhamnose",
@@ -389,6 +392,8 @@ def build_report():
     target_summary = read_csv(TARGET_SUMMARY_CSV)
     preprocessed_best = read_csv(PREPROCESSED_BEST_CSV) if PREPROCESSED_BEST_CSV.exists() else []
     parafac_summary = read_csv(PARAFAC_SUMMARY_CSV) if PARAFAC_SUMMARY_CSV.exists() else []
+    baseline_best_path = BASELINE_OUT_DIR / "best_models.csv"
+    baseline_best = read_csv(baseline_best_path) if OUT_DIR != BASELINE_OUT_DIR and baseline_best_path.exists() else []
     target_feature_rows = read_csv(TARGET_FEATURES_CSV)
     spectroscopy_samples = select_spectroscopy_samples(target_feature_rows)
 
@@ -431,6 +436,16 @@ def build_report():
         f"<td>{fnum(r['mean_rmse']):.4f}</td><td>{fnum(r['mean_mae']):.4f}</td>"
         f"<td>{fnum(r['mean_r2']):.3f}</td></tr>"
         for r in best_models
+    )
+    baseline_by_target = {row["target"]: row for row in baseline_best}
+    comparison_rows = "\n".join(
+        f"<tr><td>{esc(TARGET_LABELS.get(r['target'], r['target']))}</td>"
+        f"<td>{fnum(baseline_by_target.get(r['target'], {}).get('mean_rmse')):.4f}</td>"
+        f"<td>{fnum(r['mean_rmse']):.4f}</td>"
+        f"<td>{(100.0 * (fnum(baseline_by_target.get(r['target'], {}).get('mean_rmse')) - fnum(r['mean_rmse'])) / fnum(baseline_by_target.get(r['target'], {}).get('mean_rmse'))):.1f}%</td>"
+        f"<td>{esc(r['feature_set'])} / {esc(r['model'])}</td></tr>"
+        for r in best_models
+        if r["target"] in baseline_by_target and fnum(baseline_by_target[r["target"]].get("mean_rmse")) > 0
     )
     feature_io_rows = "\n".join(
         [
@@ -489,6 +504,22 @@ def build_report():
         for sample in spectroscopy_samples[:3]
         if sample.get("_eem_path")
     )
+    interpretation_items = (
+        [
+            "After excluding Rha (5), rhamnose is best predicted by full EEM features with ridge regression, not by the previous Raman+EEM fusion model. This suggests the high-concentration rhamnose standards were influential in the earlier fusion result.",
+            "Xylose also improves after the exclusion and is best with full EEM features plus sample-wise normalized kNN, indicating that the filtered calibration set relies strongly on matrix-level EEM structure.",
+            "Glucose is essentially unchanged in the main model search, so excluding Rha (5) mainly changes rhamnose/xylose calibration rather than glucose.",
+            "The Raman preprocessing/PARAFAC extension does not beat the new filtered best models, so it should be treated as interpretability support rather than the best predictive path for this filtered run.",
+        ]
+        if EXCLUDE_RHA5
+        else [
+            "Rhamnose currently benefits most from Raman+EEM full fusion with a local weighted kNN model.",
+            "Xylose improved slightly with a Laplacian kernel-ridge model on full EEM features and log-transformed targets.",
+            "Glucose is best in this search with compact EEM interpretable features and Manhattan kNN, but grouped-split R2 remains weak.",
+            "The requested extra 20% improvement beyond the previous best was not reached; current limits are likely target coverage, replicate structure, and lack of quantitative HPLC culture labels.",
+        ]
+    )
+    interpretation_html = "\n".join(f"<li>{esc(item)}</li>" for item in interpretation_items)
 
     report = f"""<!doctype html>
 <html lang="en">
@@ -523,7 +554,7 @@ def build_report():
   <p class="muted">This report summarizes the processing, feature construction, supervised training, optimization, and latest visual evaluation for rhamnose, xylose, and glucose prediction from EEM and Raman spectroscopy.</p>
 
   <section class="callout warn">
-    <strong>Scope:</strong> supervised results are based on standards and known spikes parsed from treatment labels. Culture-sample prediction still requires quantitative HPLC monosaccharide targets.
+    <strong>Scope:</strong> supervised results are based on standards and known spikes parsed from treatment labels. Culture-sample prediction still requires quantitative HPLC monosaccharide targets. {'This version excludes all <code>Rha (5)</code> examples from training and testing.' if EXCLUDE_RHA5 else ''}
   </section>
 
   <h2>Pipeline Summary</h2>
@@ -567,6 +598,8 @@ def build_report():
       {best_rows}
     </table>
   </section>
+
+  {'<h2>Comparison With Previous Report</h2><section class="panel"><table><tr><th>Target</th><th>Previous RMSE</th><th>New RMSE without Rha (5)</th><th>RMSE change</th><th>New best model</th></tr>' + comparison_rows + '</table><p>Positive RMSE change means the new filtered training set improved relative to the previous report; negative means performance worsened.</p></section>' if comparison_rows else ''}
 
   <h2>Feature Inputs and Model Outputs</h2>
   <section class="panel">
@@ -623,10 +656,7 @@ def build_report():
   <h2>Interpretation</h2>
   <section class="panel">
     <ul>
-      <li>Rhamnose currently benefits most from Raman+EEM full fusion with a local weighted kNN model.</li>
-      <li>Xylose improved slightly with a Laplacian kernel-ridge model on full EEM features and log-transformed targets.</li>
-      <li>Glucose is best in this search with compact EEM interpretable features and Manhattan kNN, but grouped-split R2 remains weak.</li>
-      <li>The requested extra 20% improvement beyond the previous best was not reached; current limits are likely target coverage, replicate structure, and lack of quantitative HPLC culture labels.</li>
+      {interpretation_html}
     </ul>
   </section>
 

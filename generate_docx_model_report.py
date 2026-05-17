@@ -1,14 +1,21 @@
 import csv
 import html
 import math
+import os
 import zipfile
 from pathlib import Path
 from xml.sax.saxutils import escape
 
 
 ROOT = Path(__file__).resolve().parent
-OUT_DIR = ROOT / "supervised_monosaccharides"
-REPORT_DOCX = OUT_DIR / "monosaccharide_softsensor_comprehensive_report.docx"
+OUT_DIR = ROOT / os.environ.get("SUPERVISED_OUT_DIR", "supervised_monosaccharides")
+BASELINE_OUT_DIR = ROOT / "supervised_monosaccharides"
+EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
+REPORT_DOCX = OUT_DIR / (
+    "monosaccharide_softsensor_exclude_rha5_report.docx"
+    if EXCLUDE_RHA5
+    else "monosaccharide_softsensor_comprehensive_report.docx"
+)
 BEST_MODELS = OUT_DIR / "best_models.csv"
 PREPROCESSED_BEST = OUT_DIR / "preprocessed_model_best_vs_last.csv"
 OPTIMIZATION = OUT_DIR / "optimization_improvement_summary.csv"
@@ -320,17 +327,26 @@ def build_report():
     target_rows = read_csv(TARGET_SUMMARY)
     parafac_rows = read_csv(PARAFAC_SUMMARY)
     preds = predictions_by_target(best_rows)
+    baseline_best_path = BASELINE_OUT_DIR / "best_models.csv"
+    baseline_best = read_csv(baseline_best_path) if OUT_DIR != BASELINE_OUT_DIR and baseline_best_path.exists() else []
+    baseline_by_target = {row["target"]: row for row in baseline_best}
 
     doc = DocxWriter()
-    doc.add_paragraph("Comprehensive Report: Raman and EEM Soft-Sensor Modelling for Monosaccharide Concentrations", style="Title")
+    title = "Comprehensive Report: Raman and EEM Soft-Sensor Modelling for Monosaccharide Concentrations"
+    if EXCLUDE_RHA5:
+        title += " after Excluding Rha (5) Examples"
+    doc.add_paragraph(title, style="Title")
     doc.add_paragraph("Prepared from the current project data, processing pipeline, and supervised calibration results.", italic=True)
-    doc.add_paragraph("Scope note: current supervised modelling uses standards and known spikes parsed from treatment labels. True culture-sample validation remains blocked until quantitative HPLC monosaccharide concentrations are merged.", bold=True)
+    scope = "Scope note: current supervised modelling uses standards and known spikes parsed from treatment labels. True culture-sample validation remains blocked until quantitative HPLC monosaccharide concentrations are merged."
+    if EXCLUDE_RHA5:
+        scope += " This report excludes all Rha (5) examples from the training and testing set and compares the new result with the previous report."
+    doc.add_paragraph(scope, bold=True)
 
     doc.add_heading("1. Executive Summary", 1)
     doc.add_paragraph(
         "The current pipeline has progressed from raw spectroscopy inventory to a reproducible soft-sensor workflow for rhamnose, xylose, and glucose. "
         "Raman and EEM files are aligned by experiment, plate, well, replicate, and treatment labels. EEM matrices are represented both as interpretable fluorescence summaries and unfolded matrices; Raman spectra are represented as interpretable carbohydrate windows, full-spectrum features, and baseline-corrected preprocessed features. "
-        "The best project-level models currently achieve RMSE values of 0.7043 g/L for rhamnose, 0.5359 g/L for xylose, and 0.5589 g/L for glucose on standards/spikes. A later Raman preprocessing and PARAFAC extension improves glucose further to 0.5094 g/L, an 8.8 percent improvement over the latest glucose baseline, but it does not improve rhamnose or xylose."
+        "This filtered report tests how sensitive the soft-sensor calibration is to removing the high-concentration Rha (5) examples. The comparison is important biologically because high-concentration standards can dominate regression structure and may make performance appear stronger than it would be in lower-concentration or culture-like regimes."
     )
     doc.add_svg("pipeline_overview", pipeline_svg(), 7.2, 1.9)
     doc.add_page_break()
@@ -369,6 +385,22 @@ def build_report():
 
     doc.add_heading("5. Main Results", 1)
     doc.add_table(table_from_best(best_rows))
+    if baseline_by_target:
+        compare = [["Target", "Previous RMSE", "New RMSE without Rha (5)", "RMSE change", "New best model"]]
+        for row in best_rows:
+            previous = fnum(baseline_by_target.get(row["target"], {}).get("mean_rmse"))
+            current = fnum(row["mean_rmse"])
+            change = 100.0 * (previous - current) / previous if previous > 0 else math.nan
+            compare.append([
+                TARGET_LABELS[row["target"]],
+                f"{previous:.4f}",
+                f"{current:.4f}",
+                f"{change:.1f}%",
+                f"{row['feature_set']} / {row['model']}",
+            ])
+        doc.add_heading("Comparison With Previous Report", 2)
+        doc.add_table(compare)
+        doc.add_paragraph("Positive RMSE change means the filtered run improved relative to the previous report; negative means the filtered run worsened.")
     doc.add_svg("rmse_bars", result_bars_svg(best_rows, pre_rows), 7.0, 3.0)
     doc.add_paragraph(
         "The current project-level best models are not identical across targets, which is biologically plausible. Rhamnose benefits most from Raman + EEM full fusion, suggesting that direct Raman sugar information and EEM matrix-state information are both useful. Xylose is best with full EEM features and Laplacian kernel ridge regression, possibly reflecting strong covariance with fluorescence/process-state patterns in the standards/spikes. Glucose is best in the original search with compact EEM interpretable features, but the later preprocessed Raman kernel-ridge model improves glucose RMSE to 0.5094 g/L."
@@ -400,25 +432,35 @@ def build_report():
     doc.add_page_break()
 
     doc.add_heading("7. Strengths of the Current Method", 1)
-    for item in [
+    strength_items = [
         "The pipeline is reproducible and self-contained; it avoids undeclared dependencies and writes all major intermediate artifacts.",
         "The modelling design is scientifically defensible: Raman is treated as the direct monosaccharide signal and EEM as indirect biological/process context.",
         "Multiple feature representations are compared rather than assuming one modality or one model is best.",
         "The report includes visual diagnostics, predicted-vs-true plots, residual behaviour, PARAFAC component maps, and traceable preprocessing configuration labels.",
-        "The fusion result for rhamnose supports the original biological hypothesis that Raman + EEM can outperform either signal family alone when the target is not fully captured by one modality.",
-    ]:
+    ]
+    strength_items.append(
+        "The filtered run is a useful sensitivity test: removing Rha (5) changes the rhamnose optimum from Raman+EEM fusion to EEM ridge regression, revealing that the high-concentration standards were influential."
+        if EXCLUDE_RHA5
+        else "The fusion result for rhamnose supports the original biological hypothesis that Raman + EEM can outperform either signal family alone when the target is not fully captured by one modality."
+    )
+    for item in strength_items:
         doc.add_bullet(item)
     doc.add_page_break()
 
     doc.add_heading("8. Weaknesses and Risks", 1)
-    for item in [
+    weakness_items = [
         "The strongest limitation is target quality: culture-sample HPLC monosaccharide concentrations are not yet merged, so current supervised results are calibration/spike results rather than final biological culture predictions.",
         "Some RMSE values improve, but R2 is weak or negative for rhamnose and glucose in the best project-level models. This means the models can reduce absolute error in some settings but do not yet explain variance robustly across grouped splits.",
         "The sample structure is small relative to the feature dimension. High-dimensional EEM/Raman matrices create overfitting risk, especially for nonlinear models and nearest-neighbour methods.",
         "The PARAFAC implementation is dependency-light and useful for exploration, but a publication-grade component analysis should be repeated with a tested chemometrics library and stronger split-half validation.",
-        "The current preprocessing/PARAFAC extension improves glucose only. Rhamnose and xylose become worse than their previous best models, so preprocessing should not be treated as universally beneficial.",
         "External spectral assignment is not yet fully referenced. Raman band interpretations should be strengthened with literature assignments before publication.",
-    ]:
+    ]
+    weakness_items.append(
+        "In this filtered run, the Raman preprocessing/PARAFAC extension does not beat the new best models for any target. It should be used as interpretability support rather than the primary predictive model."
+        if EXCLUDE_RHA5
+        else "The current preprocessing/PARAFAC extension improves glucose only. Rhamnose and xylose become worse than their previous best models, so preprocessing should not be treated as universally beneficial."
+    )
+    for item in weakness_items:
         doc.add_bullet(item)
 
     doc.add_heading("9. Recommended Next Steps", 1)

@@ -1,5 +1,6 @@
 import csv
 import math
+import os
 import re
 from pathlib import Path
 
@@ -8,9 +9,10 @@ import numpy as np
 
 ROOT = Path(__file__).resolve().parent
 FEATURES_DIR = ROOT / "features"
-OUT_DIR = ROOT / "supervised_monosaccharides"
+OUT_DIR = ROOT / os.environ.get("SUPERVISED_OUT_DIR", "supervised_monosaccharides")
 INTERPRETABLE_CSV = FEATURES_DIR / "rhamnose_interpretable_features.csv"
 FULL_CSV = FEATURES_DIR / "rhamnose_full_feature_matrix.csv"
+EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 
 TARGETS = ("rhamnose_gL", "xylose_gL", "glucose_gL")
 PREVIOUS_BEST_RMSE = {
@@ -122,6 +124,13 @@ def target_rows(rows):
             new[target] = "" if target not in targets else f"{targets[target]:.8g}"
         out.append(new)
     return out
+
+
+def is_excluded_rha5(row):
+    if not EXCLUDE_RHA5:
+        return False
+    label = (row.get("legend_treatment_label") or "").strip().lower().replace(" ", "")
+    return label == "rha(5)" and safe_float(row.get("rhamnose_gL")) == 5.0
 
 
 def merge_modalities(rows):
@@ -766,7 +775,7 @@ def make_html_report(target_summary, aggregated, best, opt_rows):
 <body>
 <main>
   <h1>Supervised Monosaccharide Soft Sensor Results</h1>
-  <p class="muted">Standards and known spikes were parsed from treatment labels in the enriched inventory. Culture rows without quantitative HPLC targets remain excluded from supervised fitting.</p>
+  <p class="muted">Standards and known spikes were parsed from treatment labels in the enriched inventory. Culture rows without quantitative HPLC targets remain excluded from supervised fitting. {'The Rha (5) examples were excluded from this run.' if EXCLUDE_RHA5 else ''}</p>
 
   <h2>Best Models Found</h2>
   <div class="grid">{best_cards}</div>
@@ -812,9 +821,17 @@ def main():
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     interp_rows = merge_modalities(target_rows(read_csv(INTERPRETABLE_CSV)))
     full_rows = merge_modalities(target_rows(read_csv(FULL_CSV)))
+    if EXCLUDE_RHA5:
+        interp_rows = [row for row in interp_rows if not is_excluded_rha5(row)]
+        full_rows = [row for row in full_rows if not is_excluded_rha5(row)]
 
     labelled_fields = list(interp_rows[0].keys())
-    write_csv(FEATURES_DIR / "monosaccharide_interpretable_targets.csv", interp_rows, labelled_fields)
+    labelled_target_path = (
+        OUT_DIR / "monosaccharide_interpretable_targets_exclude_rha5.csv"
+        if EXCLUDE_RHA5
+        else FEATURES_DIR / "monosaccharide_interpretable_targets.csv"
+    )
+    write_csv(labelled_target_path, interp_rows, labelled_fields)
 
     target_summary = []
     for target in TARGETS:

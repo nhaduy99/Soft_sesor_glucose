@@ -23,6 +23,18 @@ Open the Word-format scientific report here:
 
 `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`
 
+Filtered `Rha (5)` exclusion outputs are in:
+
+`supervised_monosaccharides_exclude_rha5/`
+
+Open the filtered HTML report here:
+
+`supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html`
+
+Open the filtered Word report here:
+
+`supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx`
+
 ## What Was Completed
 - Uploaded the project to GitHub.
 - Uploaded the raw data folder into `data/raw/Emilie_SoftSensor`.
@@ -52,6 +64,7 @@ Open the Word-format scientific report here:
 - Regenerated `supervised_monosaccharides/preprocessed_model_best_vs_last.csv`, `supervised_monosaccharides/preprocessed_model_search_metrics_summary.csv`, `supervised_monosaccharides/preprocessed_model_search_metrics_by_split.csv`, and the comprehensive HTML report.
 - Latest focused preprocessed/PARAFAC result: glucose improved to 0.5094 RMSE, an 8.8% gain versus the latest project-level baseline. Rhamnose and xylose did not meet the requested 5% improvement threshold.
 - Added `generate_docx_model_report.py` and generated `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`. The report is structured as a 6-8 page Word document with pipeline visualisation, RMSE/improvement plots, predicted-vs-true plots, PARAFAC visuals, strengths, weaknesses, biological interpretation, and recommended next steps.
+- Added `EXCLUDE_RHA5` and `SUPERVISED_OUT_DIR` modes to the training/report scripts, reran training/testing after excluding all `Rha (5)` examples, and generated new filtered HTML/DOCX reports under `supervised_monosaccharides_exclude_rha5/`.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
@@ -69,6 +82,17 @@ The interrupted mean-blend optimization run was stopped and should not be treate
 | Xylose | raman_preprocessed_als_sg2_snv | weighted kNN | 0.6050 | 0.5359 | -12.9% | No |
 | Glucose | raman_preprocessed_als_sg2_snv | Laplacian kernel ridge | 0.5094 | 0.5589 | 8.8% | Yes |
 
+## Latest `Rha (5)` Exclusion Results
+The filtered target table `supervised_monosaccharides_exclude_rha5/monosaccharide_interpretable_targets_exclude_rha5.csv` has zero rows with `rhamnose_gL = 5`.
+
+| Target | Previous best RMSE | Filtered best RMSE | Change vs previous | Filtered best model |
+|---|---:|---:|---:|---|
+| Rhamnose | 0.7043 | 0.4136 | 41.3% better | EEM full + ridge |
+| Xylose | 0.5359 | 0.4580 | 14.5% better | EEM full + kNN |
+| Glucose | 0.5589 | 0.5589 | 0.0% | EEM interpretable + kNN |
+
+Filtered preprocessing/PARAFAC comparison did not beat the filtered main-model baselines: rhamnose 0.4589 RMSE, xylose 0.5526 RMSE, glucose 0.7187 RMSE.
+
 ## Commands Recently Run
 ```bash
 python train_monosaccharide_softsensor.py
@@ -84,6 +108,12 @@ python -m py_compile train_preprocessed_models.py generate_supervised_visual_rep
 python -c "from html.parser import HTMLParser; from pathlib import Path; p=Path('supervised_monosaccharides/comprehensive_modeling_report.html'); HTMLParser().feed(p.read_text(encoding='utf-8')); print('html ok', p.stat().st_size)"
 python generate_docx_model_report.py
 python -c "import zipfile, xml.etree.ElementTree as ET; p='supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx'; z=zipfile.ZipFile(p); ET.fromstring(z.read('word/document.xml')); print('docx ok', len([n for n in z.namelist() if n.startswith('word/media/')]))"
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_monosaccharide_softsensor.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_preprocessed_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_supervised_visual_report.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_docx_model_report.py
+python -c "from html.parser import HTMLParser; from pathlib import Path; p=Path('supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html'); HTMLParser().feed(p.read_text(encoding='utf-8')); print('html ok', p.stat().st_size)"
+python -c "import zipfile, xml.etree.ElementTree as ET; p='supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx'; z=zipfile.ZipFile(p); ET.fromstring(z.read('word/document.xml')); print('docx ok', len([n for n in z.namelist() if n.startswith('word/media/')]))"
 ```
 
 ## Key Caveat

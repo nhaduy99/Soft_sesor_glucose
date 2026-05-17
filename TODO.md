@@ -23,6 +23,7 @@
   - EEM `OVER` handling, near-diagonal scatter masking, and PARAFAC score export are implemented in `eem_parafac_features.py`.
   - replicate-aware calibration still needs quantitative HPLC culture targets.
 - Current focused preprocessed/PARAFAC search met a 5% improvement only for glucose. Rhamnose and xylose remain unresolved with the current standard/spike labels.
+- The `Rha (5)` exclusion sensitivity run improved rhamnose and xylose RMSE relative to the previous report but changed the best rhamnose model from Raman+EEM fusion to EEM-only ridge. Treat this as evidence that the 5 g/L rhamnose standards strongly influenced the earlier fusion result.
 - Improve PARAFAC numerical quality and validation before relying on PARAFAC scores for final claims:
   - add non-negativity/stability constraints with a tested library if dependencies are available
   - evaluate component interpretability against known fluorophores/process-state signals
@@ -30,6 +31,7 @@
 
 ## Reporting
 - Review `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx` in Word and refine wording/figures for the intended audience if it will be used as a thesis or publication appendix.
+- Review `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx` as the sensitivity-analysis report for excluding the 5 g/L rhamnose standards.
 - Add supervised culture-sample evaluation plots after HPLC targets are available:
   - predicted vs actual
   - residual distribution

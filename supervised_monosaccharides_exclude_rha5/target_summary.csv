@@ -1,0 +1,4 @@
+target,labelled_rows,known_nonzero_rows,min_value,max_value
+rhamnose_gL,150,75,0,2.5
+xylose_gL,141,60,0,5
+glucose_gL,141,60,0,5

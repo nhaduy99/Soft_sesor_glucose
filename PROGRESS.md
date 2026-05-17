@@ -27,6 +27,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Added `train_preprocessed_models.py` to compare Raman-preprocessed, PARAFAC-score, and PARAFAC+Raman-fusion models against the last best RMSEs. Glucose improved by 11.6% versus the last best model; rhamnose and xylose did not improve with the new features.
 - Added kernel-ridge candidates to the focused preprocessed/PARAFAC search and regenerated the comprehensive HTML report with an explicit feature input/output table for modelling. Glucose improved further to 0.5094 RMSE, an 8.8% improvement versus the latest project-level baseline. Rhamnose and xylose still did not meet the requested 5% improvement threshold with the current standard/spike labels.
 - Added `generate_docx_model_report.py` and generated `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`, a 6-8 page Word report with pipeline diagrams, result plots, PARAFAC visual demonstrations, strengths, weaknesses, biological interpretation, and next-step recommendations.
+- Added an exclusion mode for all `Rha (5)` examples, reran supervised model search and preprocessing/PARAFAC comparison, and generated a separate report set under `supervised_monosaccharides_exclude_rha5/`. The filtered run contains zero rows with `rhamnose_gL = 5`.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -41,6 +42,15 @@ The main missing piece for culture-sample prediction is still the quantitative H
 | Rhamnose | parafac_raman_fusion_als_sg0_snv_area | weighted kNN | 0.8001 | 0.7043 | -13.6% | No |
 | Xylose | raman_preprocessed_als_sg2_snv | weighted kNN | 0.6050 | 0.5359 | -12.9% | No |
 | Glucose | raman_preprocessed_als_sg2_snv | Laplacian kernel ridge | 0.5094 | 0.5589 | 8.8% | Yes |
+
+## Latest `Rha (5)` exclusion results
+| Target | Previous best RMSE | New filtered best RMSE | Change vs previous | New filtered best model |
+|---|---:|---:|---:|---|
+| Rhamnose | 0.7043 | 0.4136 | 41.3% better | EEM full + ridge |
+| Xylose | 0.5359 | 0.4580 | 14.5% better | EEM full + kNN |
+| Glucose | 0.5589 | 0.5589 | 0.0% | EEM interpretable + kNN |
+
+Filtered preprocessing/PARAFAC extension did not beat the filtered main-model baselines: rhamnose 0.4589 RMSE, xylose 0.5526 RMSE, glucose 0.7187 RMSE.
 
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
@@ -57,6 +67,8 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - `supervised_monosaccharides/supervised_report.html`: supervised model results report with target coverage, training flow, best models, and optimization improvement.
 - `supervised_monosaccharides/comprehensive_modeling_report.html`: comprehensive visual report for processing, modelling, training, optimization, feature input/output tables, predicted-vs-true plots, residuals, and metrics.
 - `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`: Word-format scientific report summarizing the current data, methods, modelling results, strengths, weaknesses, and biological interpretation.
+- `supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html`: HTML report for the filtered training/testing run with all `Rha (5)` examples excluded and comparison against the previous report.
+- `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx`: Word report for the filtered run.
 - `supervised_monosaccharides/optimization_improvement_summary.csv`: final-best RMSE compared with the initial baseline search.
 - `generate_supervised_visual_report.py`: pure-Python SVG/HTML report generator for supervised modelling visualizations.
 - `preprocessing_raman.py`: pure-NumPy Raman preprocessing and feature export pipeline with explicit preprocessing configuration labels.
@@ -89,5 +101,9 @@ python eem_parafac_features.py
 python train_preprocessed_models.py
 python generate_supervised_visual_report.py
 python generate_docx_model_report.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_monosaccharide_softsensor.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_preprocessed_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_supervised_visual_report.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_docx_model_report.py
 python rhamnose_ml/scripts/train_baseline.py --config rhamnose_ml/config/defaults.json
 ```

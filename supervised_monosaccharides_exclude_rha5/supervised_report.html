@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supervised Monosaccharide Soft Sensor Results</title>
+  <style>
+    body { font-family: Arial, Helvetica, sans-serif; margin: 0; color: #17202a; background: #f6f8fb; line-height: 1.5; }
+    main { max-width: 1180px; margin: 0 auto; padding: 28px 22px; }
+    h1 { margin-bottom: 6px; }
+    .muted { color: #5d6d7e; }
+    .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .card { background: #fff; border: 1px solid #d6dde5; border-radius: 8px; padding: 14px; }
+    table { border-collapse: collapse; width: 100%; background: #fff; font-size: 14px; }
+    th, td { border: 1px solid #d6dde5; padding: 8px 9px; text-align: left; vertical-align: top; }
+    th { background: #eef3f8; }
+    svg { max-width: 100%; height: auto; background: #fff; border: 1px solid #d6dde5; border-radius: 8px; }
+    @media (max-width: 860px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Supervised Monosaccharide Soft Sensor Results</h1>
+  <p class="muted">Standards and known spikes were parsed from treatment labels in the enriched inventory. Culture rows without quantitative HPLC targets remain excluded from supervised fitting. The Rha (5) examples were excluded from this run.</p>
+
+  <h2>Best Models Found</h2>
+  <div class="grid">
+        <section class="card">
+          <h3>glucose_gL</h3>
+          <p><strong>target_focused / eem_interpretable + knn</strong></p>
+          <p>k=1,weighted=True,metric=manhattan,max_features=12,y_transform=none,x_transform=none</p>
+          <p>Mean RMSE: 0.5589; MAE: 0.3524; R2: -0.387</p>
+          <p>Mean improvement vs test-mean predictor: 6.6%</p>
+        </section>
+        
+
+        <section class="card">
+          <h3>rhamnose_gL</h3>
+          <p><strong>all_known / eem_full + ridge</strong></p>
+          <p>alpha=10.0,max_features=96,y_transform=log1p,x_transform=none</p>
+          <p>Mean RMSE: 0.4136; MAE: 0.2532; R2: 0.211</p>
+          <p>Mean improvement vs test-mean predictor: 13.1%</p>
+        </section>
+        
+
+        <section class="card">
+          <h3>xylose_gL</h3>
+          <p><strong>all_known / eem_full + knn</strong></p>
+          <p>k=1,weighted=True,metric=euclidean,max_features=192,y_transform=none,x_transform=sample_zscore</p>
+          <p>Mean RMSE: 0.458; MAE: 0.1711; R2: 0.337</p>
+          <p>Mean improvement vs test-mean predictor: 24.2%</p>
+        </section>
+        </div>
+
+  <h2>Optimization Improvement</h2>
+  <table>
+    <tr><th>Target</th><th>Initial baseline RMSE</th><th>Final best RMSE</th><th>RMSE improvement</th><th>Met 10% threshold</th><th>Additional improvement vs previous best</th><th>Met extra 20%</th><th>Final model</th></tr>
+    <tr><td>rhamnose_gL</td><td>0.43575</td><td>0.41357</td><td>5.1%</td><td>no</td><td>42.7%</td><td>yes</td><td>all_known / eem_full / ridge</td></tr>
+<tr><td>xylose_gL</td><td>0.65609</td><td>0.45796</td><td>30.2%</td><td>yes</td><td>14.9%</td><td>no</td><td>all_known / eem_full / knn</td></tr>
+<tr><td>glucose_gL</td><td>0.79712</td><td>0.55888</td><td>29.9%</td><td>yes</td><td>5.9%</td><td>no</td><td>target_focused / eem_interpretable / knn</td></tr>
+  </table>
+
+  <h2>Labelled Target Coverage</h2>
+  <table>
+    <tr><th>Target</th><th>Labelled rows</th><th>Non-zero rows</th><th>Minimum g/L</th><th>Maximum g/L</th></tr>
+    <tr><td>rhamnose_gL</td><td>150</td><td>75</td><td>0</td><td>2.5</td></tr>
+<tr><td>xylose_gL</td><td>141</td><td>60</td><td>0</td><td>5</td></tr>
+<tr><td>glucose_gL</td><td>141</td><td>60</td><td>0</td><td>5</td></tr>
+  </table>
+
+  <h2>Training Flow</h2>
+  <svg viewBox="0 0 1100 340" role="img" aria-label="Supervised training flow">
+    <defs><marker id="a" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10z" fill="#44546a"/></marker></defs>
+    <rect x="25" y="55" width="180" height="80" rx="8" fill="#e7f4f4" stroke="#2f7d7e"/><text x="115" y="88" text-anchor="middle" font-size="16" font-weight="700">EEM features</text><text x="115" y="114" text-anchor="middle" font-size="13">hotspots or unfolded matrix</text>
+    <rect x="25" y="205" width="180" height="80" rx="8" fill="#f0e9f7" stroke="#7a4e9f"/><text x="115" y="238" text-anchor="middle" font-size="16" font-weight="700">Raman features</text><text x="115" y="264" text-anchor="middle" font-size="13">windows or full spectrum</text>
+    <rect x="285" y="130" width="190" height="90" rx="8" fill="#fff" stroke="#b8c2cc"/><text x="380" y="163" text-anchor="middle" font-size="16" font-weight="700">Target parser</text><text x="380" y="190" text-anchor="middle" font-size="13">Rha / Xyl / Glu g/L</text>
+    <rect x="555" y="130" width="190" height="90" rx="8" fill="#eef5ff" stroke="#2d5f9a"/><text x="650" y="163" text-anchor="middle" font-size="16" font-weight="700">Model search</text><text x="650" y="190" text-anchor="middle" font-size="13">Ridge, PCR, PLS</text>
+    <rect x="825" y="130" width="230" height="90" rx="8" fill="#fff8ef" stroke="#b5651d"/><text x="940" y="163" text-anchor="middle" font-size="16" font-weight="700">Predicted concentrations</text><text x="940" y="190" text-anchor="middle" font-size="13">Rhamnose, xylose, glucose</text>
+    <line x1="205" y1="95" x2="285" y2="155" stroke="#44546a" stroke-width="2" marker-end="url(#a)"/>
+    <line x1="205" y1="245" x2="285" y2="195" stroke="#44546a" stroke-width="2" marker-end="url(#a)"/>
+    <line x1="475" y1="175" x2="555" y2="175" stroke="#44546a" stroke-width="2" marker-end="url(#a)"/>
+    <line x1="745" y1="175" x2="825" y2="175" stroke="#44546a" stroke-width="2" marker-end="url(#a)"/>
+  </svg>
+
+  <h2>Top Model Configurations</h2>
+  <table>
+    <tr><th>Target</th><th>Cohort</th><th>Feature set</th><th>Model</th><th>Config</th><th>Mean RMSE</th><th>Mean MAE</th><th>Mean R2</th><th>Improvement</th></tr>
+    <tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>ridge</td><td>alpha=10.0,max_features=96,y_transform=log1p,x_transform=none</td><td>0.41357</td><td>0.25315</td><td>0.211</td><td>13.1%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=8,alpha=1.0,max_features=192,y_transform=log1p,x_transform=none</td><td>0.41832</td><td>0.26304</td><td>0.140</td><td>10.5%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=8,alpha=1.0,max_features=384,y_transform=log1p,x_transform=none</td><td>0.41832</td><td>0.26304</td><td>0.140</td><td>10.5%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>ridge</td><td>alpha=10.0,max_features=48,y_transform=log1p,x_transform=none</td><td>0.42328</td><td>0.26011</td><td>0.178</td><td>11.2%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=5,alpha=1.0,max_features=96,y_transform=log1p,x_transform=none</td><td>0.42345</td><td>0.26096</td><td>0.095</td><td>9.1%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=192,y_transform=none,x_transform=l2</td><td>0.42407</td><td>0.2592</td><td>0.036</td><td>5.9%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>ridge</td><td>alpha=10.0,max_features=192,y_transform=log1p,x_transform=none</td><td>0.4244</td><td>0.26033</td><td>0.165</td><td>10.6%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>ridge</td><td>alpha=10.0,max_features=384,y_transform=log1p,x_transform=none</td><td>0.4244</td><td>0.26033</td><td>0.165</td><td>10.6%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=192,y_transform=log1p,x_transform=l2</td><td>0.42655</td><td>0.24779</td><td>0.075</td><td>6.5%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=5,alpha=1.0,max_features=48,y_transform=log1p,x_transform=none</td><td>0.42971</td><td>0.26303</td><td>0.086</td><td>8.2%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=8,alpha=1.0,max_features=48,y_transform=log1p,x_transform=none</td><td>0.43122</td><td>0.27938</td><td>0.083</td><td>7.7%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=euclidean,max_features=384,y_transform=log1p,x_transform=none</td><td>0.43361</td><td>0.25718</td><td>0.059</td><td>5.5%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=5,alpha=1.0,max_features=96,y_transform=none,x_transform=none</td><td>0.43575</td><td>0.30921</td><td>0.054</td><td>6.8%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=384,y_transform=log1p,x_transform=none</td><td>0.43581</td><td>0.25275</td><td>0.027</td><td>4.3%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=3,alpha=1.0,max_features=48,y_transform=log1p,x_transform=none</td><td>0.43591</td><td>0.25808</td><td>0.177</td><td>10.0%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>krr</td><td>kernel=rbf,alpha=0.01,gamma_scale=0.5,max_features=192,y_transform=log1p,x_transform=none</td><td>0.43697</td><td>0.26974</td><td>-0.095</td><td>1.6%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=192,y_transform=none,x_transform=none</td><td>0.43719</td><td>0.26677</td><td>-0.082</td><td>1.8%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=192,y_transform=log1p,x_transform=none</td><td>0.43721</td><td>0.25488</td><td>-0.004</td><td>3.5%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>pls</td><td>n_components=2,alpha=1.0,max_features=384,y_transform=log1p,x_transform=none</td><td>0.43741</td><td>0.26095</td><td>0.103</td><td>6.4%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=384,y_transform=none,x_transform=none</td><td>0.4378</td><td>0.26747</td><td>-0.032</td><td>2.7%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=384,y_transform=log1p,x_transform=l2</td><td>0.43873</td><td>0.24848</td><td>0.053</td><td>4.6%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=manhattan,max_features=384,y_transform=none,x_transform=l2</td><td>0.43923</td><td>0.26115</td><td>0.008</td><td>3.4%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=3,weighted=True,metric=euclidean,max_features=384,y_transform=none,x_transform=none</td><td>0.43958</td><td>0.2724</td><td>-0.014</td><td>3.0%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=5,alpha=1.0,max_features=192,y_transform=log1p,x_transform=none</td><td>0.44028</td><td>0.2675</td><td>-0.001</td><td>5.1%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=5,alpha=1.0,max_features=384,y_transform=log1p,x_transform=none</td><td>0.44028</td><td>0.2675</td><td>-0.001</td><td>5.1%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=9,weighted=True,metric=manhattan,max_features=384,y_transform=none,x_transform=l2</td><td>0.44041</td><td>0.27295</td><td>-0.066</td><td>1.8%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=3,alpha=1.0,max_features=96,y_transform=log1p,x_transform=none</td><td>0.44045</td><td>0.26253</td><td>0.141</td><td>8.4%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pls</td><td>n_components=3,alpha=1.0,max_features=24,y_transform=log1p,x_transform=none</td><td>0.44076</td><td>0.26184</td><td>0.165</td><td>9.4%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>krr</td><td>kernel=rbf,alpha=0.01,gamma_scale=1.0,max_features=192,y_transform=log1p,x_transform=l2</td><td>0.44117</td><td>0.27078</td><td>-0.066</td><td>1.7%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>ridge</td><td>alpha=10.0,max_features=96,y_transform=none,x_transform=none</td><td>0.44136</td><td>0.31332</td><td>0.081</td><td>6.7%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>ridge</td><td>alpha=10.0,max_features=24,y_transform=log1p,x_transform=none</td><td>0.44137</td><td>0.26467</td><td>0.151</td><td>8.9%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>ridge</td><td>alpha=10.0,max_features=48,y_transform=none,x_transform=none</td><td>0.44144</td><td>0.30903</td><td>0.049</td><td>6.0%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>krr</td><td>kernel=rbf,alpha=0.01,gamma_scale=0.5,max_features=192,y_transform=log1p,x_transform=l2</td><td>0.44159</td><td>0.27725</td><td>-0.106</td><td>0.9%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pcr</td><td>n_components=8,alpha=1.0,max_features=24,y_transform=log1p,x_transform=none</td><td>0.4421</td><td>0.26162</td><td>0.167</td><td>9.3%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pcr</td><td>n_components=12,alpha=1.0,max_features=48,y_transform=log1p,x_transform=none</td><td>0.44241</td><td>0.25994</td><td>0.151</td><td>8.6%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>eem_full</td><td>pcr</td><td>n_components=8,alpha=1.0,max_features=48,y_transform=log1p,x_transform=none</td><td>0.4428</td><td>0.25927</td><td>0.153</td><td>8.6%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=5,weighted=True,metric=manhattan,max_features=192,y_transform=none,x_transform=l2</td><td>0.44318</td><td>0.27711</td><td>-0.102</td><td>0.5%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>knn</td><td>k=5,weighted=True,metric=manhattan,max_features=12,y_transform=log1p,x_transform=none</td><td>0.4433</td><td>0.25824</td><td>0.085</td><td>5.6%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>krr</td><td>kernel=laplacian,alpha=0.01,gamma_scale=0.5,max_features=48,y_transform=log1p,x_transform=none</td><td>0.44333</td><td>0.27169</td><td>-0.000</td><td>2.9%</td></tr>
+<tr><td>rhamnose_gL</td><td>all_known</td><td>fusion_full</td><td>krr</td><td>kernel=laplacian,alpha=0.01,gamma_scale=0.5,max_features=96,y_transform=log1p,x_transform=none</td><td>0.44345</td><td>0.26602</td><td>0.011</td><td>3.1%</td></tr>
+  </table>
+</main>
+</body>
+</html>

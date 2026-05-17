@@ -1,5 +1,6 @@
 import csv
 import math
+import os
 from pathlib import Path
 
 import numpy as np
@@ -24,6 +25,7 @@ ROOT = Path(__file__).resolve().parent
 RAMAN_CSV = ROOT / "features" / "raman_preprocessed_features.csv"
 PARAFAC_CSV = ROOT / "features" / "eem_parafac_scores.csv"
 BEST_MODELS_CSV = OUT_DIR / "best_models.csv"
+EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 
 
 def read_csv(path):
@@ -47,6 +49,13 @@ def load_last_best_rmse():
 
 def key_for(row):
     return tuple(row.get(col, "") for col in MERGE_KEY_COLUMNS)
+
+
+def is_excluded_rha5(row):
+    if not EXCLUDE_RHA5:
+        return False
+    label = (row.get("legend_treatment_label") or "").strip().lower().replace(" ", "")
+    return label == "rha(5)" and safe_float(row.get("rhamnose_gL")) == 5.0
 
 
 def feature_cols(rows, prefixes):
@@ -269,8 +278,8 @@ def aggregate(rows):
 
 
 def main():
-    raman_rows = read_csv(RAMAN_CSV)
-    parafac_rows = read_csv(PARAFAC_CSV)
+    raman_rows = [row for row in read_csv(RAMAN_CSV) if not is_excluded_rha5(row)]
+    parafac_rows = [row for row in read_csv(PARAFAC_CSV) if not is_excluded_rha5(row)]
     last_best_rmse = load_last_best_rmse()
     all_metrics = []
     configs = sorted({row["preprocessing_config"] for row in raman_rows})
