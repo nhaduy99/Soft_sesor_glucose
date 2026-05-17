@@ -35,6 +35,14 @@ Open the filtered Word report here:
 
 `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx`
 
+Open the refined dependency-aware Word report here:
+
+`supervised_monosaccharides/monosaccharide_softsensor_refined_dependencies_report.docx`
+
+Open the dependency availability/comparison report here:
+
+`supervised_monosaccharides/dependency_model_comparison.html`
+
 ## What Was Completed
 - Uploaded the project to GitHub.
 - Uploaded the raw data folder into `data/raw/Emilie_SoftSensor`.
@@ -65,6 +73,12 @@ Open the filtered Word report here:
 - Latest focused preprocessed/PARAFAC result: glucose improved to 0.5094 RMSE, an 8.8% gain versus the latest project-level baseline. Rhamnose and xylose did not meet the requested 5% improvement threshold.
 - Added `generate_docx_model_report.py` and generated `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`. The report is structured as a 6-8 page Word document with pipeline visualisation, RMSE/improvement plots, predicted-vs-true plots, PARAFAC visuals, strengths, weaknesses, biological interpretation, and recommended next steps.
 - Added `EXCLUDE_RHA5` and `SUPERVISED_OUT_DIR` modes to the training/report scripts, reran training/testing after excluding all `Rha (5)` examples, and generated new filtered HTML/DOCX reports under `supervised_monosaccharides_exclude_rha5/`.
+- Refined preprocessing/model scripts for stronger dependencies when available:
+  - `preprocessing_raman.py` now uses SciPy sparse ALS and SciPy Savitzky-Golay if SciPy is installed, with NumPy fallback.
+  - `eem_parafac_features.py` now records PARAFAC backend, masks primary and second-order scatter regions, and uses TensorLy non-negative PARAFAC if TensorLy is installed, with NumPy CP-ALS fallback.
+  - `compare_dependency_models.py` now runs scikit-learn PLSR/SVR and XGBoost comparisons when those packages are installed.
+- Current dependency check: SciPy, scikit-learn, XGBoost, TensorLy, pandas, and matplotlib are not installed, so dependency-backed model comparison could not run. `supervised_monosaccharides/dependency_model_comparison.csv` records this.
+- Regenerated Raman preprocessing, EEM PARAFAC, focused preprocessed/PARAFAC results, and the comprehensive HTML report. The original DOCX could not be overwritten because Windows denied access, so the refreshed Word report was saved as `supervised_monosaccharides/monosaccharide_softsensor_refined_dependencies_report.docx`.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
@@ -93,6 +107,21 @@ The filtered target table `supervised_monosaccharides_exclude_rha5/monosaccharid
 
 Filtered preprocessing/PARAFAC comparison did not beat the filtered main-model baselines: rhamnose 0.4589 RMSE, xylose 0.5526 RMSE, glucose 0.7187 RMSE.
 
+## Latest Dependency-Aware Refinement Results
+Current dependency availability:
+- SciPy: unavailable
+- scikit-learn: unavailable
+- XGBoost: unavailable
+- TensorLy: unavailable
+
+Refined EEM PARAFAC used `numpy_cp_als`, applied `primary_nm=20.0;second_order_nm=25.0`, and selected rank 2. Focused preprocessing/PARAFAC comparison after refinement:
+
+| Target | Best refined feature set | Model | RMSE | Change vs latest project baseline |
+|---|---|---|---:|---:|
+| Rhamnose | PARAFAC + Raman fusion, ALS SG0 SNV area | weighted kNN | 0.8070 | -14.6% |
+| Xylose | preprocessed Raman, ALS SG2 SNV | weighted kNN | 0.6050 | -12.9% |
+| Glucose | preprocessed Raman, ALS SG2 SNV | Laplacian KRR | 0.5094 | +8.8% |
+
 ## Commands Recently Run
 ```bash
 python train_monosaccharide_softsensor.py
@@ -114,6 +143,11 @@ $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclu
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_docx_model_report.py
 python -c "from html.parser import HTMLParser; from pathlib import Path; p=Path('supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html'); HTMLParser().feed(p.read_text(encoding='utf-8')); print('html ok', p.stat().st_size)"
 python -c "import zipfile, xml.etree.ElementTree as ET; p='supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx'; z=zipfile.ZipFile(p); ET.fromstring(z.read('word/document.xml')); print('docx ok', len([n for n in z.namelist() if n.startswith('word/media/')]))"
+python preprocessing_raman.py
+python eem_parafac_features.py
+python train_preprocessed_models.py
+python compare_dependency_models.py
+$env:REPORT_DOCX_NAME='monosaccharide_softsensor_refined_dependencies_report.docx'; python generate_docx_model_report.py
 ```
 
 ## Key Caveat

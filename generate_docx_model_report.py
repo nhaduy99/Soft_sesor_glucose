@@ -12,9 +12,12 @@ OUT_DIR = ROOT / os.environ.get("SUPERVISED_OUT_DIR", "supervised_monosaccharide
 BASELINE_OUT_DIR = ROOT / "supervised_monosaccharides"
 EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 REPORT_DOCX = OUT_DIR / (
-    "monosaccharide_softsensor_exclude_rha5_report.docx"
-    if EXCLUDE_RHA5
-    else "monosaccharide_softsensor_comprehensive_report.docx"
+    os.environ.get(
+        "REPORT_DOCX_NAME",
+        "monosaccharide_softsensor_exclude_rha5_report.docx"
+        if EXCLUDE_RHA5
+        else "monosaccharide_softsensor_comprehensive_report.docx",
+    )
 )
 BEST_MODELS = OUT_DIR / "best_models.csv"
 PREPROCESSED_BEST = OUT_DIR / "preprocessed_model_best_vs_last.csv"

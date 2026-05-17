@@ -5,6 +5,13 @@ from pathlib import Path
 
 import numpy as np
 
+try:
+    import tensorly as tl
+    from tensorly.decomposition import non_negative_parafac
+except Exception:
+    tl = None
+    non_negative_parafac = None
+
 
 ROOT = Path(__file__).resolve().parent
 RAW_DIR = ROOT / "data" / "raw" / "Emilie_SoftSensor"
@@ -13,6 +20,8 @@ OUT_DIR = ROOT / "features" / "eem_parafac"
 SCORES_CSV = ROOT / "features" / "eem_parafac_scores.csv"
 SUMMARY_CSV = OUT_DIR / "parafac_rank_summary.csv"
 TARGETS = ("rhamnose_gL", "xylose_gL", "glucose_gL")
+SCATTER_PRIMARY_NM = 20.0
+SCATTER_SECOND_ORDER_NM = 25.0
 
 
 def read_csv(path):
@@ -81,7 +90,11 @@ def parse_eem(path):
         excitation.append(ex)
         vals = []
         for j, cell in enumerate(row[1:]):
-            if str(cell).strip().upper() == "OVER" or emission[j] <= ex + 20.0:
+            em = emission[j]
+            is_over = str(cell).strip().upper() == "OVER"
+            primary_scatter = em <= ex + SCATTER_PRIMARY_NM or abs(em - ex) <= SCATTER_PRIMARY_NM
+            second_order_scatter = abs(em - 2.0 * ex) <= SCATTER_SECOND_ORDER_NM
+            if is_over or primary_scatter or second_order_scatter:
                 vals.append(math.nan)
             else:
                 vals.append(safe_float(cell))
@@ -137,6 +150,23 @@ def reconstruct(a, b, c, weights):
 
 
 def cp_als(x, rank, n_iter=80, seed=0):
+    if non_negative_parafac is not None:
+        tl.set_backend("numpy")
+        weights, factors = non_negative_parafac(
+            x,
+            rank=rank,
+            n_iter_max=n_iter,
+            init="random",
+            random_state=seed,
+            normalize_factors=True,
+            tol=1e-7,
+        )
+        a, b, c = [np.asarray(factor, dtype=float) for factor in factors]
+        weights = np.asarray(weights, dtype=float)
+        rec = reconstruct(a, b, c, weights)
+        error = float(np.linalg.norm(x - rec) / max(np.linalg.norm(x), 1e-12))
+        scores = a * weights
+        return {"scores": scores, "excitation": b, "emission": c, "weights": weights, "error": error}
     rng = np.random.default_rng(seed)
     i, j, k = x.shape
     a = rng.random((i, rank)) + 0.1
@@ -295,6 +325,8 @@ def main():
         summary.append(
             {
                 "rank": rank,
+                "parafac_backend": "tensorly_non_negative_parafac" if non_negative_parafac is not None else "numpy_cp_als",
+                "scatter_mask": f"primary_nm={SCATTER_PRIMARY_NM};second_order_nm={SCATTER_SECOND_ORDER_NM}",
                 "reconstruction_error": f"{model['error']:.8g}",
                 "split_half_stability": f"{stability:.8g}",
                 "prediction_rmse_mean": f"{pred_score:.8g}",

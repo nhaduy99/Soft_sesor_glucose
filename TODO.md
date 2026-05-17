@@ -17,10 +17,11 @@
   - scikit-learn PLSR
   - SVR
   - XGBoost or histogram gradient boosting
+- Current dependency status: SciPy, scikit-learn, XGBoost, TensorLy, pandas, and matplotlib are not installed. `compare_dependency_models.py` will run PLSR/SVR/XGBoost once those packages are available.
 - Compare grouped splits by `batch` versus `metadata_experiment`.
 - Refine the already-added spectroscopy preprocessing before another optimization attempt:
-  - Raman cosmic-spike removal, ALS baseline correction, smoothing/derivatives, SNV, and optional area normalization are implemented in `preprocessing_raman.py`.
-  - EEM `OVER` handling, near-diagonal scatter masking, and PARAFAC score export are implemented in `eem_parafac_features.py`.
+  - Raman cosmic-spike removal, ALS baseline correction, smoothing/derivatives, SNV, and optional area normalization are implemented in `preprocessing_raman.py`; SciPy sparse ALS and Savitzky-Golay are used automatically if SciPy is installed.
+  - EEM `OVER` handling, primary/second-order scatter masking, and PARAFAC score export are implemented in `eem_parafac_features.py`; TensorLy non-negative PARAFAC is used automatically if TensorLy is installed.
   - replicate-aware calibration still needs quantitative HPLC culture targets.
 - Current focused preprocessed/PARAFAC search met a 5% improvement only for glucose. Rhamnose and xylose remain unresolved with the current standard/spike labels.
 - The `Rha (5)` exclusion sensitivity run improved rhamnose and xylose RMSE relative to the previous report but changed the best rhamnose model from Raman+EEM fusion to EEM-only ridge. Treat this as evidence that the 5 g/L rhamnose standards strongly influenced the earlier fusion result.

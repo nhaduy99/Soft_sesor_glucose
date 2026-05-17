@@ -5,6 +5,15 @@ from pathlib import Path
 
 import numpy as np
 
+try:
+    from scipy import sparse
+    from scipy.signal import savgol_filter
+    from scipy.sparse.linalg import spsolve
+except Exception:
+    sparse = None
+    savgol_filter = None
+    spsolve = None
+
 
 ROOT = Path(__file__).resolve().parent
 RAW_DIR = ROOT / "data" / "raw" / "Emilie_SoftSensor"
@@ -118,6 +127,16 @@ def remove_cosmic_spikes(y, window=9, threshold=7.5):
 
 
 def asymmetric_least_squares(y, penalty=None, p=0.01, n_iter=6):
+    if sparse is not None and spsolve is not None:
+        n = len(y)
+        d = sparse.diags([1.0, -2.0, 1.0], [0, 1, 2], shape=(n - 2, n), format="csc")
+        penalty_matrix = 1e5 * (d.T @ d)
+        weights = np.ones(n)
+        for _ in range(n_iter):
+            w = sparse.diags(weights, 0, shape=(n, n), format="csc")
+            baseline = spsolve(w + penalty_matrix, weights * y)
+            weights = p * (y > baseline) + (1.0 - p) * (y <= baseline)
+        return np.asarray(baseline, dtype=float)
     n = len(y)
     step = max(1, n // 180)
     if step > 1:
@@ -140,6 +159,8 @@ def asymmetric_least_squares(y, penalty=None, p=0.01, n_iter=6):
 def savitzky_golay(y, window=11, poly=3, deriv=0, dx=1.0):
     if window % 2 == 0:
         window += 1
+    if savgol_filter is not None:
+        return savgol_filter(y, window_length=window, polyorder=poly, deriv=deriv, delta=dx, mode="nearest")
     half = window // 2
     x = np.arange(-half, half + 1, dtype=float)
     a = np.vander(x, poly + 1, increasing=True)
