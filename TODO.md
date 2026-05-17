@@ -29,6 +29,7 @@
   - rerun rank selection after quantitative HPLC culture targets are merged
 
 ## Reporting
+- Review `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx` in Word and refine wording/figures for the intended audience if it will be used as a thesis or publication appendix.
 - Add supervised culture-sample evaluation plots after HPLC targets are available:
   - predicted vs actual
   - residual distribution

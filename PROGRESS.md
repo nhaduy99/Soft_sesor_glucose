@@ -26,6 +26,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Ran Raman preprocessing and EEM PARAFAC exports. `features/raman_preprocessed_features.csv` contains 765 labelled/configured Raman rows. PARAFAC selected rank 2 and exported scores/loadings/component maps under `features/eem_parafac/`.
 - Added `train_preprocessed_models.py` to compare Raman-preprocessed, PARAFAC-score, and PARAFAC+Raman-fusion models against the last best RMSEs. Glucose improved by 11.6% versus the last best model; rhamnose and xylose did not improve with the new features.
 - Added kernel-ridge candidates to the focused preprocessed/PARAFAC search and regenerated the comprehensive HTML report with an explicit feature input/output table for modelling. Glucose improved further to 0.5094 RMSE, an 8.8% improvement versus the latest project-level baseline. Rhamnose and xylose still did not meet the requested 5% improvement threshold with the current standard/spike labels.
+- Added `generate_docx_model_report.py` and generated `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`, a 6-8 page Word report with pipeline diagrams, result plots, PARAFAC visual demonstrations, strengths, weaknesses, biological interpretation, and next-step recommendations.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -55,6 +56,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - `train_monosaccharide_softsensor.py`: pure-NumPy supervised training and model-search script for rhamnose, xylose, and glucose standards/spikes.
 - `supervised_monosaccharides/supervised_report.html`: supervised model results report with target coverage, training flow, best models, and optimization improvement.
 - `supervised_monosaccharides/comprehensive_modeling_report.html`: comprehensive visual report for processing, modelling, training, optimization, feature input/output tables, predicted-vs-true plots, residuals, and metrics.
+- `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`: Word-format scientific report summarizing the current data, methods, modelling results, strengths, weaknesses, and biological interpretation.
 - `supervised_monosaccharides/optimization_improvement_summary.csv`: final-best RMSE compared with the initial baseline search.
 - `generate_supervised_visual_report.py`: pure-Python SVG/HTML report generator for supervised modelling visualizations.
 - `preprocessing_raman.py`: pure-NumPy Raman preprocessing and feature export pipeline with explicit preprocessing configuration labels.
@@ -86,5 +88,6 @@ python preprocessing_raman.py
 python eem_parafac_features.py
 python train_preprocessed_models.py
 python generate_supervised_visual_report.py
+python generate_docx_model_report.py
 python rhamnose_ml/scripts/train_baseline.py --config rhamnose_ml/config/defaults.json
 ```

@@ -19,6 +19,10 @@ Open the comprehensive visual modelling report here:
 
 `supervised_monosaccharides/comprehensive_modeling_report.html`
 
+Open the Word-format scientific report here:
+
+`supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`
+
 ## What Was Completed
 - Uploaded the project to GitHub.
 - Uploaded the raw data folder into `data/raw/Emilie_SoftSensor`.
@@ -47,6 +51,7 @@ Open the comprehensive visual modelling report here:
 - Extended `train_preprocessed_models.py` with a focused kernel-ridge pass over the strongest preprocessed Raman and Raman+PARAFAC feature sets.
 - Regenerated `supervised_monosaccharides/preprocessed_model_best_vs_last.csv`, `supervised_monosaccharides/preprocessed_model_search_metrics_summary.csv`, `supervised_monosaccharides/preprocessed_model_search_metrics_by_split.csv`, and the comprehensive HTML report.
 - Latest focused preprocessed/PARAFAC result: glucose improved to 0.5094 RMSE, an 8.8% gain versus the latest project-level baseline. Rhamnose and xylose did not meet the requested 5% improvement threshold.
+- Added `generate_docx_model_report.py` and generated `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx`. The report is structured as a 6-8 page Word document with pipeline visualisation, RMSE/improvement plots, predicted-vs-true plots, PARAFAC visuals, strengths, weaknesses, biological interpretation, and recommended next steps.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
@@ -77,6 +82,8 @@ python train_preprocessed_models.py
 python generate_supervised_visual_report.py
 python -m py_compile train_preprocessed_models.py generate_supervised_visual_report.py preprocessing_raman.py eem_parafac_features.py
 python -c "from html.parser import HTMLParser; from pathlib import Path; p=Path('supervised_monosaccharides/comprehensive_modeling_report.html'); HTMLParser().feed(p.read_text(encoding='utf-8')); print('html ok', p.stat().st_size)"
+python generate_docx_model_report.py
+python -c "import zipfile, xml.etree.ElementTree as ET; p='supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx'; z=zipfile.ZipFile(p); ET.fromstring(z.read('word/document.xml')); print('docx ok', len([n for n in z.namelist() if n.startswith('word/media/')]))"
 ```
 
 ## Key Caveat
