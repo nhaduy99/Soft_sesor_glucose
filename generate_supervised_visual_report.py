@@ -16,7 +16,8 @@ OPTIMIZATION_CSV = OUT_DIR / "optimization_improvement_summary.csv"
 PREDICTIONS_CSV = OUT_DIR / "example_predictions_seed0.csv"
 TARGET_SUMMARY_CSV = OUT_DIR / "target_summary.csv"
 PREPROCESSED_BEST_CSV = OUT_DIR / "preprocessed_model_best_vs_last.csv"
-PARAFAC_SUMMARY_CSV = ROOT / "features" / "eem_parafac" / "parafac_rank_summary.csv"
+PARAFAC_FEATURE_DIR = ROOT / ("features/eem_parafac_exclude_rha5" if os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"} else "features/eem_parafac")
+PARAFAC_SUMMARY_CSV = PARAFAC_FEATURE_DIR / "parafac_rank_summary.csv"
 REPORT_HTML = OUT_DIR / "comprehensive_modeling_report.html"
 EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 
@@ -492,7 +493,7 @@ def build_report():
         f"<td>{esc(r['selected_rank'])}</td></tr>"
         for r in parafac_summary
     )
-    parafac_dir = ROOT / "features" / "eem_parafac"
+    parafac_dir = PARAFAC_FEATURE_DIR
     parafac_svgs = []
     for name in ("rank2_excitation_loadings.svg", "rank2_emission_loadings.svg", "rank2_component1_map.svg", "rank2_component2_map.svg"):
         path = parafac_dir / name

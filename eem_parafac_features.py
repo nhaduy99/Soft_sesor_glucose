@@ -1,5 +1,6 @@
 import csv
 import math
+import os
 import re
 from pathlib import Path
 
@@ -16,8 +17,15 @@ except Exception:
 ROOT = Path(__file__).resolve().parent
 RAW_DIR = ROOT / "data" / "raw" / "Emilie_SoftSensor"
 SOURCE_CSV = ROOT / "features" / "monosaccharide_interpretable_targets.csv"
-OUT_DIR = ROOT / "features" / "eem_parafac"
-SCORES_CSV = ROOT / "features" / "eem_parafac_scores.csv"
+EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
+OUT_DIR = ROOT / os.environ.get(
+    "EEM_PARAFAC_OUT_DIR",
+    "features/eem_parafac_exclude_rha5" if EXCLUDE_RHA5 else "features/eem_parafac",
+)
+SCORES_CSV = ROOT / os.environ.get(
+    "EEM_PARAFAC_SCORES_CSV",
+    "features/eem_parafac_scores_exclude_rha5.csv" if EXCLUDE_RHA5 else "features/eem_parafac_scores.csv",
+)
 SUMMARY_CSV = OUT_DIR / "parafac_rank_summary.csv"
 TARGETS = ("rhamnose_gL", "xylose_gL", "glucose_gL")
 SCATTER_PRIMARY_NM = 20.0
@@ -80,6 +88,14 @@ def parse_targets(label):
     return {}, "unsupported_numeric_treatment"
 
 
+def is_excluded_rha5(row):
+    if not EXCLUDE_RHA5:
+        return False
+    label = (row.get("legend_treatment_label") or "").strip().lower().replace(" ", "")
+    targets, _ = parse_targets(row.get("legend_treatment_label", ""))
+    return label == "rha(5)" and targets.get("rhamnose_gL") == 5.0
+
+
 def parse_eem(path):
     with path.open("r", encoding="utf-8", newline="") as handle:
         rows = list(csv.reader(handle))
@@ -103,7 +119,7 @@ def parse_eem(path):
 
 
 def load_eem_cube():
-    rows = read_csv(SOURCE_CSV)
+    rows = [row for row in read_csv(SOURCE_CSV) if not is_excluded_rha5(row)]
     samples, matrices = [], []
     excitation = emission = None
     for row in rows:

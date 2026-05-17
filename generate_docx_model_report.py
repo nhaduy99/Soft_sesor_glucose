@@ -24,7 +24,8 @@ PREPROCESSED_BEST = OUT_DIR / "preprocessed_model_best_vs_last.csv"
 OPTIMIZATION = OUT_DIR / "optimization_improvement_summary.csv"
 TARGET_SUMMARY = OUT_DIR / "target_summary.csv"
 PREDICTIONS = OUT_DIR / "example_predictions_seed0.csv"
-PARAFAC_SUMMARY = ROOT / "features" / "eem_parafac" / "parafac_rank_summary.csv"
+PARAFAC_FEATURE_DIR = ROOT / ("features/eem_parafac_exclude_rha5" if EXCLUDE_RHA5 else "features/eem_parafac")
+PARAFAC_SUMMARY = PARAFAC_FEATURE_DIR / "parafac_rank_summary.csv"
 
 TARGET_LABELS = {
     "rhamnose_gL": "Rhamnose",
@@ -425,10 +426,10 @@ def build_report():
         *[[r["rank"], r["reconstruction_error"], r["split_half_stability"], r["prediction_rmse_mean"], r["selected_rank"]] for r in parafac_rows],
     ])
     for src, name in [
-        (ROOT / "features" / "eem_parafac" / "rank2_excitation_loadings.svg", "parafac_excitation_loadings"),
-        (ROOT / "features" / "eem_parafac" / "rank2_emission_loadings.svg", "parafac_emission_loadings"),
-        (ROOT / "features" / "eem_parafac" / "rank2_component1_map.svg", "parafac_component1"),
-        (ROOT / "features" / "eem_parafac" / "rank2_component2_map.svg", "parafac_component2"),
+        (PARAFAC_FEATURE_DIR / "rank2_excitation_loadings.svg", "parafac_excitation_loadings"),
+        (PARAFAC_FEATURE_DIR / "rank2_emission_loadings.svg", "parafac_emission_loadings"),
+        (PARAFAC_FEATURE_DIR / "rank2_component1_map.svg", "parafac_component1"),
+        (PARAFAC_FEATURE_DIR / "rank2_component2_map.svg", "parafac_component2"),
     ]:
         if src.exists():
             doc.add_svg(name, src.read_text(encoding="utf-8"), 5.9, 3.1)

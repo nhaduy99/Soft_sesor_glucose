@@ -23,7 +23,10 @@ from train_monosaccharide_softsensor import (
 
 ROOT = Path(__file__).resolve().parent
 RAMAN_CSV = ROOT / "features" / "raman_preprocessed_features.csv"
-PARAFAC_CSV = ROOT / "features" / "eem_parafac_scores.csv"
+PARAFAC_CSV = ROOT / os.environ.get(
+    "EEM_PARAFAC_SCORES_CSV",
+    "features/eem_parafac_scores_exclude_rha5.csv" if os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"} else "features/eem_parafac_scores.csv",
+)
 BEST_MODELS_CSV = OUT_DIR / "best_models.csv"
 EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 

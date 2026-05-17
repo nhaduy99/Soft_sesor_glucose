@@ -33,6 +33,7 @@
 ## Reporting
 - Review `supervised_monosaccharides/monosaccharide_softsensor_comprehensive_report.docx` in Word and refine wording/figures for the intended audience if it will be used as a thesis or publication appendix.
 - Review `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx` as the sensitivity-analysis report for excluding the 5 g/L rhamnose standards.
+- Review `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx` for the filtered dependency-aware PARAFAC/preprocessing sensitivity analysis.
 - Add supervised culture-sample evaluation plots after HPLC targets are available:
   - predicted vs actual
   - residual distribution

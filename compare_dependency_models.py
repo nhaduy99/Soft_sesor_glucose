@@ -35,6 +35,7 @@ OUT_DIR = ROOT / os.environ.get("SUPERVISED_OUT_DIR", "supervised_monosaccharide
 OUT_CSV = OUT_DIR / "dependency_model_comparison.csv"
 OUT_SUMMARY = OUT_DIR / "dependency_model_comparison_summary.csv"
 OUT_HTML = OUT_DIR / "dependency_model_comparison.html"
+EXCLUDE_RHA5 = os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"}
 
 
 def dependency_status():
@@ -107,6 +108,9 @@ def run_dependency_models():
 
     interp_rows = merge_modalities(target_rows(read_csv(INTERPRETABLE_CSV)))
     full_rows = merge_modalities(target_rows(read_csv(FULL_CSV)))
+    if EXCLUDE_RHA5:
+        interp_rows = [row for row in interp_rows if not is_excluded_rha5(row)]
+        full_rows = [row for row in full_rows if not is_excluded_rha5(row)]
     plans = [
         ("eem_interpretable", interp_rows, list(interp_rows[0].keys())),
         ("fusion_interpretable", interp_rows, list(interp_rows[0].keys())),
@@ -202,6 +206,11 @@ def run_dependency_models():
 def read_csv(path):
     with Path(path).open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
+
+
+def is_excluded_rha5(row):
+    label = (row.get("legend_treatment_label") or "").strip().lower().replace(" ", "")
+    return label == "rha(5)" and safe_float(row.get("rhamnose_gL")) == 5.0
 
 
 if __name__ == "__main__":

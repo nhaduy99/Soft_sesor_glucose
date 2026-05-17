@@ -30,6 +30,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Added an exclusion mode for all `Rha (5)` examples, reran supervised model search and preprocessing/PARAFAC comparison, and generated a separate report set under `supervised_monosaccharides_exclude_rha5/`. The filtered run contains zero rows with `rhamnose_gL = 5`.
 - Refined dependency-aware preprocessing/model scripts: Raman preprocessing now uses SciPy sparse ALS and SciPy Savitzky-Golay filtering when SciPy is installed, otherwise falls back to NumPy; EEM PARAFAC now records the backend and applies primary plus second-order scatter masking; TensorLy non-negative PARAFAC is used automatically if installed. The current environment does not have SciPy, scikit-learn, XGBoost, TensorLy, pandas, or matplotlib, so refreshed outputs still use NumPy fallbacks.
 - Added `compare_dependency_models.py` to run scikit-learn PLSR/SVR and XGBoost comparisons when dependencies are installed. Current run wrote `supervised_monosaccharides/dependency_model_comparison.html` and `.csv` showing those dependencies are unavailable.
+- Modified the dependency-aware refinement path for the `Rha (5)` exclusion workflow. Filtered PARAFAC now writes `features/eem_parafac_scores_exclude_rha5.csv` and `features/eem_parafac_exclude_rha5/`, so the filtered reports no longer use PARAFAC factors fitted with excluded 5 g/L samples present.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -56,6 +57,8 @@ After the stricter EEM scatter mask, PARAFAC still selected rank 2 using the Num
 
 Filtered preprocessing/PARAFAC extension did not beat the filtered main-model baselines: rhamnose 0.4589 RMSE, xylose 0.5526 RMSE, glucose 0.7187 RMSE.
 
+After fitting filtered PARAFAC without `Rha (5)`, rank 2 was still selected with NumPy CP-ALS and the stricter primary/second-order scatter mask. Filtered refined preprocessing/PARAFAC results were: rhamnose 0.4588 RMSE, xylose 0.5526 RMSE, glucose 0.7190 RMSE, still weaker than the filtered main-model baselines.
+
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
 - `eem_raman_hplc_inventory_enriched.csv`: master enriched inventory used as the central join table.
@@ -75,6 +78,9 @@ Filtered preprocessing/PARAFAC extension did not beat the filtered main-model ba
 - `supervised_monosaccharides/dependency_model_comparison.html`: dependency availability report for scikit-learn PLSR/SVR and XGBoost comparison.
 - `supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html`: HTML report for the filtered training/testing run with all `Rha (5)` examples excluded and comparison against the previous report.
 - `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_report.docx`: Word report for the filtered run.
+- `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx`: Word report for the filtered run after dependency-aware PARAFAC/preprocessing refinement.
+- `features/eem_parafac_exclude_rha5/`: filtered PARAFAC rank summary, loadings, and component maps fitted after excluding `Rha (5)` samples.
+- `features/eem_parafac_scores_exclude_rha5.csv`: filtered PARAFAC scores fitted after excluding `Rha (5)` samples.
 - `supervised_monosaccharides/optimization_improvement_summary.csv`: final-best RMSE compared with the initial baseline search.
 - `generate_supervised_visual_report.py`: pure-Python SVG/HTML report generator for supervised modelling visualizations.
 - `preprocessing_raman.py`: pure-NumPy Raman preprocessing and feature export pipeline with explicit preprocessing configuration labels.
@@ -113,5 +119,8 @@ $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclu
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_preprocessed_models.py
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_supervised_visual_report.py
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_docx_model_report.py
+$env:EXCLUDE_RHA5='1'; python eem_parafac_features.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python compare_dependency_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; $env:REPORT_DOCX_NAME='monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; python generate_docx_model_report.py
 python rhamnose_ml/scripts/train_baseline.py --config rhamnose_ml/config/defaults.json
 ```
