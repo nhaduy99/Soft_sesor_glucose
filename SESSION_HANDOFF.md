@@ -38,6 +38,11 @@ Open the comprehensive visual modelling report here:
 - Continued optimization with distance-normalized kNN and focused RBF/Laplacian kernel ridge. Latest confirmed results did not reach the requested extra 20% RMSE reduction beyond the previous best.
 - Generated `supervised_monosaccharides/comprehensive_modeling_report.html` with predicted-vs-true scatter plots, residual plots, metric bar charts, top-model tables, and pipeline documentation.
 - Inserted processed spectroscopy visual samples into `supervised_monosaccharides/comprehensive_modeling_report.html`: annotated Raman overlays and EEM heatmaps with analysis of monosaccharide signal interpretation.
+- Added `preprocessing_raman.py` for Raman cosmic-spike removal, ALS baseline correction, Savitzky-Golay smoothing/derivatives, SNV, optional area normalization, and `preprocessing_config` tracking.
+- Added `eem_parafac_features.py` for cleaned EEM cube PARAFAC rank 2-8 fitting, rank selection, score/loadings export, and component SVG plots.
+- Ran `preprocessing_raman.py`, `eem_parafac_features.py`, and `train_preprocessed_models.py`.
+- Latest new-feature comparison: glucose improved 11.6% against the last best model using `raman_preprocessed_als_sg2_snv`; rhamnose and xylose did not improve.
+- Updated `supervised_monosaccharides/comprehensive_modeling_report.html` with Raman preprocessing/PARAFAC result tables and PARAFAC loading/component-map plots.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
@@ -55,6 +60,9 @@ python -m py_compile train_monosaccharide_softsensor.py
 python -c "from html.parser import HTMLParser; HTMLParser().feed(open('supervised_monosaccharides/supervised_report.html', encoding='utf-8').read()); print('HTML parse ok')"
 git push
 python train_monosaccharide_softsensor.py
+python preprocessing_raman.py
+python eem_parafac_features.py
+python train_preprocessed_models.py
 python generate_supervised_visual_report.py
 ```
 

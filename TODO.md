@@ -22,6 +22,10 @@
   - Raman baseline correction / smoothing
   - EEM scatter-region masking and PARAFAC scores
   - replicate-aware calibration using quantitative HPLC targets
+- Improve PARAFAC numerical quality and validation before relying on PARAFAC scores for final claims:
+  - add non-negativity/stability constraints with a tested library if dependencies are available
+  - evaluate component interpretability against known fluorophores/process-state signals
+  - rerun rank selection after quantitative HPLC culture targets are merged
 
 ## Reporting
 - Add supervised culture-sample evaluation plots after HPLC targets are available:

@@ -13,6 +13,8 @@ METRICS_SUMMARY_CSV = OUT_DIR / "model_search_metrics_summary.csv"
 OPTIMIZATION_CSV = OUT_DIR / "optimization_improvement_summary.csv"
 PREDICTIONS_CSV = OUT_DIR / "example_predictions_seed0.csv"
 TARGET_SUMMARY_CSV = OUT_DIR / "target_summary.csv"
+PREPROCESSED_BEST_CSV = OUT_DIR / "preprocessed_model_best_vs_last.csv"
+PARAFAC_SUMMARY_CSV = ROOT / "features" / "eem_parafac" / "parafac_rank_summary.csv"
 REPORT_HTML = OUT_DIR / "comprehensive_modeling_report.html"
 
 TARGET_LABELS = {
@@ -385,6 +387,8 @@ def build_report():
     optimization_rows = read_csv(OPTIMIZATION_CSV)
     prediction_rows = read_csv(PREDICTIONS_CSV)
     target_summary = read_csv(TARGET_SUMMARY_CSV)
+    preprocessed_best = read_csv(PREPROCESSED_BEST_CSV) if PREPROCESSED_BEST_CSV.exists() else []
+    parafac_summary = read_csv(PARAFAC_SUMMARY_CSV) if PARAFAC_SUMMARY_CSV.exists() else []
     target_feature_rows = read_csv(TARGET_FEATURES_CSV)
     spectroscopy_samples = select_spectroscopy_samples(target_feature_rows)
 
@@ -447,6 +451,25 @@ def build_report():
         "Improvement",
         percent=True,
     )
+    preprocessed_rows = "\n".join(
+        f"<tr><td>{esc(TARGET_LABELS.get(r['target'], r['target']))}</td><td>{esc(r['feature_set'])}</td>"
+        f"<td>{esc(r.get('preprocessing_config', ''))}</td><td>{esc(r['config'])}</td>"
+        f"<td>{fnum(r['mean_rmse']):.4f}</td><td>{fnum(r['last_best_rmse']):.4f}</td>"
+        f"<td>{fnum(r['additional_improvement_vs_last_best_pct']):.1f}%</td><td>{esc(r['met_10pct_vs_last_best'])}</td></tr>"
+        for r in preprocessed_best
+    )
+    parafac_rows = "\n".join(
+        f"<tr><td>{esc(r['rank'])}</td><td>{esc(r['reconstruction_error'])}</td>"
+        f"<td>{esc(r['split_half_stability'])}</td><td>{esc(r['prediction_rmse_mean'])}</td>"
+        f"<td>{esc(r['selected_rank'])}</td></tr>"
+        for r in parafac_summary
+    )
+    parafac_dir = ROOT / "features" / "eem_parafac"
+    parafac_svgs = []
+    for name in ("rank2_excitation_loadings.svg", "rank2_emission_loadings.svg", "rank2_component1_map.svg", "rank2_component2_map.svg"):
+        path = parafac_dir / name
+        if path.exists():
+            parafac_svgs.append(f'<section class="panel">{path.read_text(encoding="utf-8")}</section>')
     raman_example_svg = raman_overlay_svg(spectroscopy_samples)
     eem_example_sections = "\n".join(
         f'<section class="panel">{eem_heatmap_svg(sample)}</section>'
@@ -546,6 +569,26 @@ def build_report():
       {opt_rows}
     </table>
   </section>
+
+  <h2>Raman Preprocessing and EEM PARAFAC Extensions</h2>
+  <section class="panel">
+    <p>The latest extension adds Raman preprocessing configurations with cosmic-spike removal, asymmetric least-squares baseline correction, Savitzky-Golay smoothing or derivatives, SNV normalization, and optional area normalization. Every result row stores a <code>preprocessing_config</code>. EEM PARAFAC scores were exported after rank selection using reconstruction error, split-half stability, and prediction performance.</p>
+    <table>
+      <tr><th>Target</th><th>Best new feature set</th><th>Preprocessing config</th><th>Model config</th><th>New RMSE</th><th>Last best RMSE</th><th>Improvement</th><th>Met 10%</th></tr>
+      {preprocessed_rows}
+    </table>
+  </section>
+  <section class="panel">
+    <h3>PARAFAC rank selection</h3>
+    <table>
+      <tr><th>Rank</th><th>Reconstruction error</th><th>Split-half stability</th><th>Prediction RMSE mean</th><th>Selected</th></tr>
+      {parafac_rows}
+    </table>
+    <p>Rank 2 was selected in the current dependency-light PARAFAC run. The PARAFAC score models did not improve rhamnose or xylose over the last best models, but they provide interpretable excitation/emission component structure for later refinement.</p>
+  </section>
+  <div class="grid">
+    {''.join(parafac_svgs)}
+  </div>
 
   <h2>Predicted vs True Scatter Plots</h2>
   <div class="grid">{''.join(scatter_sections)}</div>

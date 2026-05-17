@@ -21,6 +21,10 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Ran a further optimization pass with cosine/correlation/Manhattan kNN, row-wise normalization, and focused RBF/Laplacian kernel ridge. Latest confirmed results improved the previous best by 2.4% for rhamnose, 0.4% for xylose, and 5.9% for glucose; the requested additional 20% improvement was not reached with the current standard/spike labels.
 - Added `generate_supervised_visual_report.py` and generated `supervised_monosaccharides/comprehensive_modeling_report.html` with predicted-vs-true scatter plots, residual plots, RMSE/improvement bar charts, top-model tables, and an end-to-end modelling pipeline summary.
 - Extended the comprehensive report with processed spectroscopy examples: annotated Raman overlays for monosaccharide standards/mixtures, EEM heatmaps for rhamnose/xylose/glucose examples, saturation/scatter annotations, and written image analysis explaining direct Raman sugar signals versus indirect EEM process-state signals.
+- Added `preprocessing_raman.py` to generate Raman features with cosmic spike removal, asymmetric least-squares baseline correction, Savitzky-Golay smoothing, first/second derivatives, SNV normalization, optional area normalization, and a `preprocessing_config` column for model traceability.
+- Added `eem_parafac_features.py` to load the cleaned EEM cube, fit PARAFAC ranks 2-8, score ranks by reconstruction error, split-half stability, and prediction performance, export selected-rank scores/loadings, and create loading/component-map SVG plots.
+- Ran Raman preprocessing and EEM PARAFAC exports. `features/raman_preprocessed_features.csv` contains 765 labelled/configured Raman rows. PARAFAC selected rank 2 and exported scores/loadings/component maps under `features/eem_parafac/`.
+- Added `train_preprocessed_models.py` to compare Raman-preprocessed, PARAFAC-score, and PARAFAC+Raman-fusion models against the last best RMSEs. Glucose improved by 11.6% versus the last best model; rhamnose and xylose did not improve with the new features.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -28,6 +32,13 @@ The main missing piece for culture-sample prediction is still the quantitative H
 | Rhamnose | target_focused | fusion_full | kNN, Manhattan, L2 row normalization | 0.7043 | 18.4% | 2.4% |
 | Xylose | all_known | eem_full | Laplacian kernel ridge, log target | 0.5359 | 12.0% | 0.4% |
 | Glucose | target_focused | eem_interpretable | kNN, Manhattan | 0.5589 | 27.3% | 5.9% |
+
+## Latest preprocessing/PARAFAC model results
+| Target | Best new feature set | RMSE | Last best RMSE | Improvement vs last best | Met 10% |
+|---|---|---:|---:|---:|---|
+| Rhamnose | parafac_raman_fusion_als_sg0_snv_area | 0.8001 | 0.7043 | -10.8% | No |
+| Xylose | raman_preprocessed_als_sg2_snv | 0.6050 | 0.5359 | -12.4% | No |
+| Glucose | raman_preprocessed_als_sg2_snv | 0.5250 | 0.5589 | 11.6% | Yes |
 
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
@@ -45,6 +56,9 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - `supervised_monosaccharides/comprehensive_modeling_report.html`: comprehensive visual report for processing, modelling, training, optimization, predicted-vs-true plots, residuals, and metrics.
 - `supervised_monosaccharides/optimization_improvement_summary.csv`: final-best RMSE compared with the initial baseline search.
 - `generate_supervised_visual_report.py`: pure-Python SVG/HTML report generator for supervised modelling visualizations.
+- `preprocessing_raman.py`: pure-NumPy Raman preprocessing and feature export pipeline with explicit preprocessing configuration labels.
+- `eem_parafac_features.py`: pure-NumPy EEM PARAFAC feature export and rank-selection workflow.
+- `train_preprocessed_models.py`: compact model comparison for Raman-preprocessed, EEM-PARAFAC, and fused feature sets versus the last best models.
 - `rhamnose_ml/scripts/train_baseline.py`: starter baseline training entry point for supervised Rhamnose prediction.
 - `rhamnose_ml/src/rhamnose_ml/train.py`: baseline training pipeline using PLS with grouped train/test splitting.
 
@@ -67,6 +81,9 @@ python visualize_eem_raman.py
 python export_rhamnose_features.py
 python explore_features_unsupervised.py
 python train_monosaccharide_softsensor.py
+python preprocessing_raman.py
+python eem_parafac_features.py
+python train_preprocessed_models.py
 python generate_supervised_visual_report.py
 python rhamnose_ml/scripts/train_baseline.py --config rhamnose_ml/config/defaults.json
 ```

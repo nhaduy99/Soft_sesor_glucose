@@ -482,6 +482,9 @@ def evaluate_feature_set(rows, columns, target, feature_set, cohort):
         (target == "rhamnose_gL" and cohort in {"all_known", "target_focused"} and feature_set == "fusion_full")
         or (target == "xylose_gL" and cohort == "all_known" and feature_set == "eem_full")
         or (target == "glucose_gL" and cohort == "target_focused" and feature_set == "eem_interpretable")
+        or feature_set.startswith("raman_preprocessed")
+        or feature_set.startswith("eem_parafac")
+        or feature_set.startswith("parafac_raman_fusion")
     )
     configs = []
     max_feature_options = [12, 24, 48, 96, 192, 384]
