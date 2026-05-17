@@ -87,6 +87,10 @@ Open the dependency availability/comparison report here:
   - `eem_parafac_features.py` now supports `EXCLUDE_RHA5=1` and writes filtered PARAFAC outputs to `features/eem_parafac_exclude_rha5/` plus `features/eem_parafac_scores_exclude_rha5.csv`.
   - `train_preprocessed_models.py`, `generate_supervised_visual_report.py`, `generate_docx_model_report.py`, and `compare_dependency_models.py` use the filtered PARAFAC artifacts when `EXCLUDE_RHA5=1`.
   - Regenerated filtered PARAFAC, filtered preprocessed/PARAFAC metrics, filtered dependency availability report, filtered HTML report, and `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx`.
+- User instructed to use Conda base for all Python runs. Verified base Python is `C:\ProgramData\anaconda3\python.exe`.
+- Installed XGBoost and TensorLy into the Conda base Python user site using `conda run -n base python -m pip install --user xgboost tensorly`, because direct `conda install -n base ...` failed with `EnvironmentNotWritableError` for `C:\ProgramData\anaconda3`.
+- Verified Conda base imports: SciPy, scikit-learn, XGBoost, TensorLy, pandas, matplotlib all import successfully.
+- Re-ran filtered Raman preprocessing with SciPy path, filtered PARAFAC with TensorLy, filtered preprocessed/PARAFAC comparison, dependency-backed scikit-learn/XGBoost comparison, and regenerated filtered HTML/DOCX reports.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
@@ -115,13 +119,21 @@ The filtered target table `supervised_monosaccharides_exclude_rha5/monosaccharid
 
 Filtered preprocessing/PARAFAC comparison did not beat the filtered main-model baselines: rhamnose 0.4589 RMSE, xylose 0.5526 RMSE, glucose 0.7187 RMSE.
 
-Filtered dependency-aware PARAFAC after excluding `Rha (5)` selected rank 2 with backend `numpy_cp_als` and scatter mask `primary_nm=20.0;second_order_nm=25.0`. Latest filtered refined results:
+Filtered dependency-aware PARAFAC after excluding `Rha (5)` now selected rank 6 with backend `tensorly_non_negative_parafac` and scatter mask `primary_nm=20.0;second_order_nm=25.0`. Latest filtered refined preprocessing/PARAFAC results:
 
 | Target | Best filtered refined feature set | Model | RMSE | Compared with filtered main baseline |
 |---|---|---|---:|---:|
-| Rhamnose | EEM PARAFAC scores | RBF KRR | 0.4588 | worse than 0.4136 |
-| Xylose | preprocessed Raman, ALS SG2 SNV | weighted kNN | 0.5526 | worse than 0.4580 |
-| Glucose | EEM PARAFAC scores | RBF KRR | 0.7190 | worse than 0.5589 |
+| Rhamnose | PARAFAC + Raman fusion, ALS SG2 SNV | weighted kNN | 0.4933 | worse than 0.4136 |
+| Xylose | preprocessed Raman, ALS SG2 SNV | weighted kNN | 0.5544 | worse than 0.4580 |
+| Glucose | PARAFAC + Raman fusion, ALS SG0 SNV area | RBF KRR | 0.7058 | worse than 0.5589 |
+
+Dependency-backed filtered comparison now runs. Best visible result:
+
+| Target | Feature set | Model | RMSE | Note |
+|---|---|---|---:|---|
+| Rhamnose | fusion_full | scikit-learn PLSR, 5 components | 0.3598 | better than filtered pure-NumPy rhamnose best 0.4136 |
+
+No quantitative HPLC concentration target table was found beyond the existing sample legends/generated target files, so culture-target merging remains blocked.
 
 ## Latest Dependency-Aware Refinement Results
 Current dependency availability:
@@ -164,11 +176,11 @@ python eem_parafac_features.py
 python train_preprocessed_models.py
 python compare_dependency_models.py
 $env:REPORT_DOCX_NAME='monosaccharide_softsensor_refined_dependencies_report.docx'; python generate_docx_model_report.py
-$env:EXCLUDE_RHA5='1'; python eem_parafac_features.py
-$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_preprocessed_models.py
-$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python compare_dependency_models.py
-$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_supervised_visual_report.py
-$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; $env:REPORT_DOCX_NAME='monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; python generate_docx_model_report.py
+$env:EXCLUDE_RHA5='1'; conda run -n base python eem_parafac_features.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python train_preprocessed_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python compare_dependency_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python generate_supervised_visual_report.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; $env:REPORT_DOCX_NAME='monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; conda run -n base python generate_docx_model_report.py
 ```
 
 ## Key Caveat

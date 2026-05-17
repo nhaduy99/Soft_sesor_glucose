@@ -16,6 +16,7 @@ OPTIMIZATION_CSV = OUT_DIR / "optimization_improvement_summary.csv"
 PREDICTIONS_CSV = OUT_DIR / "example_predictions_seed0.csv"
 TARGET_SUMMARY_CSV = OUT_DIR / "target_summary.csv"
 PREPROCESSED_BEST_CSV = OUT_DIR / "preprocessed_model_best_vs_last.csv"
+DEPENDENCY_SUMMARY_CSV = OUT_DIR / "dependency_model_comparison_summary.csv"
 PARAFAC_FEATURE_DIR = ROOT / ("features/eem_parafac_exclude_rha5" if os.environ.get("EXCLUDE_RHA5", "").strip().lower() in {"1", "true", "yes"} else "features/eem_parafac")
 PARAFAC_SUMMARY_CSV = PARAFAC_FEATURE_DIR / "parafac_rank_summary.csv"
 REPORT_HTML = OUT_DIR / "comprehensive_modeling_report.html"
@@ -392,6 +393,7 @@ def build_report():
     prediction_rows = read_csv(PREDICTIONS_CSV)
     target_summary = read_csv(TARGET_SUMMARY_CSV)
     preprocessed_best = read_csv(PREPROCESSED_BEST_CSV) if PREPROCESSED_BEST_CSV.exists() else []
+    dependency_summary = read_csv(DEPENDENCY_SUMMARY_CSV) if DEPENDENCY_SUMMARY_CSV.exists() else []
     parafac_summary = read_csv(PARAFAC_SUMMARY_CSV) if PARAFAC_SUMMARY_CSV.exists() else []
     baseline_best_path = BASELINE_OUT_DIR / "best_models.csv"
     baseline_best = read_csv(baseline_best_path) if OUT_DIR != BASELINE_OUT_DIR and baseline_best_path.exists() else []
@@ -487,15 +489,29 @@ def build_report():
         f"<td>{esc(r.get('met_5pct_vs_last_best', ''))}</td><td>{esc(r['met_10pct_vs_last_best'])}</td></tr>"
         for r in preprocessed_best
     )
+    dependency_rows = "\n".join(
+        f"<tr><td>{esc(TARGET_LABELS.get(r['target'], r['target']))}</td><td>{esc(r['feature_set'])}</td>"
+        f"<td>{esc(r['model'])}</td><td>{esc(r['config'])}</td><td>{fnum(r['mean_rmse']):.4f}</td><td>{fnum(r['mean_r2']):.3f}</td></tr>"
+        for r in sorted(dependency_summary, key=lambda row: fnum(row.get("mean_rmse")))[:20]
+    )
     parafac_rows = "\n".join(
         f"<tr><td>{esc(r['rank'])}</td><td>{esc(r['reconstruction_error'])}</td>"
         f"<td>{esc(r['split_half_stability'])}</td><td>{esc(r['prediction_rmse_mean'])}</td>"
         f"<td>{esc(r['selected_rank'])}</td></tr>"
         for r in parafac_summary
     )
+    selected_parafac_rank = 2
+    for row in parafac_summary:
+        if str(row.get("selected_rank", "")).lower() == "true":
+            selected_parafac_rank = int(fnum(row.get("rank"), 2))
+            break
     parafac_dir = PARAFAC_FEATURE_DIR
     parafac_svgs = []
-    for name in ("rank2_excitation_loadings.svg", "rank2_emission_loadings.svg", "rank2_component1_map.svg", "rank2_component2_map.svg"):
+    parafac_names = [
+        f"rank{selected_parafac_rank}_excitation_loadings.svg",
+        f"rank{selected_parafac_rank}_emission_loadings.svg",
+    ] + [f"rank{selected_parafac_rank}_component{i}_map.svg" for i in range(1, selected_parafac_rank + 1)]
+    for name in parafac_names:
         path = parafac_dir / name
         if path.exists():
             parafac_svgs.append(f'<section class="panel">{path.read_text(encoding="utf-8")}</section>')
@@ -644,6 +660,8 @@ def build_report():
   <div class="grid">
     {''.join(parafac_svgs)}
   </div>
+
+  {'<h2>Dependency-Backed Model Comparison</h2><section class="panel"><p>This section uses Conda base packages when installed: scikit-learn PLSR/SVR and XGBoost.</p><table><tr><th>Target</th><th>Feature set</th><th>Model</th><th>Config</th><th>RMSE</th><th>R2</th></tr>' + dependency_rows + '</table></section>' if dependency_rows else ''}
 
   <h2>Predicted vs True Scatter Plots</h2>
   <div class="grid">{''.join(scatter_sections)}</div>

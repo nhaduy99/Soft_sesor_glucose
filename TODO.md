@@ -17,7 +17,8 @@
   - scikit-learn PLSR
   - SVR
   - XGBoost or histogram gradient boosting
-- Current dependency status: SciPy, scikit-learn, XGBoost, TensorLy, pandas, and matplotlib are not installed. `compare_dependency_models.py` will run PLSR/SVR/XGBoost once those packages are available.
+- Current Conda base dependency status: SciPy, scikit-learn, XGBoost, TensorLy, pandas, and matplotlib are importable using `conda run -n base python`. XGBoost and TensorLy were installed into the base Python user site because `C:\ProgramData\anaconda3` is not writable.
+- Review `supervised_monosaccharides_exclude_rha5/dependency_model_comparison_summary.csv` target-by-target. Rhamnose improved with fusion-full PLSR, but xylose/glucose dependency-backed results should be checked before replacing filtered main baselines.
 - Compare grouped splits by `batch` versus `metadata_experiment`.
 - Refine the already-added spectroscopy preprocessing before another optimization attempt:
   - Raman cosmic-spike removal, ALS baseline correction, smoothing/derivatives, SNV, and optional area normalization are implemented in `preprocessing_raman.py`; SciPy sparse ALS and Savitzky-Golay are used automatically if SciPy is installed.

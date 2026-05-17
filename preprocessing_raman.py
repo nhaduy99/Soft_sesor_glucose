@@ -51,6 +51,12 @@ def safe_float(value):
         return math.nan
 
 
+def integrate_trapezoid(y, x=None, dx=1.0):
+    if hasattr(np, "trapezoid"):
+        return np.trapezoid(y, x=x, dx=dx)
+    return np.trapz(y, x=x, dx=dx)
+
+
 def find_raw_file(path_text):
     name = Path(path_text or "").name
     if not name:
@@ -181,7 +187,7 @@ def snv(y):
 
 
 def area_normalize(x, y):
-    area = np.trapezoid(np.abs(y), x)
+    area = integrate_trapezoid(np.abs(y), x=x)
     if area <= 1e-12:
         return y
     return y / area
@@ -210,7 +216,7 @@ def summarize_windows(x, y):
         else:
             out[f"{name}_mean"] = f"{float(np.mean(vals)):.8g}"
             out[f"{name}_max"] = f"{float(np.max(vals)):.8g}"
-            out[f"{name}_area"] = f"{float(np.trapezoid(vals, dx=1.0)):.8g}"
+            out[f"{name}_area"] = f"{float(integrate_trapezoid(vals, dx=1.0)):.8g}"
     if out.get("rp_w905_mean") not in {"", "0"} and out.get("rp_w735_mean") not in {"", "0"}:
         out["rp_ratio_905_735"] = f"{safe_float(out['rp_w905_mean']) / safe_float(out['rp_w735_mean']):.8g}"
     else:

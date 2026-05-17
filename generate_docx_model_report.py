@@ -24,6 +24,7 @@ PREPROCESSED_BEST = OUT_DIR / "preprocessed_model_best_vs_last.csv"
 OPTIMIZATION = OUT_DIR / "optimization_improvement_summary.csv"
 TARGET_SUMMARY = OUT_DIR / "target_summary.csv"
 PREDICTIONS = OUT_DIR / "example_predictions_seed0.csv"
+DEPENDENCY_SUMMARY = OUT_DIR / "dependency_model_comparison_summary.csv"
 PARAFAC_FEATURE_DIR = ROOT / ("features/eem_parafac_exclude_rha5" if EXCLUDE_RHA5 else "features/eem_parafac")
 PARAFAC_SUMMARY = PARAFAC_FEATURE_DIR / "parafac_rank_summary.csv"
 
@@ -330,6 +331,7 @@ def build_report():
     opt_rows = read_csv(OPTIMIZATION)
     target_rows = read_csv(TARGET_SUMMARY)
     parafac_rows = read_csv(PARAFAC_SUMMARY)
+    dependency_rows = read_csv(DEPENDENCY_SUMMARY) if DEPENDENCY_SUMMARY.exists() else []
     preds = predictions_by_target(best_rows)
     baseline_best_path = BASELINE_OUT_DIR / "best_models.csv"
     baseline_best = read_csv(baseline_best_path) if OUT_DIR != BASELINE_OUT_DIR and baseline_best_path.exists() else []
@@ -410,6 +412,24 @@ def build_report():
         "The current project-level best models are not identical across targets, which is biologically plausible. Rhamnose benefits most from Raman + EEM full fusion, suggesting that direct Raman sugar information and EEM matrix-state information are both useful. Xylose is best with full EEM features and Laplacian kernel ridge regression, possibly reflecting strong covariance with fluorescence/process-state patterns in the standards/spikes. Glucose is best in the original search with compact EEM interpretable features, but the later preprocessed Raman kernel-ridge model improves glucose RMSE to 0.5094 g/L."
     )
     doc.add_svg("scatter_best", scatter_svg(preds), 7.2, 2.5)
+    if dependency_rows:
+        top_dependency = sorted(dependency_rows, key=lambda row: fnum(row.get("mean_rmse")))[:12]
+        doc.add_heading("Dependency-Backed Model Comparison", 2)
+        doc.add_paragraph("This comparison uses Conda base packages when available: scikit-learn PLSR/SVR and XGBoost.")
+        doc.add_table([
+            ["Target", "Feature set", "Model", "Config", "RMSE", "R2"],
+            *[
+                [
+                    TARGET_LABELS.get(r["target"], r["target"]),
+                    r["feature_set"],
+                    r["model"],
+                    r["config"],
+                    f"{fnum(r['mean_rmse']):.4f}",
+                    f"{fnum(r['mean_r2']):.3f}",
+                ]
+                for r in top_dependency
+            ],
+        ])
     doc.add_page_break()
 
     doc.add_heading("6. Raman Preprocessing and EEM PARAFAC Extension", 1)
@@ -425,12 +445,19 @@ def build_report():
         ["Rank", "Reconstruction error", "Split-half stability", "Prediction RMSE mean", "Selected"],
         *[[r["rank"], r["reconstruction_error"], r["split_half_stability"], r["prediction_rmse_mean"], r["selected_rank"]] for r in parafac_rows],
     ])
-    for src, name in [
-        (PARAFAC_FEATURE_DIR / "rank2_excitation_loadings.svg", "parafac_excitation_loadings"),
-        (PARAFAC_FEATURE_DIR / "rank2_emission_loadings.svg", "parafac_emission_loadings"),
-        (PARAFAC_FEATURE_DIR / "rank2_component1_map.svg", "parafac_component1"),
-        (PARAFAC_FEATURE_DIR / "rank2_component2_map.svg", "parafac_component2"),
-    ]:
+    selected_rank = 2
+    for row in parafac_rows:
+        if str(row.get("selected_rank", "")).lower() == "true":
+            selected_rank = int(fnum(row.get("rank"), 2))
+            break
+    parafac_figures = [
+        (PARAFAC_FEATURE_DIR / f"rank{selected_rank}_excitation_loadings.svg", "parafac_excitation_loadings"),
+        (PARAFAC_FEATURE_DIR / f"rank{selected_rank}_emission_loadings.svg", "parafac_emission_loadings"),
+    ] + [
+        (PARAFAC_FEATURE_DIR / f"rank{selected_rank}_component{i}_map.svg", f"parafac_component{i}")
+        for i in range(1, selected_rank + 1)
+    ]
+    for src, name in parafac_figures:
         if src.exists():
             doc.add_svg(name, src.read_text(encoding="utf-8"), 5.9, 3.1)
     doc.add_page_break()

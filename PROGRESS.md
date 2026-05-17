@@ -31,6 +31,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Refined dependency-aware preprocessing/model scripts: Raman preprocessing now uses SciPy sparse ALS and SciPy Savitzky-Golay filtering when SciPy is installed, otherwise falls back to NumPy; EEM PARAFAC now records the backend and applies primary plus second-order scatter masking; TensorLy non-negative PARAFAC is used automatically if installed. The current environment does not have SciPy, scikit-learn, XGBoost, TensorLy, pandas, or matplotlib, so refreshed outputs still use NumPy fallbacks.
 - Added `compare_dependency_models.py` to run scikit-learn PLSR/SVR and XGBoost comparisons when dependencies are installed. Current run wrote `supervised_monosaccharides/dependency_model_comparison.html` and `.csv` showing those dependencies are unavailable.
 - Modified the dependency-aware refinement path for the `Rha (5)` exclusion workflow. Filtered PARAFAC now writes `features/eem_parafac_scores_exclude_rha5.csv` and `features/eem_parafac_exclude_rha5/`, so the filtered reports no longer use PARAFAC factors fitted with excluded 5 g/L samples present.
+- Installed missing packages for Conda base via the base Python user site because `C:\ProgramData\anaconda3` is not writable: XGBoost and TensorLy are now importable from `conda run -n base python`. Re-ran the filtered workflow with SciPy, scikit-learn, XGBoost, and TensorLy available.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -58,6 +59,10 @@ After the stricter EEM scatter mask, PARAFAC still selected rank 2 using the Num
 Filtered preprocessing/PARAFAC extension did not beat the filtered main-model baselines: rhamnose 0.4589 RMSE, xylose 0.5526 RMSE, glucose 0.7187 RMSE.
 
 After fitting filtered PARAFAC without `Rha (5)`, rank 2 was still selected with NumPy CP-ALS and the stricter primary/second-order scatter mask. Filtered refined preprocessing/PARAFAC results were: rhamnose 0.4588 RMSE, xylose 0.5526 RMSE, glucose 0.7190 RMSE, still weaker than the filtered main-model baselines.
+
+After enabling TensorLy in Conda base, filtered PARAFAC selected rank 6 using `tensorly_non_negative_parafac`. Filtered preprocessed/PARAFAC results remained weaker than filtered main baselines: rhamnose 0.4933 RMSE, xylose 0.5544 RMSE, glucose 0.7058 RMSE.
+
+Dependency-backed filtered comparison now runs scikit-learn PLSR/SVR and XGBoost. Best result found so far is rhamnose fusion-full PLSR with 5 components: RMSE 0.3598, improving over the filtered pure-NumPy best rhamnose RMSE of 0.4136. Xylose/glucose dependency-backed results still need target-specific review before replacing the current filtered main baselines.
 
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
@@ -119,8 +124,8 @@ $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclu
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_preprocessed_models.py
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_supervised_visual_report.py
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_docx_model_report.py
-$env:EXCLUDE_RHA5='1'; python eem_parafac_features.py
-$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python compare_dependency_models.py
-$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; $env:REPORT_DOCX_NAME='monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; python generate_docx_model_report.py
+$env:EXCLUDE_RHA5='1'; conda run -n base python eem_parafac_features.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; conda run -n base python compare_dependency_models.py
+$env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; $env:REPORT_DOCX_NAME='monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx'; conda run -n base python generate_docx_model_report.py
 python rhamnose_ml/scripts/train_baseline.py --config rhamnose_ml/config/defaults.json
 ```

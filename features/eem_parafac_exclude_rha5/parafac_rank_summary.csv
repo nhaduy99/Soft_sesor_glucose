@@ -1,8 +1,8 @@
 rank,parafac_backend,scatter_mask,reconstruction_error,split_half_stability,prediction_rmse_mean,rhamnose_score_rmse,xylose_score_rmse,glucose_score_rmse,selected_rank
-2,numpy_cp_als,primary_nm=20.0;second_order_nm=25.0,3.224822,0.49878435,0.68150897,0.46531016,0.71307985,0.86613689,True
-3,numpy_cp_als,primary_nm=20.0;second_order_nm=25.0,3.224822,0.3325229,0.68150897,0.46531016,0.71307985,0.86613689,False
-4,numpy_cp_als,primary_nm=20.0;second_order_nm=25.0,3.224822,0.24939217,0.68150897,0.46531016,0.71307985,0.86613689,False
-5,numpy_cp_als,primary_nm=20.0;second_order_nm=25.0,3.224822,0.19951374,0.68150897,0.46531016,0.71307985,0.86613689,False
-6,numpy_cp_als,primary_nm=20.0;second_order_nm=25.0,3.224822,0.16626145,0.68150897,0.46531016,0.71307985,0.86613689,False
-7,numpy_cp_als,primary_nm=20.0;second_order_nm=25.0,3.224822,0.14250981,0.68150897,0.46531016,0.71307985,0.86613689,False
-8,numpy_cp_als,primary_nm=20.0;second_order_nm=25.0,3.224822,0.12469609,0.68150897,0.46531016,0.71307985,0.86613689,False
+2,tensorly_non_negative_parafac,primary_nm=20.0;second_order_nm=25.0,0.34025443,0.99987795,0.68822254,0.47309746,0.71755887,0.87401128,False
+3,tensorly_non_negative_parafac,primary_nm=20.0;second_order_nm=25.0,0.22514742,0.87603194,0.68595321,0.48012074,0.70515541,0.87258349,False
+4,tensorly_non_negative_parafac,primary_nm=20.0;second_order_nm=25.0,0.1527805,0.89848944,0.68654914,0.48640185,0.70591924,0.86732634,False
+5,tensorly_non_negative_parafac,primary_nm=20.0;second_order_nm=25.0,0.15589811,0.96413299,0.68702432,0.47871124,0.70760712,0.87475462,False
+6,tensorly_non_negative_parafac,primary_nm=20.0;second_order_nm=25.0,0.12100706,0.98698016,0.68558806,0.48303972,0.70496757,0.86875688,True
+7,tensorly_non_negative_parafac,primary_nm=20.0;second_order_nm=25.0,0.11684123,0.93715975,0.71229033,0.53572518,0.71517791,0.88596792,False
+8,tensorly_non_negative_parafac,primary_nm=20.0;second_order_nm=25.0,0.12544893,0.92848186,0.74271379,0.49082595,0.73274043,1.004575,False
