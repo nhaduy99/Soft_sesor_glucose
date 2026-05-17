@@ -1,4 +1,4 @@
-target,cohort,feature_set,model,config,n_repeats,mean_rmse,std_rmse,mean_mae,mean_r2,last_best_rmse,additional_improvement_vs_last_best_pct,met_10pct_vs_last_best
-rhamnose_gL,all_known,parafac_raman_fusion_als_sg0_snv_area,weighted_knn,"k=3,metric=manhattan,max_features=12,x_transform=l2,log_target=False",10,0.80012146,0.26710754,0.42239795,0.11689337,0.72189956,-10.835566,False
-xylose_gL,all_known,raman_preprocessed_als_sg2_snv,weighted_knn,"k=3,metric=correlation,max_features=192,x_transform=none,log_target=True",10,0.60497561,0.29724767,0.28562037,-0.18494584,0.53806598,-12.435209,False
-glucose_gL,all_known,raman_preprocessed_als_sg2_snv,weighted_knn,"k=5,metric=manhattan,max_features=12,x_transform=none,log_target=True",10,0.52504321,0.23590763,0.28027977,-0.099018125,0.59378797,11.577324,True
+target,cohort,feature_set,preprocessing_config,model,config,n_repeats,mean_rmse,std_rmse,mean_mae,mean_r2,last_best_rmse,additional_improvement_vs_last_best_pct,met_5pct_vs_last_best,met_10pct_vs_last_best
+rhamnose_gL,all_known,parafac_raman_fusion_als_sg0_snv_area,als_sg0_snv_area+parafac,weighted_knn,"k=3,metric=manhattan,max_features=12,x_transform=l2,log_target=False",10,0.80012146,0.26710754,0.42239795,0.11689337,0.70427079,-13.609917,False,False
+xylose_gL,all_known,raman_preprocessed_als_sg2_snv,als_sg2_snv,weighted_knn,"k=3,metric=correlation,max_features=192,x_transform=none,log_target=True",10,0.60497561,0.29724767,0.28562037,-0.18494584,0.53590234,-12.889152,False,False
+glucose_gL,all_known,raman_preprocessed_als_sg2_snv,als_sg2_snv,krr,"kernel=laplacian,alpha=0.1,gamma_scale=2.0,max_features=192,x_transform=none,log_target=True",10,0.50943891,0.24135573,0.27399199,0.011623788,0.55887802,8.8461363,True,False

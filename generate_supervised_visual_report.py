@@ -432,6 +432,18 @@ def build_report():
         f"<td>{fnum(r['mean_r2']):.3f}</td></tr>"
         for r in best_models
     )
+    feature_io_rows = "\n".join(
+        [
+            "<tr><td>Raman interpretable windows</td><td>Raw Raman spectra cropped to 500-2000 cm-1</td><td>Integrated/summary bands near 735, 905, 1156, 1408, 1523, and 1878 cm-1 plus ratios</td><td>Direct carbohydrate-sensitive signal; compact, explainable input to Ridge/PCR/PLS/kNN/KRR models</td></tr>",
+            "<tr><td>Raman full spectrum</td><td>Raw Raman spectra cropped to 500-2000 cm-1</td><td>Sampled full-spectrum intensity columns</td><td>Higher-dimensional direct sugar signal for predictive models</td></tr>",
+            "<tr><td>Preprocessed Raman</td><td>Raw Raman spectra with cosmic-spike removal, asymmetric least-squares baseline correction, Savitzky-Golay smoothing or derivatives, SNV normalization, optional area normalization</td><td><code>features/raman_preprocessed_features.csv</code> with <code>rp_*</code> features and <code>preprocessing_config</code></td><td>Baseline-corrected direct sugar signal used by weighted kNN and kernel-ridge searches</td></tr>",
+            "<tr><td>EEM interpretable hotspots</td><td>15 x 19 EEM matrices with saturated cells handled</td><td>Named EEM hotspot/intensity summary columns</td><td>Indirect fluorescence/process-state features; useful for compact interpretation</td></tr>",
+            "<tr><td>EEM unfolded matrix</td><td>15 x 19 EEM matrices</td><td><code>eem_ex*</code> flattened excitation-emission cells</td><td>Strong EEM baseline feature set for PLS/Ridge/PCR/kNN/KRR comparisons</td></tr>",
+            "<tr><td>EEM PARAFAC scores</td><td>Cleaned EEM cube with <code>OVER</code> cells and near-diagonal scatter/invalid regions masked before factorization</td><td><code>features/eem_parafac_scores.csv</code> with selected-rank component scores plus excitation/emission loadings and component maps</td><td>Interpretable latent fluorescence components, used alone and fused with Raman</td></tr>",
+            "<tr><td>Raman + EEM fusion</td><td>Aligned Raman features, EEM features, and/or PARAFAC scores joined by experiment, plate, well, replicate, and treatment label</td><td>Fusion matrices for full-spectrum and mid-level models</td><td>Combines direct Raman sugar signal with indirect fluorescence/process-state signal for best robustness</td></tr>",
+            "<tr><td>Model outputs</td><td>Feature matrices plus parsed concentration labels from standards/known spikes</td><td>Predicted <code>rhamnose_gL</code>, <code>xylose_gL</code>, and <code>glucose_gL</code>; RMSE, MAE, R2, residuals, and pred-vs-true plots</td><td>Soft-sensor outputs for monosaccharide concentration prediction</td></tr>",
+        ]
+    )
 
     opt_rows = "\n".join(
         f"<tr><td>{esc(TARGET_LABELS.get(r['target'], r['target']))}</td>"
@@ -455,7 +467,8 @@ def build_report():
         f"<tr><td>{esc(TARGET_LABELS.get(r['target'], r['target']))}</td><td>{esc(r['feature_set'])}</td>"
         f"<td>{esc(r.get('preprocessing_config', ''))}</td><td>{esc(r['config'])}</td>"
         f"<td>{fnum(r['mean_rmse']):.4f}</td><td>{fnum(r['last_best_rmse']):.4f}</td>"
-        f"<td>{fnum(r['additional_improvement_vs_last_best_pct']):.1f}%</td><td>{esc(r['met_10pct_vs_last_best'])}</td></tr>"
+        f"<td>{fnum(r['additional_improvement_vs_last_best_pct']):.1f}%</td>"
+        f"<td>{esc(r.get('met_5pct_vs_last_best', ''))}</td><td>{esc(r['met_10pct_vs_last_best'])}</td></tr>"
         for r in preprocessed_best
     )
     parafac_rows = "\n".join(
@@ -555,6 +568,14 @@ def build_report():
     </table>
   </section>
 
+  <h2>Feature Inputs and Model Outputs</h2>
+  <section class="panel">
+    <table>
+      <tr><th>Feature group</th><th>Raw input</th><th>Exported modelling input</th><th>Model role / output</th></tr>
+      {feature_io_rows}
+    </table>
+  </section>
+
   <h2>Metric Plots</h2>
   <div class="grid">
     <section class="panel">{rmse_svg}</section>
@@ -574,7 +595,7 @@ def build_report():
   <section class="panel">
     <p>The latest extension adds Raman preprocessing configurations with cosmic-spike removal, asymmetric least-squares baseline correction, Savitzky-Golay smoothing or derivatives, SNV normalization, and optional area normalization. Every result row stores a <code>preprocessing_config</code>. EEM PARAFAC scores were exported after rank selection using reconstruction error, split-half stability, and prediction performance.</p>
     <table>
-      <tr><th>Target</th><th>Best new feature set</th><th>Preprocessing config</th><th>Model config</th><th>New RMSE</th><th>Last best RMSE</th><th>Improvement</th><th>Met 10%</th></tr>
+      <tr><th>Target</th><th>Best new feature set</th><th>Preprocessing config</th><th>Model config</th><th>New RMSE</th><th>Last best RMSE</th><th>Improvement</th><th>Met 5%</th><th>Met 10%</th></tr>
       {preprocessed_rows}
     </table>
   </section>
@@ -613,9 +634,8 @@ def build_report():
   <section class="panel">
     <ol>
       <li>Merge quantitative HPLC monosaccharide targets for culture samples.</li>
-      <li>Add Raman baseline correction and EEM scatter-region masking before feature export.</li>
-      <li>Add PARAFAC scores for interpretable EEM components.</li>
-      <li>Compare this pure-NumPy search with scikit-learn PLSR/SVR and XGBoost if dependencies are available.</li>
+      <li>Refine the already-added Raman baseline correction, EEM scatter-region masking, and PARAFAC score features using stronger scientific Python dependencies if available.</li>
+      <li>Compare this pure-NumPy search with scikit-learn PLSR/SVR and XGBoost if dependencies are installed later.</li>
     </ol>
   </section>
 </main>

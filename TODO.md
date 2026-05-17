@@ -18,10 +18,11 @@
   - SVR
   - XGBoost or histogram gradient boosting
 - Compare grouped splits by `batch` versus `metadata_experiment`.
-- Add true spectroscopy preprocessing before another optimization attempt:
-  - Raman baseline correction / smoothing
-  - EEM scatter-region masking and PARAFAC scores
-  - replicate-aware calibration using quantitative HPLC targets
+- Refine the already-added spectroscopy preprocessing before another optimization attempt:
+  - Raman cosmic-spike removal, ALS baseline correction, smoothing/derivatives, SNV, and optional area normalization are implemented in `preprocessing_raman.py`.
+  - EEM `OVER` handling, near-diagonal scatter masking, and PARAFAC score export are implemented in `eem_parafac_features.py`.
+  - replicate-aware calibration still needs quantitative HPLC culture targets.
+- Current focused preprocessed/PARAFAC search met a 5% improvement only for glucose. Rhamnose and xylose remain unresolved with the current standard/spike labels.
 - Improve PARAFAC numerical quality and validation before relying on PARAFAC scores for final claims:
   - add non-negativity/stability constraints with a tested library if dependencies are available
   - evaluate component interpretability against known fluorophores/process-state signals

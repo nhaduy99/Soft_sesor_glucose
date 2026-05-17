@@ -53,3 +53,10 @@ Decision: commit HTML reports, metrics CSVs, and feature CSVs.
 Reason: this project is research-oriented and the user requested maintained progress. Generated outputs document progress and allow review without rerunning long scripts.
 
 Consequence: future commits should avoid accidental duplication of large generated files unless outputs changed meaningfully.
+
+### Treat Raman preprocessing and EEM PARAFAC as an extension rather than replacing the last best models
+Decision: compare preprocessed Raman, EEM PARAFAC scores, and Raman+PARAFAC fusion against the last confirmed baselines, but keep the original best full/interpretable EEM/Raman models as the project-level best where they still win.
+
+Reason: the new preprocessing/PARAFAC pass improved glucose but did not improve rhamnose or xylose with the current standard/spike targets.
+
+Consequence: PARAFAC remains valuable for interpretation and future culture-target modelling, while rhamnose and xylose should still report the earlier best models until stronger target data or dependency-backed methods improve them.

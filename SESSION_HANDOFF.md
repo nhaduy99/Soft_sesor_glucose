@@ -3,9 +3,9 @@
 ## Current State
 The project is on GitHub and synced on branch `main`.
 
-Latest major commit before this handoff:
+Latest committed baseline before this handoff:
 
-`68e6b4b Add supervised monosaccharide soft sensor training`
+`4ec8ec1 Add Raman preprocessing and EEM PARAFAC models`
 
 Current supervised calibration outputs are in:
 
@@ -43,6 +43,10 @@ Open the comprehensive visual modelling report here:
 - Ran `preprocessing_raman.py`, `eem_parafac_features.py`, and `train_preprocessed_models.py`.
 - Latest new-feature comparison: glucose improved 11.6% against the last best model using `raman_preprocessed_als_sg2_snv`; rhamnose and xylose did not improve.
 - Updated `supervised_monosaccharides/comprehensive_modeling_report.html` with Raman preprocessing/PARAFAC result tables and PARAFAC loading/component-map plots.
+- Added an explicit feature input/output table to `supervised_monosaccharides/comprehensive_modeling_report.html`, covering Raman interpretable/full/preprocessed features, EEM interpretable/unfolded/PARAFAC features, fusion inputs, and predicted concentration outputs.
+- Extended `train_preprocessed_models.py` with a focused kernel-ridge pass over the strongest preprocessed Raman and Raman+PARAFAC feature sets.
+- Regenerated `supervised_monosaccharides/preprocessed_model_best_vs_last.csv`, `supervised_monosaccharides/preprocessed_model_search_metrics_summary.csv`, `supervised_monosaccharides/preprocessed_model_search_metrics_by_split.csv`, and the comprehensive HTML report.
+- Latest focused preprocessed/PARAFAC result: glucose improved to 0.5094 RMSE, an 8.8% gain versus the latest project-level baseline. Rhamnose and xylose did not meet the requested 5% improvement threshold.
 
 ## Latest Confirmed Results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Extra improvement vs previous best |
@@ -52,6 +56,13 @@ Open the comprehensive visual modelling report here:
 | Glucose | target_focused | eem_interpretable | kNN, Manhattan | 0.5589 | 27.3% | 5.9% |
 
 The interrupted mean-blend optimization run was stopped and should not be treated as a confirmed result.
+
+## Latest Preprocessed/PARAFAC Extension Results
+| Target | Best new feature set | Model | RMSE | Latest project baseline RMSE | Improvement vs latest baseline | Met 5% |
+|---|---|---|---:|---:|---:|---|
+| Rhamnose | parafac_raman_fusion_als_sg0_snv_area | weighted kNN | 0.8001 | 0.7043 | -13.6% | No |
+| Xylose | raman_preprocessed_als_sg2_snv | weighted kNN | 0.6050 | 0.5359 | -12.9% | No |
+| Glucose | raman_preprocessed_als_sg2_snv | Laplacian kernel ridge | 0.5094 | 0.5589 | 8.8% | Yes |
 
 ## Commands Recently Run
 ```bash
@@ -64,6 +75,8 @@ python preprocessing_raman.py
 python eem_parafac_features.py
 python train_preprocessed_models.py
 python generate_supervised_visual_report.py
+python -m py_compile train_preprocessed_models.py generate_supervised_visual_report.py preprocessing_raman.py eem_parafac_features.py
+python -c "from html.parser import HTMLParser; from pathlib import Path; p=Path('supervised_monosaccharides/comprehensive_modeling_report.html'); HTMLParser().feed(p.read_text(encoding='utf-8')); print('html ok', p.stat().st_size)"
 ```
 
 ## Key Caveat
@@ -81,3 +94,5 @@ python train_monosaccharide_softsensor.py
 ```
 
 After rerunning, compare culture-sample grouped validation against the current standards/spikes calibration result.
+
+Also remember: `AGENTS.md` requires updating this `SESSION_HANDOFF.md` at the end of every task so the next Codex session can continue without chat history.

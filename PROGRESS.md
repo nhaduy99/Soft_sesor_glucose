@@ -25,6 +25,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Added `eem_parafac_features.py` to load the cleaned EEM cube, fit PARAFAC ranks 2-8, score ranks by reconstruction error, split-half stability, and prediction performance, export selected-rank scores/loadings, and create loading/component-map SVG plots.
 - Ran Raman preprocessing and EEM PARAFAC exports. `features/raman_preprocessed_features.csv` contains 765 labelled/configured Raman rows. PARAFAC selected rank 2 and exported scores/loadings/component maps under `features/eem_parafac/`.
 - Added `train_preprocessed_models.py` to compare Raman-preprocessed, PARAFAC-score, and PARAFAC+Raman-fusion models against the last best RMSEs. Glucose improved by 11.6% versus the last best model; rhamnose and xylose did not improve with the new features.
+- Added kernel-ridge candidates to the focused preprocessed/PARAFAC search and regenerated the comprehensive HTML report with an explicit feature input/output table for modelling. Glucose improved further to 0.5094 RMSE, an 8.8% improvement versus the latest project-level baseline. Rhamnose and xylose still did not meet the requested 5% improvement threshold with the current standard/spike labels.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -34,11 +35,11 @@ The main missing piece for culture-sample prediction is still the quantitative H
 | Glucose | target_focused | eem_interpretable | kNN, Manhattan | 0.5589 | 27.3% | 5.9% |
 
 ## Latest preprocessing/PARAFAC model results
-| Target | Best new feature set | RMSE | Last best RMSE | Improvement vs last best | Met 10% |
-|---|---|---:|---:|---:|---|
-| Rhamnose | parafac_raman_fusion_als_sg0_snv_area | 0.8001 | 0.7043 | -10.8% | No |
-| Xylose | raman_preprocessed_als_sg2_snv | 0.6050 | 0.5359 | -12.4% | No |
-| Glucose | raman_preprocessed_als_sg2_snv | 0.5250 | 0.5589 | 11.6% | Yes |
+| Target | Best new feature set | Best model | RMSE | Latest project baseline RMSE | Improvement vs latest baseline | Met 5% |
+|---|---|---|---:|---:|---:|---|
+| Rhamnose | parafac_raman_fusion_als_sg0_snv_area | weighted kNN | 0.8001 | 0.7043 | -13.6% | No |
+| Xylose | raman_preprocessed_als_sg2_snv | weighted kNN | 0.6050 | 0.5359 | -12.9% | No |
+| Glucose | raman_preprocessed_als_sg2_snv | Laplacian kernel ridge | 0.5094 | 0.5589 | 8.8% | Yes |
 
 ## Important files
 - `build_enriched_inventory.py`: builds the enriched sample inventory by joining raw file structure with metadata and HPLC sample legends.
@@ -53,7 +54,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - `docs/softsensor_monosaccharide_model_io.html`: model input/output explanation with diagrams for monosaccharide soft-sensor prediction.
 - `train_monosaccharide_softsensor.py`: pure-NumPy supervised training and model-search script for rhamnose, xylose, and glucose standards/spikes.
 - `supervised_monosaccharides/supervised_report.html`: supervised model results report with target coverage, training flow, best models, and optimization improvement.
-- `supervised_monosaccharides/comprehensive_modeling_report.html`: comprehensive visual report for processing, modelling, training, optimization, predicted-vs-true plots, residuals, and metrics.
+- `supervised_monosaccharides/comprehensive_modeling_report.html`: comprehensive visual report for processing, modelling, training, optimization, feature input/output tables, predicted-vs-true plots, residuals, and metrics.
 - `supervised_monosaccharides/optimization_improvement_summary.csv`: final-best RMSE compared with the initial baseline search.
 - `generate_supervised_visual_report.py`: pure-Python SVG/HTML report generator for supervised modelling visualizations.
 - `preprocessing_raman.py`: pure-NumPy Raman preprocessing and feature export pipeline with explicit preprocessing configuration labels.
@@ -70,7 +71,7 @@ The main missing piece for culture-sample prediction is still the quantitative H
 ## Next recommended steps
 1. Obtain and merge the actual quantitative HPLC monosaccharide reference table for culture samples.
 2. Re-run supervised training with culture targets and compare against the current standards/spikes calibration results.
-3. Add stronger Raman baseline correction and EEM scatter masking, then rerun `train_monosaccharide_softsensor.py`.
+3. Refine the already-added Raman ALS baseline correction, EEM scatter-region masking, and PARAFAC score export using tested libraries if dependency installation is allowed.
 4. If external dependencies are allowed, compare the pure-NumPy search against scikit-learn PLSR/SVR/XGBoost implementations. The current pure-NumPy optimization did not deliver an extra 20% RMSE reduction beyond the previous best.
 
 ## How to run

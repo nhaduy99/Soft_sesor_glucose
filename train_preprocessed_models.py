@@ -9,9 +9,13 @@ from train_monosaccharide_softsensor import (
     OUT_DIR,
     PREVIOUS_BEST_RMSE,
     TARGETS,
+    inverse_transform_y,
     is_target_relevant,
+    kernel_ridge_fit,
+    kernel_ridge_predict,
     pairwise_distances,
     safe_float,
+    transform_y,
     write_csv,
 )
 
@@ -19,11 +23,26 @@ from train_monosaccharide_softsensor import (
 ROOT = Path(__file__).resolve().parent
 RAMAN_CSV = ROOT / "features" / "raman_preprocessed_features.csv"
 PARAFAC_CSV = ROOT / "features" / "eem_parafac_scores.csv"
+BEST_MODELS_CSV = OUT_DIR / "best_models.csv"
 
 
 def read_csv(path):
     with path.open("r", encoding="utf-8-sig", newline="") as handle:
         return list(csv.DictReader(handle))
+
+
+def load_last_best_rmse():
+    if BEST_MODELS_CSV.exists():
+        rows = read_csv(BEST_MODELS_CSV)
+        out = {}
+        for row in rows:
+            target = row.get("target")
+            value = safe_float(row.get("mean_rmse"))
+            if target in TARGETS and math.isfinite(value):
+                out[target] = value
+        if all(target in out for target in TARGETS):
+            return out
+    return PREVIOUS_BEST_RMSE
 
 
 def key_for(row):
@@ -132,23 +151,71 @@ def evaluate(rows, cols, target, cohort, feature_set, preprocessing_config):
     if len(kept) < 12:
         return []
     configs = []
-    for max_features in (12, 24, 48, 96, 192):
+    for max_features in (12, 48, 192):
         for k in (1, 3, 5):
-            for metric in ("euclidean", "manhattan", "correlation"):
+            for metric in ("manhattan", "correlation"):
                 for x_transform in ("none", "l2"):
                     for log_target in (False, True):
-                        configs.append((max_features, k, metric, x_transform, log_target))
+                        configs.append(
+                            {
+                                "model": "weighted_knn",
+                                "max_features": max_features,
+                                "k": k,
+                                "metric": metric,
+                                "x_transform": x_transform,
+                                "log_target": log_target,
+                            }
+                        )
+        for kernel in ("rbf", "laplacian"):
+            for alpha in (0.01, 0.1):
+                for gamma_scale in (1.0, 2.0):
+                    for x_transform in ("none", "l2"):
+                        for log_target in (False, True):
+                            configs.append(
+                                {
+                                    "model": "krr",
+                                    "max_features": max_features,
+                                    "kernel": kernel,
+                                    "alpha": alpha,
+                                    "gamma_scale": gamma_scale,
+                                    "x_transform": x_transform,
+                                    "log_target": log_target,
+                                }
+                            )
     metrics = []
     for seed in range(10):
         train, test = split(kept, 500 + seed)
         if len(train) < 8 or len(test) < 2:
             continue
-        for max_features, k, metric, x_transform, log_target in configs:
-            prepared = prep(x[train].copy(), x[test].copy(), y[train], max_features, x_transform)
+        for cfg in configs:
+            prepared = prep(x[train].copy(), x[test].copy(), y[train], cfg["max_features"], cfg["x_transform"])
             if prepared is None:
                 continue
             x_train, x_test = prepared
-            pred = knn_predict(x_train, y[train], x_test, k, metric, log_target)
+            if cfg["model"] == "weighted_knn":
+                pred = knn_predict(x_train, y[train], x_test, cfg["k"], cfg["metric"], cfg["log_target"])
+                config = (
+                    f"k={cfg['k']},metric={cfg['metric']},max_features={cfg['max_features']},"
+                    f"x_transform={cfg['x_transform']},log_target={cfg['log_target']}"
+                )
+            else:
+                y_fit = transform_y(y[train], "log1p" if cfg["log_target"] else "none")
+                try:
+                    model = kernel_ridge_fit(
+                        x_train,
+                        y_fit,
+                        alpha=cfg["alpha"],
+                        kernel=cfg["kernel"],
+                        gamma_scale=cfg["gamma_scale"],
+                    )
+                except np.linalg.LinAlgError:
+                    continue
+                pred = inverse_transform_y(kernel_ridge_predict(model, x_test), "log1p" if cfg["log_target"] else "none")
+                config = (
+                    f"kernel={cfg['kernel']},alpha={cfg['alpha']},gamma_scale={cfg['gamma_scale']},"
+                    f"max_features={cfg['max_features']},x_transform={cfg['x_transform']},"
+                    f"log_target={cfg['log_target']}"
+                )
             err = y[test] - pred
             rmse = float(np.sqrt(np.mean(err * err)))
             mae = float(np.mean(np.abs(err)))
@@ -161,8 +228,8 @@ def evaluate(rows, cols, target, cohort, feature_set, preprocessing_config):
                     "cohort": cohort,
                     "feature_set": feature_set,
                     "preprocessing_config": preprocessing_config,
-                    "model": "weighted_knn",
-                    "config": f"k={k},metric={metric},max_features={max_features},x_transform={x_transform},log_target={log_target}",
+                    "model": cfg["model"],
+                    "config": config,
                     "seed": seed,
                     "rmse": rmse,
                     "mae": mae,
@@ -175,11 +242,11 @@ def evaluate(rows, cols, target, cohort, feature_set, preprocessing_config):
 def aggregate(rows):
     buckets = {}
     for row in rows:
-        key = (row["target"], row["cohort"], row["feature_set"], row["model"], row["config"])
+        key = (row["target"], row["cohort"], row["feature_set"], row["preprocessing_config"], row["model"], row["config"])
         buckets.setdefault(key, []).append(row)
     out = []
     for key, vals in buckets.items():
-        target, cohort, feature_set, model, config = key
+        target, cohort, feature_set, preprocessing_config, model, config = key
         rmse = np.asarray([v["rmse"] for v in vals])
         mae = np.asarray([v["mae"] for v in vals])
         r2 = np.asarray([v["r2"] for v in vals])
@@ -188,6 +255,7 @@ def aggregate(rows):
                 "target": target,
                 "cohort": cohort,
                 "feature_set": feature_set,
+                "preprocessing_config": preprocessing_config,
                 "model": model,
                 "config": config,
                 "n_repeats": len(vals),
@@ -203,25 +271,27 @@ def aggregate(rows):
 def main():
     raman_rows = read_csv(RAMAN_CSV)
     parafac_rows = read_csv(PARAFAC_CSV)
+    last_best_rmse = load_last_best_rmse()
     all_metrics = []
     configs = sorted({row["preprocessing_config"] for row in raman_rows})
-    for config in configs:
+    focus_raman_configs = {"als_sg0_snv_area", "als_sg2_snv"}
+    for config in [c for c in configs if c in focus_raman_configs]:
         rows = [row for row in raman_rows if row["preprocessing_config"] == config]
         cols = feature_cols(rows, ("rp_",))
         for target in TARGETS:
-            for cohort in ("all_known", "target_focused"):
+            for cohort in ("all_known",):
                 all_metrics.extend(evaluate(rows, cols, target, cohort, f"raman_preprocessed_{config}", config))
     parafac_cols = feature_cols(parafac_rows, ("parafac_score_",))
     for target in TARGETS:
         for cohort in ("all_known", "target_focused"):
             all_metrics.extend(evaluate(parafac_rows, parafac_cols, target, cohort, "eem_parafac_scores", "parafac_rank_selected"))
-    for config in configs:
+    for config in [c for c in configs if c in focus_raman_configs]:
         fused = merge_feature_rows([row for row in raman_rows if row["preprocessing_config"] == config], parafac_rows)
         if not fused:
             continue
         cols = feature_cols(fused, ("rp_", "parafac_score_"))
         for target in TARGETS:
-            for cohort in ("all_known", "target_focused"):
+            for cohort in ("all_known",):
                 all_metrics.extend(evaluate(fused, cols, target, cohort, f"parafac_raman_fusion_{config}", f"{config}+parafac"))
     if not all_metrics:
         raise RuntimeError("No metrics generated.")
@@ -229,10 +299,11 @@ def main():
     best = []
     for target in TARGETS:
         row = next(r for r in summary if r["target"] == target)
-        last = PREVIOUS_BEST_RMSE[target]
+        last = last_best_rmse[target]
         row = dict(row)
         row["last_best_rmse"] = last
         row["additional_improvement_vs_last_best_pct"] = 100.0 * (last - row["mean_rmse"]) / last
+        row["met_5pct_vs_last_best"] = row["additional_improvement_vs_last_best_pct"] >= 5.0
         row["met_10pct_vs_last_best"] = row["additional_improvement_vs_last_best_pct"] >= 10.0
         best.append(row)
     write_csv(OUT_DIR / "preprocessed_model_search_metrics_by_split.csv", all_metrics, list(all_metrics[0].keys()))
