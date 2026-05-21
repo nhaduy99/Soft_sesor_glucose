@@ -1,5 +1,42 @@
 # SESSION_HANDOFF.md
 
+## Latest Task - 2026-05-21 Rhamnose Literature Method-Extraction Tool
+User requested implementation of a repo-local tool to review literature and extract methods for rhamnose modelling and detection.
+
+Completed:
+- Added `literature_methods_review.py`.
+- Added input templates:
+  - `literature/README.md`
+  - `literature/seed_references.csv`
+  - `literature/papers/README.md`
+- Generated `literature_review/` outputs:
+  - `literature_review/rhamnose_method_evidence.csv`
+  - `literature_review/rhamnose_method_review.html`
+  - `literature_review/screened_references.csv`
+  - `literature_review/extraction_log.csv`
+- The tool supports local PDFs, seed references, optional Crossref web discovery, deterministic rules-based extraction, and optional LLM refinement via `ENABLE_LLM_EXTRACTION=1` plus `OPENAI_API_KEY`.
+
+Validation:
+- `conda run -n base python -m py_compile literature_methods_review.py` passed.
+- Offline run with empty seed/PDF inputs completed and wrote valid outputs.
+- HTML parse passed: `html ok 3760` for the offline output and `html ok 6107` after the web-discovery smoke run.
+- CSV schema check passed: `headers ok True source ok True rows 0`.
+- Optional Crossref smoke run completed with `--web --web-limit 1`, screening 5 web records. No method evidence rows were extracted yet because no local PDFs or detailed seed-reference notes have been provided.
+
+Commands run:
+```powershell
+conda run -n base python -m py_compile literature_methods_review.py
+conda run -n base python literature_methods_review.py
+conda run -n base python -c "from html.parser import HTMLParser; from pathlib import Path; p=Path('literature_review/rhamnose_method_review.html'); HTMLParser().feed(p.read_text(encoding='utf-8')); print('html ok', p.stat().st_size)"
+conda run -n base python -c "import csv; from pathlib import Path; expected=['paper_id','title','year','doi','source_type','analyte','matrix_or_sample','detection_method','modelling_method','input_features','preprocessing','validation_design','metrics','key_result','limitations','relevance_to_project','supporting_quote','page_or_section','confidence']; p=Path('literature_review/rhamnose_method_evidence.csv'); f=p.open(encoding='utf-8'); reader=csv.DictReader(f); rows=list(reader); print('headers ok', reader.fieldnames==expected, 'source ok', all((r.get('doi') or r.get('paper_id')) for r in rows), 'rows', len(rows))"
+conda run -n base python literature_methods_review.py --web --web-limit 1
+```
+
+Next recommended action:
+- Add real rhamnose-relevant PDFs to `literature/papers/` or detailed references/abstract notes to `literature/seed_references.csv`, then rerun `conda run -n base python literature_methods_review.py --web` if web discovery is desired.
+
+---
+
 ## Latest Task - 2026-05-17 Rhamnose-Only Model Comparison
 User requested a dedicated rhamnose-only folder comparing all models with different combined input strategies, including EEM, Raman, processed data, feature data, statistical models, ML, DL-style models, clear pipeline, visualisations, explanations, analysis, and academic reports.
 

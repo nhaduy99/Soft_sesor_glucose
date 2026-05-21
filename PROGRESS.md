@@ -1,6 +1,6 @@
 # Project Progress
 
-Last updated: 2026-05-17
+Last updated: 2026-05-21
 
 ## Current goal
 Prepare a scientifically defensible, ML-ready workflow for predicting Rhamnose from EEM and Raman data once quantitative HPLC targets are available.
@@ -32,6 +32,8 @@ The main missing piece for culture-sample prediction is still the quantitative H
 - Added `compare_dependency_models.py` to run scikit-learn PLSR/SVR and XGBoost comparisons when dependencies are installed. Current run wrote `supervised_monosaccharides/dependency_model_comparison.html` and `.csv` showing those dependencies are unavailable.
 - Modified the dependency-aware refinement path for the `Rha (5)` exclusion workflow. Filtered PARAFAC now writes `features/eem_parafac_scores_exclude_rha5.csv` and `features/eem_parafac_exclude_rha5/`, so the filtered reports no longer use PARAFAC factors fitted with excluded 5 g/L samples present.
 - Installed missing packages for Conda base via the base Python user site because `C:\ProgramData\anaconda3` is not writable: XGBoost and TensorLy are now importable from `conda run -n base python`. Re-ran the filtered workflow with SciPy, scikit-learn, XGBoost, and TensorLy available.
+- Added `literature_methods_review.py`, a repo-local rhamnose literature method-extraction tool. It reads local PDFs from `literature/papers/`, optional seed references from `literature/seed_references.csv`, and optional Crossref web-discovered records, then writes auditable CSV/HTML outputs under `literature_review/`.
+- Added literature input templates in `literature/`. The first offline and web smoke runs completed successfully, but no method evidence rows were extracted yet because no local PDFs or seed-reference notes have been provided.
 
 ## Latest supervised results
 | Target | Best cohort | Best feature set | Best model | RMSE | Improvement vs initial baseline | Additional improvement vs previous best |
@@ -119,6 +121,9 @@ This improves on the previous visible rhamnose dependency-backed result of 0.359
 - `export_best_model_predictions.py`: compact seed-0 prediction exporter for the selected best pure-NumPy models, used by reports to avoid empty scatter panels when the best model is ridge/PCR/PLS.
 - `rhamnose_only_model_comparison.py`: rhamnose-only academic comparison runner for EEM, Raman, processed, PARAFAC, and fusion inputs across statistical, chemometric, ML, XGBoost, and ANN/MLP models.
 - `rhamnose_model_comparison/`: rhamnose-only comparison folder containing metrics, predictions, figures, HTML report, DOCX report, and README.
+- `literature_methods_review.py`: rhamnose literature method-extraction tool for PDF, seed-reference, and optional Crossref inputs.
+- `literature/`: input folder for local PDFs and seed references.
+- `literature_review/`: generated literature evidence CSV, screened-reference CSV, extraction log, and HTML review report.
 - `rhamnose_ml/scripts/train_baseline.py`: starter baseline training entry point for supervised Rhamnose prediction.
 - `rhamnose_ml/src/rhamnose_ml/train.py`: baseline training pipeline using PLS with grouped train/test splitting.
 
@@ -129,9 +134,10 @@ This improves on the previous visible rhamnose dependency-backed result of 0.359
 
 ## Next recommended steps
 1. Obtain and merge the actual quantitative HPLC monosaccharide reference table for culture samples.
-2. Re-run supervised training with culture targets and compare against the current standards/spikes calibration results.
-3. Refine the already-added Raman ALS baseline correction, EEM scatter-region masking, and PARAFAC score export using tested libraries if dependency installation is allowed.
-4. If external dependencies are allowed, compare the pure-NumPy search against scikit-learn PLSR/SVR/XGBoost implementations. The current pure-NumPy optimization did not deliver an extra 20% RMSE reduction beyond the previous best.
+2. Add rhamnose spectroscopy/HPLC/modelling papers to `literature/papers/` or `literature/seed_references.csv`, rerun `literature_methods_review.py`, and use high-relevance evidence rows to strengthen method justification.
+3. Re-run supervised training with culture targets and compare against the current standards/spikes calibration results.
+4. Refine the already-added Raman ALS baseline correction, EEM scatter-region masking, and PARAFAC score export using tested libraries if dependency installation is allowed.
+5. If external dependencies are allowed, compare the pure-NumPy search against scikit-learn PLSR/SVR/XGBoost implementations. The current pure-NumPy optimization did not deliver an extra 20% RMSE reduction beyond the previous best.
 
 ## How to run
 ```bash
@@ -147,6 +153,7 @@ python train_preprocessed_models.py
 python generate_supervised_visual_report.py
 python generate_docx_model_report.py
 python compare_dependency_models.py
+python literature_methods_review.py
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_monosaccharide_softsensor.py
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python train_preprocessed_models.py
 $env:EXCLUDE_RHA5='1'; $env:SUPERVISED_OUT_DIR='supervised_monosaccharides_exclude_rha5'; python generate_supervised_visual_report.py

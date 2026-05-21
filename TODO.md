@@ -32,6 +32,8 @@
   - rerun rank selection after quantitative HPLC culture targets are merged
 
 ## Reporting
+- Add real rhamnose method papers to `literature/papers/` or detailed rows to `literature/seed_references.csv`, then rerun `conda run -n base python literature_methods_review.py`.
+- Review `literature_review/rhamnose_method_review.html` after adding papers and use high-relevance rows to support Raman, EEM/PARAFAC, HPLC, validation, and model-family justification.
 - Review `rhamnose_model_comparison/rhamnose_model_comparison_report.html` and `rhamnose_model_comparison/rhamnose_model_comparison_report.docx` as the focused academic rhamnose-only model comparison.
 - Review the refreshed filtered HTML report after the Nature-style visualization update: `supervised_monosaccharides_exclude_rha5/comprehensive_modeling_report.html`.
 - Review the refreshed filtered Word report after the beginner explanations and detailed pipeline diagrams were added: `supervised_monosaccharides_exclude_rha5/monosaccharide_softsensor_exclude_rha5_refined_dependencies_report.docx`.
